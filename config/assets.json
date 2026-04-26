@@ -1,0 +1,22 @@
+[
+  {
+    "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+    "label": "RealT Detroit Property #1",
+    "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+    "expectedHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gateways": [
+      "https://ipfs.io/ipfs/",
+      "https://cloudflare-ipfs.com/ipfs/"
+    ]
+  },
+  {
+    "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+    "label": "RealT Detroit Property #2",
+    "ipfsCid": "bafybeibm4u2c6f5z2a7e3w7x4j5y6q7r8s9t0u1v2w3x4y5z6a7b8c9d0",
+    "expectedHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gateways": [
+      "https://ipfs.io/ipfs/",
+      "https://gateway.pinata.cloud/ipfs/"
+    ]
+  }
+]
