@@ -1,0 +1,22 @@
+{
+  "name": "proofbridge-liner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ghost-Risk Circuit-Breaker for tokenised real-world assets — MVP.",
+  "main": "dashboard/server.js",
+  "scripts": {
+    "start": "node dashboard/server.js",
+    "dev": "node dashboard/server.js",
+    "fetch": "node prover/fetcher.js",
+    "fetch:watch": "node prover/fetcher.js --watch",
+    "submit": "node prover/submitter.js",
+    "test:contracts": "forge test -vvv",
+    "deploy:amoy": "forge script script/DeployCircuitBreaker.s.sol --rpc-url $POLYGON_AMOY_RPC_URL --broadcast --verify"
+  },
+  "dependencies": {
+    "express": "^4.22.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
