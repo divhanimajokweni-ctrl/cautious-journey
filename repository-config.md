@@ -3,8 +3,8 @@
 ## Recommended Repository Settings
 
 ### Repository Name
-**Current:** `cautious-journey`  
-**Recommended:** `proofbridge-liner`
+**Previous:** `cautious-journey`
+**Current:** `proofbridge-liner`
 
 **Rationale:** The current name is generic and doesn't reflect the project's purpose. "ProofBridge Liner" is the established project name and clearly communicates the circuit-breaker functionality for tokenized assets.
 
@@ -61,7 +61,7 @@ https://github.com/divhanimajokweni-ctrl/proofbridge-liner
 
 ### README Link Update Required
 After rename, update all documentation links from:
-- `https://github.com/divhanimajokweni-ctrl/cautious-journey`
+- `https://github.com/divhanimajokweni-ctrl/proofbridge-liner`
 - `https://github.com/divhanimajokweni-ctrl/proofbridge-liner`
 
 ---

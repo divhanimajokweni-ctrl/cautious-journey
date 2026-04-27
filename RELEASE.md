@@ -3,7 +3,7 @@
 **Release:** Safety Kernel v1.0 (Frozen)  
 **Tag:** `v1.0-safety-kernel`  
 **Date:** 2026-04-27  
-**Repository:** [cautious-journey](https://github.com/divhanimajokweni-ctrl/cautious-journey)  
+**Repository:** [proofbridge-liner](https://github.com/divhanimajokweni-ctrl/proofbridge-liner)  
 **Status:** PUBLIC RELEASE  
 
 ---
@@ -62,15 +62,8 @@ Tokenized real-world assets create "ghost-risk": the risk that on-chain tokens c
 All claims are supported by executable artifacts:
 
 ```bash
-# Clone and verify
-git clone https://github.com/divhanimajokweni-ctrl/cautious-journey.git
-cd cautious-journey
-
-# Run tests
-npm run test:contracts  # 14/14 passing
-
-# Start dashboard
-npm start  # http://localhost:5000
+git clone https://github.com/divhanimajokweni-ctrl/proofbridge-liner.git
+cd proofbridge-liner
 ```
 
 ## Intended Audience

@@ -3,7 +3,7 @@
 ## 🚀 ProofBridge Liner Safety Kernel v1.0 Released
 
 **Date:** April 27, 2026  
-**Repository:** https://github.com/divhanimajokweni-ctrl/cautious-journey  
+**Repository:** https://github.com/divhanimajokweni-ctrl/proofbridge-liner  
 **Tag:** v1.0-safety-kernel  
 **Classification:** Class A Research Release  
 
@@ -47,18 +47,19 @@ ProofBridge Liner is a **ghost-risk circuit-breaker** for tokenized real-world a
 All claims supported by executable code. Clone and verify:
 
 ```bash
-git clone https://github.com/divhanimajokweni-ctrl/cautious-journey.git
-cd cautious-journey
-npm run test:contracts  # 14/14 tests passing
-npm start              # Dashboard at http://localhost:5000
+git clone https://github.com/divhanimajokweni-ctrl/proofbridge-liner.git
+cd proofbridge-liner
 ```
 
 ### Documentation Suite
 
-📋 [Class A Release Specification](https://github.com/divhanimajokweni-ctrl/cautious-journey/blob/main/class-a-release-spec.md)  
-📋 [Regulatory Reading Guide](https://github.com/divhanimajokweni-ctrl/cautious-journey/blob/main/regulatory-reading-guide.md)  
-📋 [Integration Guide](https://github.com/divhanimajokweni-ctrl/cautious-journey/blob/main/integration-guide.md)  
-📋 [Economic Models](https://github.com/divhanimajokweni-ctrl/cautious-journey/blob/main/economic-models.md)  
+📋 [Class A Release Specification](https://github.com/divhanimajokweni-ctrl/proofbridge-liner/blob/main/class-a-release-spec.md)
+
+📋 [Regulatory Reading Guide](https://github.com/divhanimajokweni-ctrl/proofbridge-liner/blob/main/regulatory-reading-guide.md)
+
+📋 [Integration Guide](https://github.com/divhanimajokweni-ctrl/proofbridge-liner/blob/main/integration-guide.md)
+
+📋 [Economic Models](https://github.com/divhanimajokweni-ctrl/proofbridge-liner/blob/main/economic-models.md)
 
 ### Canonical Statement
 
