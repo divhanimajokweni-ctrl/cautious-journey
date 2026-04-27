@@ -10,6 +10,7 @@
     "fetch": "node prover/fetcher.js",
     "fetch:watch": "node prover/fetcher.js --watch",
     "submit": "node prover/submitter.js",
+    "submit:dry": "node prover/submitter.js --dry-run",
     "test:contracts": "forge test -vvv",
     "deploy:amoy": "forge script script/DeployCircuitBreaker.s.sol --rpc-url $POLYGON_AMOY_RPC_URL --broadcast --verify"
   },
