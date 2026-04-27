@@ -14,6 +14,7 @@
     "deploy:amoy": "forge script script/DeployCircuitBreaker.s.sol --rpc-url $POLYGON_AMOY_RPC_URL --broadcast --verify"
   },
   "dependencies": {
+    "@kilocode/cli": "^7.2.24",
     "express": "^4.22.1"
   },
   "engines": {
