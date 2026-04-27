@@ -2,7 +2,7 @@
 
 ## A Minimal Research Architecture for Replacing Hot-Wallet Proof Relays with Auditable Signing Infrastructure
 
-**Repository:** `divhanimajokweni-ctrl/cautious-journey`
+**Repository:** `divhanimajokweni-ctrl/proofbridge-liner`
 **System:** ProofBridge Liner Safety Kernel v1.0
 **Implementation locus:** `prover/submitter.js`
 **Status:** Research framework complete; attestation layer scoped for future Phase 4 implementation  

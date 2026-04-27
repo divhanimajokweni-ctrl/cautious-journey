@@ -1,7 +1,7 @@
 # Ghost-Risk Audit Report
 
 **System:** ProofBridge Liner Safety Kernel v1.0
-**Repository:** `cautious-journey`
+**Repository:** `proofbridge-liner`
 **Network target:** Polygon Amoy
 **Report phase:** Publication-ready audit framework
 **Gate state:** Phase 2 deployment ready (30% complete), awaiting real credentials  

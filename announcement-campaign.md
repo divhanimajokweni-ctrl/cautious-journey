@@ -24,11 +24,11 @@ ProofBridge Liner provides:
 - 1% equity carry on protected assets (non-dilutive)
 
 ### Next Steps
-1. Review our [Integration Guide](https://github.com/divhanimajokweni-ctrl/cautious-journey/blob/main/integration-guide.md)
-2. Evaluate the [Economic Model](https://github.com/divhanimajokweni-ctrl/cautious-journey/blob/main/economic-models.md)
+1. Review our [Integration Guide](https://github.com/divhanimajokweni-ctrl/proofbridge-liner/blob/main/integration-guide.md)
+2. Evaluate the [Economic Model](https://github.com/divhanimajokweni-ctrl/proofbridge-liner/blob/main/economic-models.md)
 3. Schedule technical discussion
 
-Repository: https://github.com/divhanimajokweni-ctrl/cautious-journey
+Repository: https://github.com/divhanimajokweni-ctrl/proofbridge-liner
 
 Best regards,  
 ProofBridge Team
@@ -49,7 +49,7 @@ ProofBridge Team
 - Comprehensive test suite (14/14 passing)
 - Economic analysis of marginal-cost protection
 
-**Repository:** https://github.com/divhanimajokweni-ctrl/cautious-journey  
+**Repository:** https://github.com/divhanimajokweni-ctrl/proofbridge-liner  
 **Classification:** Class A Research Release (frozen, reference-grade)
 
 **Discussion Points:**
@@ -74,8 +74,8 @@ The ProofBridge Liner research release provides a technical framework for unders
 - **Jurisdictional Neutrality**: No embedded legal assumptions
 
 **Documentation for Review:**
-- [Regulatory Reading Guide](https://github.com/divhanimajokweni-ctrl/cautious-journey/blob/main/regulatory-reading-guide.md)
-- [Regulator Q&A Sheet](https://github.com/divhanimajokweni-ctrl/cautious-journey/blob/main/regulator-qa-sheet.md)
+- [Regulatory Reading Guide](https://github.com/divhanimajokweni-ctrl/proofbridge-liner/blob/main/regulatory-reading-guide.md)
+- [Regulator Q&A Sheet](https://github.com/divhanimajokweni-ctrl/proofbridge-liner/blob/main/regulator-qa-sheet.md)
 
 This is research-grade material for technical evaluation. Not a commercial offering.
 
@@ -105,9 +105,9 @@ function _update(address from, address to, uint256 value) internal override {
 - Gas-optimized (<50k per check)
 
 **Test Coverage:** 14/14 passing with Foundry
+Repository: https://github.com/divhanimajokweni-ctrl/proofbridge-liner
 
-Repository: https://github.com/divhanimajokweni-ctrl/cautious-journey  
-Integration Guide: https://github.com/divhanimajokweni-ctrl/cautious-journey/blob/main/integration-guide.md
+Integration Guide: https://github.com/divhanimajokweni-ctrl/proofbridge-liner/blob/main/integration-guide.md
 
 ---
 
@@ -130,8 +130,8 @@ We're reaching out regarding ProofBridge Liner, a circuit-breaker infrastructure
 - Dashboard monitoring APIs
 
 **Business Model:** White-label integration with revenue sharing.
+Repository: https://github.com/divhanimajokweni-ctrl/proofbridge-liner
 
-Repository: https://github.com/divhanimajokweni-ctrl/cautious-journey  
 Contact: [contact information]
 
 Best,  
@@ -157,7 +157,7 @@ Solves "ghost-risk" where tokens trade on stale legal backing
 • Issuer-controlled resets  
 • Gas-efficient (<50k per check)  
 
-4/ Repository: https://github.com/divhanimajokweni-ctrl/cautious-journey  
+4/ Repository: https://github.com/divhanimajokweni-ctrl/proofbridge-liner  
 Tag: v1.0-safety-kernel  
 Classification: Class A Research Release  
 
