@@ -157,7 +157,7 @@ MIT - See LICENSE file for details.
 
 This is Safety Kernel v1.0 — Frozen. No contributions accepted until Phase 6 completion.
 
-For questions: [contact information]
+For questions: [divhanimajokweni@gmail.com]
 
 ---
 
