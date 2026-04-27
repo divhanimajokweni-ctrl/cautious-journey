@@ -2,10 +2,10 @@
 
 ## A Minimal Research Architecture for Replacing Hot-Wallet Proof Relays with Auditable Signing Infrastructure
 
-**Repository:** `divhanimajokweni-ctrl/cautious-journey`  
-**System:** ProofBridge Liner  
-**Implementation locus:** `prover/submitter.js`  
-**Status:** MVP attestation layer implemented; contract broadcast intentionally deferred  
+**Repository:** `divhanimajokweni-ctrl/cautious-journey`
+**System:** ProofBridge Liner Safety Kernel v1.0
+**Implementation locus:** `prover/submitter.js`
+**Status:** Research framework complete; attestation layer scoped for future Phase 4 implementation  
 
 ---
 
@@ -13,9 +13,9 @@
 
 ProofBridge Liner is a ghost-risk circuit-breaker for tokenised real-world assets. Its core function is to observe external proof state, classify each asset as fresh, mismatched, or unreachable, and convert those classifications into circuit-breaker actions. The initial architecture planned for an eventual on-chain relay, but the pre-existing relay path was a dry-run logger and the future broadcast path implied a conventional local private-key signer.
 
-This paper documents the architectural upgrade that replaces the implied hot-wallet signer with a SafeKrypte-backed signing simulator. The resulting system generates cryptographic attestations for each planned relay action before any on-chain broadcast is enabled. Each action is canonicalized, hashed, submitted to the SafeKrypte `/sign` endpoint, and persisted as a signed execution artifact in `.local/state/submitter-attestations.json`.
+This paper documents the research framework for upgrading ProofBridge Liner's oracle signing infrastructure from hot-wallet patterns to externally auditable attestation. The Safety Kernel v1.0 implements a simplified single-oracle model for MVP demonstration, with this SafeKrypte-backed architecture preserved as the upgrade path for Phase 4 multi-oracle quorum implementation.
 
-The central claim is narrow: ProofBridge Liner does not need a multi-oracle staking network at MVP stage. It needs a single oracle pathway whose signing boundary is externally auditable, replaceable, and compatible with later HSM or staking upgrades. SafeKrypte supplies that boundary without requiring a smart-contract migration.
+The central claim remains: ProofBridge Liner does not require a multi-oracle staking network at MVP stage. It needs a single oracle pathway whose signing boundary is externally auditable, replaceable, and compatible with later HSM or staking upgrades. SafeKrypte supplies that boundary without requiring smart-contract migration, but is deferred until post-publication Phase 4 development.
 
 ---
 
@@ -259,23 +259,29 @@ These limitations do not weaken the architectural result. They define the next c
 
 ---
 
-## 12. Next Work
+## 12. Publication Status & Next Work
 
-The next phase should add the following, in order:
+**Current Status:** This research framework is complete and publication-ready as part of Class A research artifacts. The Safety Kernel v1.0 implements a simplified oracle model sufficient for MVP demonstration.
 
-1. a local verification command for `submitter-attestations.json`;
-2. tests for deterministic digest generation;
-3. tests for SafeKrypte timeout and malformed-response handling;
-4. ABI-aware transaction broadcasting;
-5. optional linkage between transaction hash and attestation digest;
-6. HSM-backed SafeKrypte deployment once issuer demand justifies it.
+**Publication Timeline:**
+- **Class A (Research):** Complete - This paper ready for publication
+- **Class B (Protocol):** Next Sprint - Deploy with single oracle model
+- **Class C (Demo):** Future - Full production with advanced signing
 
-SafeStakes should remain out of scope until ProofBridge Liner requires multiple economically accountable signers.
+**Phase 4 Implementation Roadmap (Post-Publication):**
+
+1. Integrate SafeKrypte attestation layer into `prover/submitter.js`
+2. Implement local verification command for `submitter-attestations.json`
+3. Add tests for deterministic digest generation
+4. Add tests for SafeKrypte timeout and error handling
+5. Enable ABI-aware transaction broadcasting with attestation linkage
+6. Deploy HSM-backed SafeKrypte for production oracle custody
+7. Implement SafeStakes multi-oracle slashing network (Phase 4 future)
 
 ---
 
 ## 13. Conclusion
 
-The implemented SafeKrypte integration converts ProofBridge Liner from a dry-run relay into an attestable oracle-action pipeline. The system now produces signed evidence before any contract broadcast occurs. This removes the need for a local hot-wallet signer, creates a durable audit artifact, and preserves a clean upgrade path from simulator to HSM to later multi-oracle enforcement.
+This research framework establishes the architectural foundation for auditable oracle signing in ProofBridge Liner. The Safety Kernel v1.0 implements a simplified single-oracle model sufficient for MVP demonstration and publication. The SafeKrypte-backed attestation architecture is preserved as the research-grounded upgrade path for Phase 4 multi-oracle implementation.
 
-The result is not a maximal architecture. It is the correct minimal architecture: one oracle, externally managed signing, deterministic payloads, persisted attestations, and no premature slashing network.
+The result is a research-complete architecture: externally managed signing, deterministic payloads, persisted attestations, and a clear progression from single-oracle MVP to multi-oracle production without premature complexity. This framework enables credible Class A research publication while maintaining the upgrade path to institutional-grade signing infrastructure.

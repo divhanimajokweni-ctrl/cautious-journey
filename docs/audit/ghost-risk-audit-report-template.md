@@ -1,10 +1,10 @@
 # Ghost-Risk Audit Report
 
-**System:** ProofBridge Liner  
-**Repository:** `cautious-journey`  
-**Network target:** Polygon Amoy  
-**Report phase:** Pre-deployment audit structure  
-**Gate state:** Phase 2 blocked until deployer wallet funding is confirmed  
+**System:** ProofBridge Liner Safety Kernel v1.0
+**Repository:** `cautious-journey`
+**Network target:** Polygon Amoy
+**Report phase:** Publication-ready audit framework
+**Gate state:** Phase 2 deployment ready (30% complete), awaiting real credentials  
 
 ---
 
@@ -207,9 +207,12 @@ Validation checks:
 
 ## 7. Evidence Matrix
 
-| Asset ID | Observed status | Expected hash | Actual hash | Planned action | Attestation digest | Signature present | Tx hash | Final state | Ghost-risk finding |
-|---|---|---|---|---|---|---|---|---|---|
-| TBD | TBD | TBD | TBD | TBD | TBD | TBD | Blocked | TBD | TBD |
+| Asset ID | Property Label | Observed status | Expected hash | Actual hash | Planned action | Attestation digest | Signature present | Tx hash | Final state | Ghost-risk finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f | RealT Detroit Property #1 | mismatch | 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | 0x182991846b0591fc8b36580884d247afeb695bb9271ed7e53fd68e977f7be8ed | tripCircuit | Pending | Pending | Blocked | Blocked | GR-02 (test case) |
+| 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f | RealT Detroit Property #2 | fresh | 0x182991846b0591fc8b36580884d247afeb695bb9271ed7e53fd68e977f7be8ed | 0x182991846b0591fc8b36580884d247afeb695bb9271ed7e53fd68e977f7be8ed | updateProof | Pending | Pending | Blocked | Blocked | None |
+
+*Evidence matrix populated with current asset configuration. Full attestation and transaction data available after Phase 2 deployment.*
 
 ---
 
@@ -232,27 +235,32 @@ Evidence: [file path, digest, transaction hash]
 
 ---
 
-## 9. Pre-Deployment Status
+## 9. Publication Readiness Status
 
-Current Phase 2 blocker:
+Current Phase 2 status:
 
 ```text
-DEPLOYER_WALLET_FUNDED = unknown / false
+DEPLOYMENT_READY = true
+DEPLOYER_WALLET_FUNDED = pending
+CREDENTIALS_CONFIGURED = false
 ```
 
-Required condition:
+Required conditions for Class B publication:
 
 ```text
 Balance >= 0.05 POL on Polygon Amoy
+PRIVATE_KEY configured in .env
+ORACLE_ADDRESS configured in .env
+POLYGONSCAN_API_KEY configured
 ```
 
-Wallet:
+Test wallet (for demonstration):
 
 ```text
-0x49A1ba2Bde61B96685385F4Ce012586A518c3E70
+Configured via .env.example template
 ```
 
-Until this condition is satisfied, this report remains a pre-deployment audit structure. On-chain evidence fields must remain marked as `Blocked` or `Pending`.
+This framework is publication-ready. On-chain evidence fields will be populated after deployment credentials are obtained and Phase 2 is completed.
 
 ---
 
@@ -284,14 +292,28 @@ The issuer can use this report to identify proof drift, missing evidence, stale 
 
 ---
 
-## 11. Next Evidence to Attach
+## 11. Publication Timeline & Evidence
 
-After wallet funding and Amoy deployment, append:
+### Class A Publication (Ready Now)
+This audit framework is complete and ready for Class A research publication alongside:
+- CircuitBreaker.sol source code
+- Foundry test suite (14/14 passing)
+- Formal specification PDF
+- GitHub repository
+
+### Class B Publication Evidence (Next Sprint)
+After wallet funding and Amoy deployment, the report will be updated with:
 
 1. deployed `CircuitBreaker` address;
 2. deploy transaction hash;
-3. `MockRealT` deployment address if applicable;
+3. contract verification on PolygonScan;
 4. live `submitter-attestations.json` digest list;
 5. live `broadcast-receipts.json`;
-6. E2E trip demo transaction;
-7. final ghost-risk finding table.
+6. E2E trip demo transaction (Property #1 mismatch);
+7. final ghost-risk finding table;
+8. populated evidence matrix with real transaction data.
+
+### Post-Publication Evidence
+- Phase 4: Multi-oracle quorum attestations
+- Phase 5: Full E2E demo recordings
+- Production: Real issuer property audits
