@@ -52,16 +52,21 @@
 
 ## Development Workflow
 
-### Phase Structure
+### Phase Structure & Publication Status
 | Phase | Description | Status | Progress |
 |-------|-------------|--------|----------|
 | 0 | Env scaffold | ✅ Complete | 100% |
 | 1 | CircuitBreaker contract + tests | ✅ Complete | 100% |
-| 2 | Deploy to Polygon Amoy | 🔄 Ready | 70% |
-| 3 | Fetcher + submitter | ✅ Complete | 100% |
+| 2 | Deploy to Polygon Amoy | 🟡 Ready | 30% |
+| 3 | Fetcher + submitter | 🟡 In Progress | 60% |
 | 4 | 3-node quorum | 📋 Future | 0% |
 | 5 | E2E demo | 📋 Future | 0% |
-| 6 | Audit & pitch | 📋 Future | 0% |
+| 6 | Audit & pitch | ✅ Complete | 100% |
+
+**Publication Readiness:**
+- **Class A (Research)**: ✅ Ready Now - Formal spec, audit memo, GitHub release
+- **Class B (Protocol)**: 🟡 1 Sprint Away - Live testnet deployment
+- **Class C (Demo)**: 📋 Post-Release - Full production demo
 
 ### Local Development Setup
 
@@ -178,7 +183,7 @@ TRIP_THRESHOLD=1
 
 ### Contract Tests
 ```bash
-forge test -vvv  # 11/11 tests passing
+forge test -vvv  # 14/14 tests passing
 ```
 
 **Test Coverage**:
@@ -268,4 +273,4 @@ For questions or issues:
 
 ---
 
-**ProofBridge Liner MVP** | April 2026 | 72-Hour Development Sprint Complete
+**ProofBridge Liner Safety Kernel v1.0 Frozen** | April 27, 2026 | Class A Publication Ready
