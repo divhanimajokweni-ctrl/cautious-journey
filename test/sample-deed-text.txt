@@ -1,0 +1,31 @@
+PROPERTY DEED DOCUMENT
+
+Property Address: 123 Blockchain Street, Crypto City, CC 12345
+
+Legal Description:
+This deed conveys all right, title, and interest in the real property located at 123 Blockchain Street, Crypto City, including all improvements thereon.
+
+Grantor: RealT Property LLC
+Grantee: Tokenized Real Estate Trust
+
+Consideration: $100,000.00
+
+This property is subject to the following encumbrances:
+- First mortgage in the amount of $75,000.00
+- Property taxes for 2024
+- HOA fees of $200.00 per month
+
+Title Guarantee: The grantor warrants good title to the property, subject to the exceptions noted above.
+
+Executed this 15th day of April, 2024.
+
+[Signature]
+John Doe, Authorized Representative
+
+NOTARY PUBLIC
+State of Michigan
+County of Wayne
+
+This document was acknowledged before me on April 15, 2024 by John Doe.
+
+[Notary Seal]
