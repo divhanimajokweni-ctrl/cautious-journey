@@ -11,6 +11,7 @@
     "fetch:watch": "node prover/fetcher.js --watch",
     "submit": "node prover/submitter.js",
     "submit:dry": "node prover/submitter.js --dry-run",
+    "audit": "node prover/auditor.js",
     "broadcast": "node prover/broadcaster.js",
     "broadcast:dry": "node prover/broadcaster.js --dry-run",
     "test:contracts": "forge test -vvv",
@@ -19,7 +20,9 @@
   "dependencies": {
     "@kilocode/cli": "^7.2.24",
     "ethers": "^6.13.0",
-    "express": "^4.22.1"
+    "express": "^4.22.1",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^1.1.1"
   },
   "engines": {
     "node": ">=20"
