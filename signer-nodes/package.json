@@ -1,0 +1,9 @@
+{
+  "name": "pb-signer-node",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.22.1",
+    "ethers": "^6.13.0"
+  }
+}

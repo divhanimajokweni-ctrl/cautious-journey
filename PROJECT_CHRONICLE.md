@@ -74,17 +74,21 @@ Success criteria: Check. Circuit trips, proofs validate, dashboards dazzle.
 *Quirky aside: The system now distinguishes 'oops, network hiccup' from 'deed gone missing' – because not every IPFS tantrum deserves a global halt.*
 
 **Completed Tasks (Phase 2):**
-- Implemented exponential backoff in fetcher gateway retries (0.5s, 1s, 2s...).
+- Implemented exponential backoff in fetcher gateway retries (0.5s, 1s, 2s delays on gateway failures).
 - Added structured JSON logging across prover components.
 - Enhanced dashboard /api/health endpoint with gateway status checks and prover state inclusion.
 
-**Pending Tasks (Next Phases):**
-1. **Phase 3 (Trust Decentralization):** Upgrade to quorum signatures (3-of-5 ECDSA) in contract and pipeline.
-2. **Phase 4 (Expansion):** Support per-asset circuits, multi-asset batching, additional ERC-20 integrations.
-3. **Phase 5 (Institutional Adoption):** Formal security audit, pilot deployments with partners.
-4. **Monetization:** Introduce equity carry model post-trust establishment.
+**Completed Tasks (Phase 3):**
+- Created CircuitBreakerV2.sol with threshold signature verification (3-of-5 ECDSA).
+- Built 5-node mock quorum via Docker Compose (signer-nodes/).
+- Implemented TSS signer in prover/tss-signer.js for signature collection and aggregation.
 
-**Immediate Next Step:** Deploy contract via Remix on Polygon Amoy after funding wallet.
+**Pending Tasks (Next Phases):**
+1. **Phase 4 (Expansion):** Support per-asset circuits, multi-asset batching, integration with additional ERC-20 tokens.
+2. **Phase 5 (Institutional Adoption):** Audit, formal security review, pilot deployments with partners.
+3. **Monetization:** Introduce equity carry model post-trust establishment.
+
+**Immediate Next Step:** Deploy CircuitBreakerV2 via Remix on Polygon Amoy after funding wallet.
 
 *Dry observation: The kernel is frozen, but the future is thawing – one phase at a time.*
 

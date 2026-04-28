@@ -1,49 +1,41 @@
-/**
- * prover/tss-signer.js
- * ----------------------------------------------------------
- * Phase 4 stub: collects t-of-n signatures from the mock
- * quorum running under signer-nodes/docker-compose.yml.
- *
- * For the MVP this returns an empty bytes string; the
- * CircuitBreaker contract does not yet verify a quorum
- * signature on-chain (see ratified decision matrix).
- *
- * The interface is here so the submitter can be wired up
- * end-to-end and the upgrade to EIP-712 verification is
- * a one-file change.
- */
+// prover/tss-signer.js
+// Collects partial signatures from 5 signer nodes,
+// aggregates them into the format expected by CircuitBreakerV2.
+const axios = require('axios');
+const { ethers } = require('ethers');
 
-const fs = require('fs');
-const path = require('path');
+const SIGNER_NODES = [
+  'http://localhost:7001',
+  'http://localhost:7002',
+  'http://localhost:7003',
+  'http://localhost:7004',
+  'http://localhost:7005',
+];
 
-function loadSignerNodes() {
-  const cfgPath = path.resolve(__dirname, '..', 'config', 'signer-nodes.json');
-  return JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
-}
-
-/**
- * Request signatures from the configured quorum.
- * @param {{ assetId: string, deedHash: string }} payload
- * @returns {Promise<{ signatures: string[], aggregated: string }>}
- */
-async function collectSignatures(payload) {
-  const nodes = loadSignerNodes();
-  const signatures = [];
-  for (const node of nodes) {
+async function collectSigs(digest) {
+  const sigs = [];
+  for (const node of SIGNER_NODES) {
     try {
-      const res = await fetch(`${node.endpoint}/sign`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) continue;
-      const body = await res.json();
-      if (body.signature) signatures.push(body.signature);
-    } catch (_) {
-      // node down -> skip; quorum logic handles t-of-n.
+      const { data } = await axios.post(`${node}/sign`, { digest });
+      sigs.push({ signature: data.sig, signer: data.signer });
+    } catch (err) {
+      console.warn(`[tss-signer] Node ${node} failed: ${err.message}`);
     }
   }
-  return { signatures, aggregated: '0x' };
+  // Sort by signer address (ascending) — required by on-chain verification
+  sigs.sort((a, b) => a.signer.toLowerCase().localeCompare(b.signer.toLowerCase()));
+  return sigs;
 }
 
-module.exports = { collectSignatures, loadSignerNodes };
+function aggregate(sigs) {
+  const threshold = 3;
+  if (sigs.length < threshold) {
+    throw new Error(`Need at least ${threshold} signatures, got ${sigs.length}`);
+  }
+  // Concatenate the first `threshold` signatures (each 65 bytes: r,s,v)
+  const selected = sigs.slice(0, threshold);
+  const packed = ethers.concat(selected.map(s => s.signature));
+  return ethers.hexlify(packed);
+}
+
+module.exports = { collectSigs, aggregate };
