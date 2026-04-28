@@ -38,6 +38,20 @@ const DEFAULT_GATEWAYS = [
 
 const POLL_MS = Number(process.env.FETCHER_POLL_MS || 5 * 60 * 1000);
 
+// Exponential backoff
+function backoff(attempt, baseMs = 1000) {
+  const delay = baseMs * Math.pow(2, attempt);
+  return new Promise(resolve => setTimeout(resolve, delay));
+}
+
+// Structured logger
+function logEvent(level, message, meta = {}) {
+  const entry = { timestamp: new Date().toISOString(), level, message, ...meta };
+  const output = JSON.stringify(entry);
+  if (level === 'error') console.error(output);
+  else console.log(output);
+}
+
 function loadAssets() {
   const raw = fs.readFileSync(ASSETS_PATH, 'utf8');
   const parsed = JSON.parse(raw);
@@ -50,22 +64,31 @@ function sha256(buf) {
 }
 
 async function fetchFromGateways(cid, gateways) {
-  let lastErr;
-  for (const gw of gateways) {
+  let errors = 0;
+  let pdfBuffer = null;
+  for (let i = 0; i < gateways.length; i++) {
+    const gw = gateways[i];
     const url = gw.endsWith('/') ? gw + cid : `${gw}/${cid}`;
     try {
+      logEvent('info', `Gateway attempt ${i+1}/${gateways.length}`, { gateway: gw, cid });
       const res = await fetch(url, { redirect: 'follow' });
       if (!res.ok) throw new Error(`HTTP ${res.status} from ${gw}`);
       const arr = new Uint8Array(await res.arrayBuffer());
-      return { bytes: Buffer.from(arr), gateway: gw };
+      pdfBuffer = Buffer.from(arr);
+      logEvent('info', `Success via gateway`, { gateway: gw });
+      break;
     } catch (err) {
-      lastErr = err;
+      errors++;
+      logEvent('error', `Gateway failed`, { gateway: gw, error: err.message });
+      if (i < gateways.length - 1) {
+        await backoff(i, 500); // 0.5s, 1s, 2s...
+      }
     }
   }
-  throw lastErr || new Error('all gateways failed');
+  return { bytes: pdfBuffer, gateway: pdfBuffer ? gateways[gateways.length - errors] : null, errors };
 }
 
-async function checkAsset(asset) {
+async function checkAsset(asset, previousResult) {
   const start = Date.now();
   const result = {
     assetId: asset.assetId,
@@ -73,26 +96,50 @@ async function checkAsset(asset) {
     expectedHash: asset.expectedHash,
     actualHash: null,
     status: 'unknown',
+    health: 'unknown',
     gateway: null,
     bytes: 0,
     error: null,
     durationMs: 0,
     checkedAt: new Date().toISOString(),
+    consecutiveUnreachable: 0,
   };
-  try {
-    const gateways = asset.gateways && asset.gateways.length ? asset.gateways : DEFAULT_GATEWAYS;
-    const { bytes, gateway } = await fetchFromGateways(asset.ipfsCid, gateways);
+  const gateways = asset.gateways && asset.gateways.length ? asset.gateways : DEFAULT_GATEWAYS;
+  const { bytes, gateway, errors } = await fetchFromGateways(asset.ipfsCid, gateways);
+  if (bytes) {
     result.actualHash = sha256(bytes);
     result.gateway = gateway;
     result.bytes = bytes.length;
     result.status = result.actualHash === asset.expectedHash ? 'fresh' : 'mismatch';
-  } catch (err) {
+    result.health = errors === 0 ? 'healthy' : 'degraded';
+  } else {
     result.status = 'unreachable';
-    result.error = err.message || String(err);
-  } finally {
-    result.durationMs = Date.now() - start;
+    result.error = 'all gateways failed';
+    result.health = 'unreachable';
+  }
+  result.durationMs = Date.now() - start;
+  // Compute consecutive unreachables
+  const prevCount = previousResult?.consecutiveUnreachable || 0;
+  if (result.status === 'unreachable') {
+    result.consecutiveUnreachable = prevCount + 1;
+  } else {
+    result.consecutiveUnreachable = 0;
+  }
+  // Apply threshold
+  const threshold = Number(process.env.MAX_UNREACHABLE_RETRIES || 3);
+  if (result.status === 'unreachable' && result.consecutiveUnreachable >= threshold) {
+    result.status = 'unreachable_threshold';
   }
   return result;
+}
+
+function loadPreviousState() {
+  if (!fs.existsSync(STATE_PATH)) return {};
+  try {
+    return JSON.parse(fs.readFileSync(STATE_PATH, 'utf8'));
+  } catch {
+    return {};
+  }
 }
 
 function persistState(results) {
@@ -105,6 +152,7 @@ function persistState(results) {
       fresh: results.filter((r) => r.status === 'fresh').length,
       mismatch: results.filter((r) => r.status === 'mismatch').length,
       unreachable: results.filter((r) => r.status === 'unreachable').length,
+      unreachable_threshold: results.filter((r) => r.status === 'unreachable_threshold').length,
     },
   };
   fs.writeFileSync(STATE_PATH, JSON.stringify(payload, null, 2));
@@ -113,21 +161,28 @@ function persistState(results) {
 
 async function runOnce() {
   const assets = loadAssets();
+  const previous = loadPreviousState();
+  const previousResults = previous.results || [];
+  const prevMap = {};
+  for (const r of previousResults) {
+    prevMap[r.assetId] = r;
+  }
   console.log(`[fetcher] checking ${assets.length} asset(s)`);
   const results = [];
   for (const asset of assets) {
-    const r = await checkAsset(asset);
+    const r = await checkAsset(asset, prevMap[asset.assetId]);
     results.push(r);
     console.log(
       `[fetcher] ${r.assetId}  status=${r.status}  ` +
         (r.actualHash ? `hash=${r.actualHash.slice(0, 14)}…  ` : '') +
+        (r.consecutiveUnreachable ? `consec=${r.consecutiveUnreachable}  ` : '') +
         `(${r.durationMs}ms)`
     );
   }
   const payload = persistState(results);
   console.log(
     `[fetcher] summary  fresh=${payload.summary.fresh}  ` +
-      `mismatch=${payload.summary.mismatch}  unreachable=${payload.summary.unreachable}`
+      `mismatch=${payload.summary.mismatch}  unreachable=${payload.summary.unreachable}  threshold=${payload.summary.unreachable_threshold}`
   );
   return payload;
 }
@@ -151,4 +206,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runOnce, checkAsset, sha256, loadAssets };
+module.exports = { runOnce, checkAsset, sha256, loadAssets, loadPreviousState };

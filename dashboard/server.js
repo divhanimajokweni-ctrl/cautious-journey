@@ -98,7 +98,41 @@ app.get('/api/status', (_req, res) => {
   });
 });
 
-app.get('/api/health', (_req, res) => res.json({ ok: true, ts: Date.now() }));
+app.get('/api/health', async (req, res) => {
+  const gateways = [
+    'https://ipfs.io/ipfs/',
+    'https://cloudflare-ipfs.com/ipfs/',
+    'https://gateway.pinata.cloud/ipfs/',
+  ];
+  const gatewayHealth = {};
+  for (const gateway of gateways) {
+    const start = Date.now();
+    try {
+      await fetch(`${gateway}/QmbWqxBEKC3P8tqsKc98xmWNzrzDRRLbhtJ38WNqHVWojK`, {
+        method: 'HEAD',
+        timeout: 5000
+      });
+      gatewayHealth[gateway] = { status: 'healthy', latency: Date.now() - start };
+    } catch (err) {
+      gatewayHealth[gateway] = { status: 'unreachable', error: err.message };
+    }
+  }
+
+  // Read prover state if exists
+  let proverState = {};
+  try {
+    const stateFile = path.resolve(__dirname, '..', '.local', 'state', 'prover-state.json');
+    if (fs.existsSync(stateFile)) {
+      proverState = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+    }
+  } catch (e) { /* ignore */ }
+
+  res.json({
+    uptime: process.uptime(),
+    gateways: gatewayHealth,
+    proverState
+  });
+});
 
 app.listen(PORT, HOST, () => {
   console.log(`[dashboard] ProofBridge Liner Ops listening on http://${HOST}:${PORT}`);

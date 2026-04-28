@@ -51,11 +51,11 @@ function planActions(state) {
         assetId: r.assetId,
         reason: `mismatch: expected ${r.expectedHash}, got ${r.actualHash}`,
       });
-    } else if (r.status === 'unreachable') {
+    } else if (r.status === 'unreachable_threshold') {
       actions.push({
         kind: 'tripCircuit',
         assetId: r.assetId,
-        reason: `unreachable: ${r.error || 'unknown'}`,
+        reason: `Document unreachable after ${r.consecutiveUnreachable} consecutive polls`,
       });
     }
   }
