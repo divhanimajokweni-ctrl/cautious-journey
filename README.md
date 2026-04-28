@@ -4,6 +4,16 @@
 
 A minimal, trust-minimal circuit-breaker for tokenised real-world assets (RWAs) on EVM-compatible chains. Implements ghost-risk mitigation through hash-verified document anchoring and global transfer gating.
 
+## Research Publication
+
+**arXiv Paper**: Fail-Closed Enforcement for Tokenized Real-World Assets: A Circuit-Breaker Approach to Ghost-Risk Mitigation
+- **Status**: Submitted for publication
+- **Categories**: cs.CR (Cryptography and Security), cs.DC (Distributed, Parallel, and Cluster Computing)
+- **Repository**: Tagged `v1.0-safety-kernel` for reference implementation
+- **arXiv Link**: [Available after publication]
+
+**Call for Reviewers**: We invite academic and technical review of this research. See [CALL-FOR-REVIEWERS.md](./CALL-FOR-REVIEWERS.md) for details.
+
 For the full project chronicle, see [PROJECT_CHRONICLE.md](./PROJECT_CHRONICLE.md).
 
 Phase 4 Gateway-Quorum implementation details: [phase-4-gateway-quorum-summary.md](./phase-4-gateway-quorum-summary.md)
