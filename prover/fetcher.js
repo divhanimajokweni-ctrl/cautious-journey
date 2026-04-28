@@ -30,11 +30,7 @@ const ASSETS_PATH = path.join(ROOT, 'config', 'assets.json');
 const STATE_DIR = path.join(ROOT, '.local', 'state');
 const STATE_PATH = path.join(STATE_DIR, 'prover-state.json');
 
-const DEFAULT_GATEWAYS = [
-  'https://ipfs.io/ipfs/',
-  'https://cloudflare-ipfs.com/ipfs/',
-  'https://gateway.pinata.cloud/ipfs/',
-];
+const { resolveCID, evaluateResolution } = require('./ipfsResolver');
 
 const POLL_MS = Number(process.env.FETCHER_POLL_MS || 5 * 60 * 1000);
 
@@ -63,29 +59,30 @@ function sha256(buf) {
   return '0x' + crypto.createHash('sha256').update(buf).digest('hex');
 }
 
-async function fetchFromGateways(cid, gateways) {
-  let errors = 0;
-  let pdfBuffer = null;
-  for (let i = 0; i < gateways.length; i++) {
-    const gw = gateways[i];
-    const url = gw.endsWith('/') ? gw + cid : `${gw}/${cid}`;
-    try {
-      logEvent('info', `Gateway attempt ${i+1}/${gateways.length}`, { gateway: gw, cid });
-      const res = await fetch(url, { redirect: 'follow' });
-      if (!res.ok) throw new Error(`HTTP ${res.status} from ${gw}`);
-      const arr = new Uint8Array(await res.arrayBuffer());
-      pdfBuffer = Buffer.from(arr);
-      logEvent('info', `Success via gateway`, { gateway: gw });
-      break;
-    } catch (err) {
-      errors++;
-      logEvent('error', `Gateway failed`, { gateway: gw, error: err.message });
-      if (i < gateways.length - 1) {
-        await backoff(i, 500); // 0.5s, 1s, 2s...
-      }
-    }
-  }
-  return { bytes: pdfBuffer, gateway: pdfBuffer ? gateways[gateways.length - errors] : null, errors };
+// Phase 4: Gateway Quorum Resolution
+async function resolveWithQuorum(cid, expectedHash) {
+  logEvent('info', 'Starting gateway quorum resolution', { cid });
+
+  const results = await resolveCID(cid);
+  const outcome = evaluateResolution(results, expectedHash);
+
+  const successes = results.filter(r => r.ok);
+  const failures = results.filter(r => !r.ok);
+
+  logEvent('info', 'Resolution complete', {
+    cid,
+    status: outcome.status,
+    successes: successes.length,
+    failures: failures.length,
+    observedHash: outcome.observedHash
+  });
+
+  return {
+    results,
+    outcome,
+    successes,
+    failures
+  };
 }
 
 async function checkAsset(asset, previousResult) {
@@ -103,33 +100,79 @@ async function checkAsset(asset, previousResult) {
     durationMs: 0,
     checkedAt: new Date().toISOString(),
     consecutiveUnreachable: 0,
+    // Phase 4 additions
+    resolutionStatus: null,
+    gatewayResults: [],
+    evidence: null
   };
-  const gateways = asset.gateways && asset.gateways.length ? asset.gateways : DEFAULT_GATEWAYS;
-  const { bytes, gateway, errors } = await fetchFromGateways(asset.ipfsCid, gateways);
-  if (bytes) {
-    result.actualHash = sha256(bytes);
-    result.gateway = gateway;
-    result.bytes = bytes.length;
-    result.status = result.actualHash === asset.expectedHash ? 'fresh' : 'mismatch';
-    result.health = errors === 0 ? 'healthy' : 'degraded';
-  } else {
-    result.status = 'unreachable';
-    result.error = 'all gateways failed';
-    result.health = 'unreachable';
+
+  try {
+    const { results, outcome, successes, failures } = await resolveWithQuorum(asset.ipfsCid, asset.expectedHash);
+
+    result.resolutionStatus = outcome.status;
+    result.gatewayResults = results;
+
+    switch (outcome.status) {
+      case 'CONSISTENT':
+        result.actualHash = outcome.observedHash;
+        result.status = 'fresh';
+        result.health = failures.length === 0 ? 'healthy' : 'degraded';
+        // Find first successful gateway for reporting
+        const firstSuccess = successes[0];
+        if (firstSuccess) {
+          result.gateway = firstSuccess.gateway;
+        }
+        break;
+
+      case 'HASH_MISMATCH':
+        result.status = 'mismatch';
+        result.health = 'compromised';
+        result.evidence = outcome.evidence;
+        logEvent('error', 'Hash mismatch detected', {
+          assetId: asset.assetId,
+          cid: asset.ipfsCid,
+          evidence: outcome.evidence
+        });
+        break;
+
+      case 'NETWORK_UNAVAILABLE':
+        result.status = 'unreachable';
+        result.error = 'all gateways failed';
+        result.health = 'unreachable';
+        logEvent('warn', 'Network unavailable', {
+          assetId: asset.assetId,
+          cid: asset.ipfsCid,
+          failures: failures.length
+        });
+        break;
+    }
+  } catch (err) {
+    result.status = 'error';
+    result.error = err.message;
+    result.health = 'error';
+    logEvent('error', 'Resolution failed', {
+      assetId: asset.assetId,
+      error: err.message
+    });
   }
+
   result.durationMs = Date.now() - start;
-  // Compute consecutive unreachables
+
+  // Compute consecutive unreachables (updated for Phase 4)
   const prevCount = previousResult?.consecutiveUnreachable || 0;
-  if (result.status === 'unreachable') {
+  if (result.status === 'unreachable' || result.resolutionStatus === 'NETWORK_UNAVAILABLE') {
     result.consecutiveUnreachable = prevCount + 1;
   } else {
     result.consecutiveUnreachable = 0;
   }
-  // Apply threshold
+
+  // Apply threshold for network unavailable
   const threshold = Number(process.env.MAX_UNREACHABLE_RETRIES || 3);
-  if (result.status === 'unreachable' && result.consecutiveUnreachable >= threshold) {
+  if ((result.status === 'unreachable' || result.resolutionStatus === 'NETWORK_UNAVAILABLE') &&
+      result.consecutiveUnreachable >= threshold) {
     result.status = 'unreachable_threshold';
   }
+
   return result;
 }
 
@@ -153,6 +196,10 @@ function persistState(results) {
       mismatch: results.filter((r) => r.status === 'mismatch').length,
       unreachable: results.filter((r) => r.status === 'unreachable').length,
       unreachable_threshold: results.filter((r) => r.status === 'unreachable_threshold').length,
+      // Phase 4 additions
+      network_unavailable: results.filter((r) => r.resolutionStatus === 'NETWORK_UNAVAILABLE').length,
+      hash_mismatch: results.filter((r) => r.resolutionStatus === 'HASH_MISMATCH').length,
+      consistent: results.filter((r) => r.resolutionStatus === 'CONSISTENT').length,
     },
   };
   fs.writeFileSync(STATE_PATH, JSON.stringify(payload, null, 2));
@@ -183,6 +230,10 @@ async function runOnce() {
   console.log(
     `[fetcher] summary  fresh=${payload.summary.fresh}  ` +
       `mismatch=${payload.summary.mismatch}  unreachable=${payload.summary.unreachable}  threshold=${payload.summary.unreachable_threshold}`
+  );
+  console.log(
+    `[fetcher] Phase 4:  consistent=${payload.summary.consistent}  ` +
+      `hash_mismatch=${payload.summary.hash_mismatch}  network_unavailable=${payload.summary.network_unavailable}`
   );
   return payload;
 }

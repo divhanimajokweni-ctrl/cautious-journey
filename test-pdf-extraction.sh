@@ -33,7 +33,12 @@ async function testExtraction() {
       https.get(url, (res) => {
         if (res.statusCode === 301 || res.statusCode === 302) {
           // Follow redirect
-          const redirectUrl = res.headers.location;
+          let redirectUrl = res.headers.location;
+          if (redirectUrl.startsWith('/')) {
+            // Relative redirect, use same host
+            const urlObj = new URL(url);
+            redirectUrl = urlObj.origin + redirectUrl;
+          }
           console.log(\`Redirecting to \${redirectUrl}\`);
           https.get(redirectUrl, (res2) => {
             if (res2.statusCode !== 200) {

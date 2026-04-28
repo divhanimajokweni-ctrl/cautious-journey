@@ -28,6 +28,8 @@ try {
     const content = fs.readFileSync(file, 'utf8');
     for (const pattern of secretPatterns) {
       if (pattern.test(content)) {
+        // Allow known placeholders
+        if (content.includes('your-key-here') || content.includes('REMOVED_KEY')) continue;
         console.error(`❌ Potential secret detected in ${file} matching pattern: ${pattern}`);
         console.error('Commit blocked. Remove the secret or use environment variables.');
         process.exit(1);

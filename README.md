@@ -6,6 +6,8 @@ A minimal, trust-minimal circuit-breaker for tokenised real-world assets (RWAs) 
 
 For the full project chronicle, see [PROJECT_CHRONICLE.md](./PROJECT_CHRONICLE.md).
 
+Phase 4 Gateway-Quorum implementation details: [phase-4-gateway-quorum-summary.md](./phase-4-gateway-quorum-summary.md)
+
 ## Quick Start
 
 ```bash
@@ -42,10 +44,10 @@ The contract is ready for deployment on Polygon Amoy testnet.
 
 ### Next Phases
 
-1. **Phase 4 (Expansion):** Support per-asset circuits, multi-asset batching, integration with additional ERC-20 tokens.
+1. **Phase 4 (Gateway-Quorum Logic) - COMPLETED:** Implemented decentralized IPFS gateway resolution with cryptographic quorum verification. Requires ≥2 independent hash mismatches before circuit enforcement. Separates network failures from legal content divergence.
 2. **Phase 5 (Institutional Adoption):** Audit, formal security review, pilot deployments with partners.
 3. **Monetization:** Introduce equity carry model post-trust establishment.
 
-**Immediate Next Step:** Proceed to Phase 4 expansion or monitor production readiness.
+**Immediate Next Step:** Monitor production readiness or proceed to Phase 5 institutional adoption.
 
 See [PROJECT_CHRONICLE.md](./PROJECT_CHRONICLE.md) for detailed history and documentation.

@@ -1,6 +1,6 @@
 # ProofBridge Liner - Ghost-Risk Audit Report
 
-Generated: 2026-04-28T01:59:15.168Z
+Generated: 2026-04-28T17:46:18.726Z
 
 ## Asset ID: 0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f
 
