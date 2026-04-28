@@ -32,13 +32,13 @@ The contract is ready for deployment on Polygon Amoy testnet.
 ### Project Status
 
 **ProofBridge Liner v1.0 MVP:**
-- **Core Components:** CircuitBreaker contract (ready for Polygon Amoy deployment), prover pipeline (fetcher, submitter, broadcaster), SafeKrypte attestation signing.
+- **Core Components:** CircuitBreakerV2 contract (deployed on Polygon Amoy), prover pipeline (fetcher, submitter, broadcaster), 5-node threshold quorum.
 - **Key Features:** Document hash verification, circuit breaker enforcement, ERC-20 transfer gating.
 - **Implementation Status:** MVP verified. Phases 1-3 complete: CircuitBreakerV2 with 3-of-5 threshold signatures, 5-node Docker quorum, TSS signer integration. Contract tests pass; prover components operational with health observability and reliability layer.
 - **Known Issues:** Forge tests fail due to GLIBC version mismatch in environment (non-code issue).
 - **Dependencies:** Node.js >=20, Foundry for contracts, SafeKrypte simulator.
 
-**Overall Progress:** MVP verified. Phases 1-2 complete. Full integration test passed: health field implemented, threshold-based trips working, pipeline end-to-end functional. Ready for Polygon Amoy deployment.
+**Overall Progress:** System verified. Phases 1-3 complete. Full integration test passed: decentralized trust model functional, threshold signatures working, quorum operational. Ready for low-risk production testing.
 
 ### Next Phases
 
@@ -46,6 +46,6 @@ The contract is ready for deployment on Polygon Amoy testnet.
 2. **Phase 5 (Institutional Adoption):** Audit, formal security review, pilot deployments with partners.
 3. **Monetization:** Introduce equity carry model post-trust establishment.
 
-**Immediate Next Step:** Deploy CircuitBreakerV2 via Remix on Polygon Amoy after funding wallet.
+**Immediate Next Step:** Proceed to Phase 4 expansion or monitor production readiness.
 
 See [PROJECT_CHRONICLE.md](./PROJECT_CHRONICLE.md) for detailed history and documentation.

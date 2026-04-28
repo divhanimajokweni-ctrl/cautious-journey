@@ -23,6 +23,7 @@
     "axios": "^1.6.0",
     "ethers": "^6.13.0",
     "express": "^4.22.1",
+    "opencode-ai": "^1.14.28",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^1.1.1"
   },

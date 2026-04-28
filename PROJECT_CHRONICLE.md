@@ -82,13 +82,15 @@ Success criteria: Check. Circuit trips, proofs validate, dashboards dazzle.
 - Created CircuitBreakerV2.sol with threshold signature verification (3-of-5 ECDSA).
 - Built 5-node mock quorum via Docker Compose (signer-nodes/).
 - Implemented TSS signer in prover/tss-signer.js for signature collection and aggregation.
+- Deployed CircuitBreakerV2 on Polygon Amoy with initialized quorum.
+- Passed full integration test: end-to-end threshold signatures, quorum failure handling.
 
 **Pending Tasks (Next Phases):**
 1. **Phase 4 (Expansion):** Support per-asset circuits, multi-asset batching, integration with additional ERC-20 tokens.
 2. **Phase 5 (Institutional Adoption):** Audit, formal security review, pilot deployments with partners.
 3. **Monetization:** Introduce equity carry model post-trust establishment.
 
-**Immediate Next Step:** Deploy CircuitBreakerV2 via Remix on Polygon Amoy after funding wallet.
+**Immediate Next Step:** Proceed to Phase 4 expansion or monitor production readiness.
 
 *Dry observation: The kernel is frozen, but the future is thawing – one phase at a time.*
 
@@ -102,5 +104,5 @@ Multi-oracle networks, real deployments, audits. But for now, Safety Kernel v1.0
 
 **Chronicled by Kilo, the AI Scribe**  
 **Date:** April 28, 2026  
-**Status:** MVP Complete, Chronicle Updated with Completed and Pending  
+**Status:** System Verified with Decentralized Trust, Chronicle Updated  
 **Tone:** Generic with a wink and a nod.

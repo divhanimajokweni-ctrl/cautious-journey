@@ -27,11 +27,11 @@ const RECEIPTS_FILE = path.resolve(
 // ABI — exactly matching CircuitBreaker.sol
 // ---------------------------------------------------------------------------
 const CIRCUIT_BREAKER_ABI = [
-  "function updateProof(bytes32 assetId, bytes32 deedHash) external",
-  "function tripCircuit(string calldata reason) external",
+  "function updateProof(bytes32 assetId, bytes32 deedHash, bytes calldata thresholdSigs) external",
+  "function tripCircuit(string calldata reason, bytes calldata thresholdSigs) external",
   "function circuitOpen() external view returns (bool)",
   "function latestProof(bytes32 assetId) external view returns (bytes32)",
-  "function oracle() external view returns (address)",
+  "function threshold() external view returns (uint256)",
 ];
 
 // ---------------------------------------------------------------------------
@@ -127,7 +127,7 @@ async function broadcastOne(contract, att, receipts, options = {}) {
     }
 
     console.log(`[broadcaster] SEND updateProof assetId=${assetId.slice(0, 16)}... digest=${digest.slice(0, 16)}...`);
-    tx = await contract.updateProof(assetId, deedHash);
+    tx = await contract.updateProof(assetId, deedHash, att.signature);
   }
 
   if (kind === "tripCircuit") {
@@ -145,7 +145,7 @@ async function broadcastOne(contract, att, receipts, options = {}) {
     }
 
     console.log(`[broadcaster] SEND tripCircuit reason="${reason}" digest=${digest.slice(0, 16)}...`);
-    tx = await contract.tripCircuit(reason);
+    tx = await contract.tripCircuit(reason, att.signature);
   }
 
   console.log(`[broadcaster] WAIT ${tx.hash}...`);
@@ -192,15 +192,8 @@ async function broadcast(options = {}) {
   const signer = new ethers.Wallet(oracleKey, provider);
   const contract = new ethers.Contract(contractAddr, CIRCUIT_BREAKER_ABI, signer);
 
-  // Verify oracle identity
-  const onChainOracle = await contract.oracle();
-  if (signer.address.toLowerCase() !== onChainOracle.toLowerCase()) {
-    throw new Error(
-      `Signer ${signer.address} ≠ on-chain oracle ${onChainOracle}. ` +
-      "onlyOracle will reject all transactions."
-    );
-  }
-  console.log(`[broadcaster] Oracle identity confirmed: ${signer.address}`);
+  // For V2, no oracle check needed; threshold signatures handle auth
+  console.log(`[broadcaster] Connected to CircuitBreakerV2 at ${contractAddr}`);
 
   const receipts = loadReceipts();
   const results = [];

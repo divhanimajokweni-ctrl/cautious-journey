@@ -17,6 +17,7 @@
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
+const { ethers } = require('ethers');
 
 const STATE_PATH = path.resolve(__dirname, '..', '.local', 'state', 'prover-state.json');
 const ATTESTATION_PATH = path.resolve(__dirname, '..', '.local', 'state', 'submitter-attestations.json');
@@ -62,52 +63,16 @@ function planActions(state) {
   return actions;
 }
 
-async function requestSafeKrypteSignature({ payload, digest }) {
-  const baseUrl = process.env.SAFEKRYPTE_SIMULATOR_URL || 'http://localhost:3001';
-  const keyId = process.env.SAFEKRYPTE_SIGNING_KEY_ID || 'proofbridge-oracle-dev';
-  const timeoutMs = Number(process.env.SAFEKRYPTE_TIMEOUT_MS || 10000);
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const response = await fetch(`${baseUrl.replace(/\/$/, '')}/sign`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        ...(process.env.SAFEKRYPTE_API_KEY
-          ? { authorization: `Bearer ${process.env.SAFEKRYPTE_API_KEY}` }
-          : {}),
-      },
-      body: JSON.stringify({
-        keyId,
-        payload,
-        digest,
-        algorithm: process.env.SAFEKRYPTE_ALGORITHM || 'ECDSA_SECP256K1',
-        encoding: 'hex',
-      }),
-      signal: controller.signal,
-    });
-
-    const bodyText = await response.text();
-    const body = bodyText ? JSON.parse(bodyText) : {};
-
-    if (!response.ok) {
-      throw new Error(`SafeKrypte signing failed: ${response.status} ${bodyText}`);
-    }
-
-    if (!body.signature) {
-      throw new Error('SafeKrypte response missing signature');
-    }
-
-    return {
-      signature: body.signature,
-      signerAddress: body.signerAddress || null,
-      keyId: body.keyId || keyId,
-      auditId: body.auditId || null,
-    };
-  } finally {
-    clearTimeout(timeout);
-  }
+async function requestThresholdSignature(digest) {
+  const { collectSigs, aggregate } = require('./tss-signer');
+  const sigs = await collectSigs(digest);
+  const aggregated = aggregate(sigs);
+  return {
+    signature: aggregated,
+    signerAddresses: sigs.map(s => s.signer),
+    keyId: 'threshold-quorum',
+    auditId: null,
+  };
 }
 
 async function attestActions(actions, state) {
@@ -121,14 +86,25 @@ async function attestActions(actions, state) {
       stateGeneratedAt: state.generatedAt || null,
       issuedAt: new Date().toISOString(),
     };
-    const digest = digestPayload(payload);
-    const signed = await requestSafeKrypteSignature({ payload, digest });
+    // For V2, use threshold digest
+    let digest;
+    if (action.kind === 'updateProof') {
+      // actionDigest(assetId, deedHash) = keccak256(abi.encodePacked(assetId, deedHash, block.chainid, address(this)))
+      const contractAddress = process.env.CIRCUIT_BREAKER_ADDRESS || '0x1234567890123456789012345678901234567890';
+      const chainId = 80002; // Polygon Amoy
+      digest = ethers.keccak256(ethers.concat([action.assetId, action.deedHash, ethers.toBeHex(chainId, 32), contractAddress]));
+    } else if (action.kind === 'tripCircuit') {
+      const contractAddress = process.env.CIRCUIT_BREAKER_ADDRESS || '0x1234567890123456789012345678901234567890';
+      const chainId = 80002;
+      digest = ethers.keccak256(ethers.concat([ethers.toUtf8Bytes(action.reason), ethers.toBeHex(chainId, 32), contractAddress]));
+    }
+    const signed = await requestThresholdSignature(digest);
 
     attestations.push({
       ...payload,
       digest,
       ...signed,
-      backend: 'safekrypte-simulator',
+      backend: 'threshold-quorum',
     });
   }
 
@@ -179,6 +155,6 @@ module.exports = {
   attestActions,
   digestPayload,
   planActions,
-  requestSafeKrypteSignature,
+  requestThresholdSignature,
   stableJson,
 };
