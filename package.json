@@ -15,6 +15,7 @@
     "broadcast": "node prover/broadcaster.js",
     "broadcast:dry": "node prover/broadcaster.js --dry-run",
     "test:contracts": "forge test -vvv",
+    "test:contracts:docker": "docker build -t proofbridge-liner . && docker run --rm proofbridge-liner",
     "deploy:amoy": "forge script script/DeployCircuitBreaker.s.sol --rpc-url $POLYGON_AMOY_RPC_URL --broadcast --verify",
     "precommit": "node scripts/check-secrets.js"
   },

@@ -31,6 +31,21 @@ async function testExtraction() {
     console.log('Fetching PDF from IPFS...');
     const buffer = await new Promise((resolve, reject) => {
       https.get(url, (res) => {
+        if (res.statusCode === 301 || res.statusCode === 302) {
+          // Follow redirect
+          const redirectUrl = res.headers.location;
+          console.log(\`Redirecting to \${redirectUrl}\`);
+          https.get(redirectUrl, (res2) => {
+            if (res2.statusCode !== 200) {
+              reject(new Error(\`HTTP \${res2.statusCode} after redirect\`));
+              return;
+            }
+            const chunks = [];
+            res2.on('data', chunk => chunks.push(chunk));
+            res2.on('end', () => resolve(Buffer.concat(chunks)));
+          }).on('error', reject);
+          return;
+        }
         if (res.statusCode !== 200) {
           reject(new Error(\`HTTP \${res.statusCode}\`));
           return;

@@ -1,0 +1,2 @@
+// test file with fake secret
+const key = "sk-test12345678901234567890123456789012345678901234567890";
