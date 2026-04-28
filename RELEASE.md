@@ -4,7 +4,20 @@
 **Tag:** `v1.0-safety-kernel`  
 **Date:** 2026-04-27  
 **Repository:** [proofbridge-liner](https://github.com/divhanimajokweni-ctrl/proofbridge-liner)  
-**Status:** PUBLIC RELEASE  
+**Status:** PUBLIC RELEASE
+
+## Publication Status
+- **arXiv Status**: Ready for submission
+- **Manuscript**: `arxiv-submission-paper.tex` (arXiv-compatible LaTeX)
+- **Submission Guide**: `arxiv-submission-guide.md` (complete metadata and process)
+- **Categories**: cs.CR (Cryptography and Security), cs.DC (Distributed Systems)
+- **arXiv Link**: [Available after publication]
+
+## Call for Reviewers
+- **Status**: Active
+- **Document**: `CALL-FOR-REVIEWERS.md`
+- **Outreach**: Targeted to academic researchers in cryptography, distributed systems, and regulatory technology
+- **Checklist**: `reviewer-checklist.md` for structured feedback
 
 ---
 

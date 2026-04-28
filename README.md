@@ -7,10 +7,13 @@ A minimal, trust-minimal circuit-breaker for tokenised real-world assets (RWAs) 
 ## Research Publication
 
 **arXiv Paper**: Fail-Closed Enforcement for Tokenized Real-World Assets: A Circuit-Breaker Approach to Ghost-Risk Mitigation
-- **Status**: Submitted for publication
+- **Status**: Ready for arXiv submission
 - **Categories**: cs.CR (Cryptography and Security), cs.DC (Distributed, Parallel, and Cluster Computing)
+- **Manuscript**: `arxiv-submission-paper.tex` + `arxiv-submission-guide.md`
 - **Repository**: Tagged `v1.0-safety-kernel` for reference implementation
 - **arXiv Link**: [Available after publication]
+
+**Submission Instructions**: See `arxiv-submission-guide.md` for complete metadata and step-by-step process.
 
 **Call for Reviewers**: We invite academic and technical review of this research. See [CALL-FOR-REVIEWERS.md](./CALL-FOR-REVIEWERS.md) for details.
 
