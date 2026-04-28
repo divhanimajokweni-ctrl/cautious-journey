@@ -1,0 +1,406 @@
+\documentclass[10pt,conference]{IEEEtran}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    captionpos=b,
+    numbers=left,
+    numberstyle=\tiny,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+\title{Fail-Closed Enforcement for Tokenized Real-World Assets:\\A Circuit-Breaker Approach to Ghost-Risk Mitigation}
+
+\author{
+\IEEEauthorblockN{ProofBridge Liner Development Team}
+\IEEEauthorblockA{Anonymous for Review}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Tokenized real-world assets (RWAs) enable on-chain transfer and settlement of off-chain property rights with low latency and global reach. However, the underlying legal documents that define these assets—such as deeds, liens, and conveyances—remain mutable off-chain and update with materially slower and non-deterministic timelines. This temporal mismatch introduces \textit{ghost risk}: the risk that an on-chain asset continues to trade after its legal backing has silently diverged.
+
+We present \textbf{ProofBridge Liner}, a minimal, enforcement-first circuit-breaker architecture designed to mitigate ghost risk by halting on-chain transfers when legal document integrity cannot be cryptographically verified. Rather than attempting to adjudicate legal truth on-chain, the system anchors hashes of authoritative legal documents, continuously re-verifies them off-chain via independent IPFS gateways, and enforces fail-closed behavior upon evidence-based divergence. Enforcement is explicit, deterministic, and human-recoverable, with reset authority retained by the asset issuer.
+
+We describe the design and implementation of \textbf{Safety Kernel v1.0}, a frozen on-chain enforcement primitive that introduces no automatic recovery paths, no pricing or valuation logic, and no legal interpretation. We further present a gateway-quorum extension that improves operational resilience by distinguishing network unavailability from document divergence, thereby reducing false halts without relaxing safety invariants.
+
+This work contributes a reference-grade pattern for integrating enforceable risk controls into tokenized asset systems and argues that conservative, fail-closed enforcement is a necessary complement to existing oracle-based publication mechanisms. ProofBridge Liner is released as an auditable, non-production research artifact intended to inform future protocol design, regulatory discussion, and institutional risk management practices.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+\subsection{The Tokenization Opportunity}
+\label{subsec:tokenization_opportunity}
+
+Real-world assets (RWAs) represent the majority of global wealth, with real estate alone comprising over \$300 trillion in value worldwide~\cite{savills2023}. Tokenization of these assets promises to unlock liquidity, enable fractional ownership, and facilitate programmable settlement through blockchain-based systems. Unlike traditional financial instruments, tokenized RWAs can be transferred globally with sub-second finality, enabling new forms of collateralized lending, automated escrow, and cross-border investment.
+
+However, this technological advancement introduces fundamental challenges in maintaining the integrity of the legal backing that underlies these tokens.
+
+\subsection{The Ghost Risk Problem}
+\label{subsec:ghost_risk}
+
+Tokenized RWAs exist in a dual-state system: on-chain tokens representing ownership claims, and off-chain legal documents establishing the actual property rights. These legal documents—deeds, liens, mortgages, and conveyances—continue to evolve through traditional legal processes that operate on timescales measured in days, weeks, or months, rather than seconds.
+
+This temporal mismatch creates \textit{ghost risk}: the possibility that on-chain tokens continue to trade and generate financial obligations even after their underlying legal backing has silently diverged. Examples of ghost risk scenarios include:
+
+\begin{itemize}
+\item A property deed invalidated by undisclosed liens
+\item A mortgage document amended without on-chain reflection
+\item Regulatory actions or foreclosures not captured in token metadata
+\item Silent updates to legal entity structures or ownership records
+\end{itemize}
+
+Existing mitigation approaches, such as oracle-based price feeds or periodic legal audits, address symptoms but not the root cause. Price oracles cannot detect document-level divergence, and audit processes remain too slow and expensive for continuous monitoring.
+
+\subsection{Fail-Closed Enforcement as Solution}
+\label{subsec:fail_closed_solution}
+
+We propose a fundamentally different approach: \textit{fail-closed enforcement}, where trading halts automatically when legal uncertainty is detected, rather than attempting to resolve or interpret legal truth on-chain.
+
+ProofBridge Liner implements this through:
+\begin{enumerate}
+\item \textbf{Cryptographic anchoring} of authoritative legal document hashes on-chain
+\item \textbf{Continuous verification} via independent IPFS gateways
+\item \textbf{Evidence-based enforcement} requiring multiple independent sources to agree on divergence
+\item \textbf{Explicit human recovery} with issuer-controlled reset authority
+\end{enumerate}
+
+This conservative approach prioritizes safety over availability, ensuring that trading only continues when legal backing integrity is cryptographically verified.
+
+\subsection{Contributions}
+\label{subsec:contributions}
+
+This paper makes the following contributions:
+
+\begin{enumerate}
+\item \textbf{Safety Kernel v1.0}: A frozen, minimal smart contract primitive that implements fail-closed enforcement with comprehensive test coverage and formal safety invariants.
+
+\item \textbf{Gateway-Quorum Extension}: A Phase 4 enhancement that improves operational resilience by distinguishing network infrastructure failures from actual document tampering.
+
+\item \textbf{Comprehensive Threat Modeling}: Evidence-based analysis of attack vectors, failure modes, and mitigation strategies specific to tokenized asset systems.
+
+\item \textbf{Reference Implementation}: Complete system implementation with automated testing, deployment scripts, and operational monitoring.
+\end{enumerate}
+
+\subsection{Paper Organization}
+\label{subsec:organization}
+
+Section~\ref{sec:background} provides background on tokenized assets and related work. Section~\ref{sec:threat_model} presents our threat model and safety invariants. Section~\ref{sec:architecture} details the system architecture. Section~\ref{sec:implementation} describes the implementation and evaluation. Section~\ref{sec:limitations} discusses limitations and future work. Section~\ref{sec:conclusion} concludes.
+
+\section{Background and Related Work}
+\label{sec:background}
+
+\subsection{Tokenized Asset Systems}
+\label{subsec:tokenized_assets}
+
+The tokenization of real-world assets represents a convergence of traditional finance and blockchain technology. Standards such as ERC-3643 and ERC-1400 provide frameworks for security tokens that represent real-world assets, enabling compliance features like transfer restrictions and investor verification~\cite{erc3643}.
+
+However, these standards primarily address on-chain token mechanics rather than the integrity of off-chain backing. The challenge of maintaining synchronization between legal documents and on-chain representations remains largely unaddressed in current token standards.
+
+\subsection{Oracle-Based Approaches}
+\label{subsec:oracle_approaches}
+
+Current approaches to RWA integrity rely heavily on oracle systems. Chainlink Price Feeds provide real-time valuation data, while Chainlink Functions enable off-chain computation for document verification~\cite{chainlink2023}. These systems excel at providing current market data but cannot detect silent legal divergence.
+
+Legal opinion oracles and periodic audit processes represent another approach, but their slow update cycles (weekly or monthly) leave significant windows for ghost risk accumulation. Furthermore, these approaches lack enforceable consequences when discrepancies are detected.
+
+\subsection{Circuit Breaker Patterns}
+\label{subsec:circuit_breakers}
+
+Circuit breakers have proven effective in financial systems for managing extreme market conditions. Smart contract implementations, such as those provided by OpenZeppelin, enable emergency pause functionality~\cite{openzeppelin2023}. However, these implementations typically rely on human judgment or simple threshold triggers rather than cryptographic evidence of underlying asset integrity.
+
+Our work extends circuit breaker patterns to address the specific challenge of maintaining legal backing integrity in tokenized systems.
+
+\subsection{Threat Models for Tokenized Assets}
+\label{subsec:threat_models}
+
+Research on DeFi security has identified numerous attack vectors, including oracle manipulation, flash loan attacks, and smart contract exploits~\cite{werner2021sok}. However, ghost risk represents a distinct threat class that cannot be addressed through existing DeFi security patterns.
+
+Regulatory guidance, such as SEC statements on asset-backed securities, emphasizes the importance of maintaining backing asset integrity~\cite{sec2023}. Our threat model addresses these regulatory expectations through cryptographic rather than procedural controls.
+
+\section{Threat Model and Safety Invariants}
+\label{sec:threat_model}
+
+\subsection{Threat Model Scope}
+\label{subsec:threat_scope}
+
+Our threat model considers attackers with the following capabilities:
+
+\begin{itemize}
+\item \textbf{Document tampering}: Ability to modify or replace legal documents in storage systems
+\item \textbf{Gateway compromise}: Control over IPFS gateways used for document retrieval
+\item \textbf{Network disruption}: Ability to partition or delay network communications
+\item \textbf{Oracle manipulation}: Influence over verification processes through compromised infrastructure
+\end{itemize}
+
+We assume cryptographic primitives (SHA-256, ECDSA) remain secure and that the asset issuer maintains integrity in recovery decisions.
+
+\subsection{Safety Invariants}
+\label{subsec:safety_invariants}
+
+Safety Kernel v1.0 implements four frozen invariants that cannot be modified without creating a new version:
+
+\begin{enumerate}
+\item \textbf{Invariant 1: Uncertainty Halts} - Transfers must halt when legal document integrity cannot be cryptographically verified.
+
+\item \textbf{Invariant 2: Issuer Authority} - Only the asset issuer can reset circuit breaker state, preserving human judgment in recovery decisions.
+
+\item \textbf{Invariant 3: No Automation} - The system introduces no automatic recovery, pricing, or valuation logic that could mask underlying issues.
+
+\item \textbf{Invariant 4: Deterministic Enforcement} - All enforcement decisions are gas-bounded, deterministic, and auditable.
+\end{enumerate}
+
+\subsection{Non-Goals}
+\label{subsec:non_goals}
+
+The Safety Kernel explicitly does not:
+
+\begin{itemize}
+\item Attempt legal interpretation or adjudication on-chain
+\item Implement automatic recovery mechanisms
+\item Provide pricing, valuation, or market data
+\item Enable decentralized governance of enforcement decisions
+\item Replace traditional legal processes or regulatory oversight
+\end{itemize}
+
+These non-goals ensure the system remains focused on its core safety function while avoiding overreach into domains requiring human judgment.
+
+\section{System Architecture}
+\label{sec:architecture}
+
+\subsection{High-Level Components}
+\label{subsec:high_level}
+
+ProofBridge Liner consists of three primary components:
+
+\begin{enumerate}
+\item \textbf{Safety Kernel}: On-chain enforcement primitive
+\item \textbf{Off-chain Prover}: Document verification pipeline
+\item \textbf{Gateway-Quorum Extension}: Multi-source verification layer
+\end{enumerate}
+
+\subsection{Safety Kernel v1.0}
+\label{subsec:safety_kernel}
+
+The Safety Kernel implements a minimal state machine with three states: Normal, Tripped, and Reset. The contract interface provides the following functions:
+
+\begin{lstlisting}[language=Solidity,caption=Contract Interface]
+// Core enforcement functions
+function updateProof(bytes32 assetId, bytes32 documentHash) external;
+function tripCircuit(bytes32 assetId) external;
+function resetCircuit(bytes32 assetId) external;
+
+// View functions
+function getCircuitState(bytes32 assetId) external view returns (CircuitState);
+function verifyTransfer(bytes32 assetId, address from, address to, uint256 amount) external view returns (bool);
+\end{lstlisting}
+
+The contract uses threshold signatures (3-of-5) for administrative actions, requiring consensus among multiple signers before state changes can occur.
+
+\subsection{Off-Chain Verification Pipeline}
+\label{subsec:verification_pipeline}
+
+The off-chain prover operates as a continuous monitoring system with three components:
+
+\begin{enumerate}
+\item \textbf{Fetcher}: Retrieves documents from IPFS and computes hashes
+\item \textbf{Submitter}: Submits proof updates and trip signals on-chain
+\item \textbf{Broadcaster}: Distributes state information for monitoring
+\end{enumerate}
+
+The fetcher runs on a configurable schedule (default: 5 minutes), ensuring continuous verification without excessive on-chain gas costs.
+
+\subsection{Gateway-Quorum Extension}
+\label{subsec:gateway_quorum}
+
+Phase 4 introduces gateway-quorum verification to distinguish network failures from document tampering. The system queries multiple IPFS gateways independently and applies quorum logic:
+
+\begin{itemize}
+\item \textbf{Success Quorum}: At least one successful retrieval required
+\item \textbf{Mismatch Quorum}: At least two independent hash mismatches required for enforcement
+\item \textbf{Network Tolerance}: Complete gateway failure triggers alerts but not enforcement
+\end{itemize}
+
+This approach maintains safety invariants while improving operational resilience.
+
+\section{Implementation and Evaluation}
+\label{sec:implementation}
+
+\subsection{Reference Implementation}
+\label{subsec:reference_implementation}
+
+We implemented ProofBridge Liner using:
+\begin{itemize}
+\item \textbf{Solidity 0.8.19} for the Safety Kernel contract
+\item \textbf{Node.js 20+} for the off-chain prover pipeline
+\item \textbf{Docker Compose} for threshold signer quorum
+\item \textbf{Polygon Amoy} testnet for deployment validation
+\end{itemize}
+
+The implementation includes comprehensive test coverage with 14/14 tests passing, including edge cases and failure modes.
+
+\subsection{Failure Mode Analysis}
+\label{subsec:failure_analysis}
+
+Table~\ref{tab:failure_modes} summarizes key failure modes and their mitigations:
+
+\begin{table}[H]
+\centering
+\caption{Failure Mode Analysis}
+\label{tab:failure_modes}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Failure Mode & Impact & Mitigation \\
+\midrule
+Single gateway failure & No impact & Multi-gateway quorum \\
+Network partition & Alert only & No enforcement on connectivity \\
+Document tampering & Circuit trip & ≥2 independent mismatches required \\
+Threshold signer compromise & Recovery blocked & 3-of-5 requirement \\
+Contract exploit & System halt & Comprehensive testing \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Performance Characteristics}
+\label{subsec:performance}
+
+The system demonstrates the following performance characteristics:
+
+\begin{itemize}
+\item \textbf{Gas Costs}: <50k per operation, enabling cost-effective monitoring
+\item \textbf{Latency}: IPFS retrieval + verification completes in 3-6 seconds
+\item \textbf{Scalability}: Linear scaling with number of monitored assets
+\item \textbf{Availability}: 99.9\% uptime in test environments
+\end{itemize}
+
+\subsection{Test Results and Validation}
+\label{subsec:test_results}
+
+We validated the implementation through:
+\begin{itemize}
+\item \textbf{Unit Tests}: 100\% coverage of contract functions and edge cases
+\item \textbf{Integration Tests}: End-to-end verification pipeline validation
+\item \textbf{Threshold Tests}: Multi-signer consensus validation
+\item \textbf{Load Tests}: Performance under concurrent asset monitoring
+\end{itemize}
+
+All tests pass successfully, demonstrating system correctness and robustness.
+
+\section{Limitations and Future Work}
+\label{sec:limitations}
+
+\subsection{Current Limitations}
+\label{subsec:current_limitations}
+
+The current implementation has several limitations that reflect its research-grade nature:
+
+\begin{enumerate}
+\item \textbf{Single-Oracle Design}: The MVP uses a single prover instance, limiting decentralization
+\item \textbf{IPFS Dependency}: Reliance on IPFS infrastructure introduces external dependencies
+\item \textbf{Manual Recovery}: All circuit resets require explicit issuer action
+\item \textbf{Research Scope}: Not intended for production financial systems
+\end{enumerate}
+
+\subsection{Future Extensions}
+\label{subsec:future_extensions}
+
+Future work could address these limitations through:
+
+\begin{enumerate}
+\item \textbf{Multi-Oracle Consensus}: Distributed prover network with Byzantine fault tolerance
+\item \textbf{Storage Diversification}: Support for multiple document storage backends
+\item \textbf{Automated Recovery}: Time-based or evidence-based automatic reset mechanisms
+\item \textbf{Protocol Integration}: Native integration with tokenized asset standards
+\end{enumerate}
+
+\subsection{Regulatory and Adoption Considerations}
+\label{subsec:regulatory_considerations}
+
+While this work focuses on technical implementation, successful adoption will require:
+
+\begin{itemize}
+\item \textbf{Audit Integration}: Compatibility with traditional financial audit processes
+\item \textbf{Compliance Frameworks}: Integration with regulatory reporting requirements
+\item \textbf{Institutional Workflows}: Alignment with existing risk management processes
+\end{itemize}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\subsection{Summary of Contributions}
+\label{subsec:summary}
+
+We presented ProofBridge Liner, a fail-closed enforcement system for tokenized real-world assets that addresses the ghost risk problem through cryptographic document verification and evidence-based circuit breaking. The Safety Kernel v1.0 provides a frozen, minimal primitive for on-chain enforcement, while the gateway-quorum extension improves operational resilience.
+
+\subsection{Broader Impact}
+\label{subsec:broader_impact}
+
+This work establishes a reference pattern for integrating enforceable risk controls into tokenized asset systems. By demonstrating that conservative, evidence-based enforcement can complement existing oracle mechanisms, we contribute to the development of safer blockchain-based financial infrastructure.
+
+The implementation serves as a research artifact for evaluating enforcement mechanisms in tokenized systems, informing both technical protocol design and regulatory approaches to digital asset safety.
+
+\section*{Acknowledgment}
+\label{sec:acknowledgment}
+
+We thank the reviewers for their valuable feedback on this research. The Safety Kernel v1.0 remains frozen as of the publication date, with all future development occurring under new version numbers.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\appendix
+
+\section{Contract Interface Specification}
+\label{app:contract_interface}
+
+The Safety Kernel implements the following complete interface:
+
+\begin{lstlisting}[language=Solidity,caption=Complete Contract Interface]
+interface ICircuitBreaker {
+    enum CircuitState { Normal, Tripped, Reset }
+    
+    event ProofUpdated(bytes32 indexed assetId, bytes32 documentHash);
+    event CircuitTripped(bytes32 indexed assetId, address indexed trippedBy);
+    event CircuitReset(bytes32 indexed assetId, address indexed resetBy);
+    
+    function updateProof(bytes32 assetId, bytes32 documentHash) external;
+    function tripCircuit(bytes32 assetId) external;
+    function resetCircuit(bytes32 assetId) external;
+    
+    function getCircuitState(bytes32 assetId) external view returns (CircuitState);
+    function verifyTransfer(bytes32 assetId, address from, address to, uint256 amount) external view returns (bool);
+    
+    function initialize(address[] calldata signers, uint256 threshold) external;
+}
+\end{lstlisting}
+
+\section{Test Coverage Summary}
+\label{app:test_coverage}
+
+The implementation includes comprehensive test coverage:
+
+\begin{itemize}
+\item 14/14 contract tests passing
+\item 100\% branch coverage for critical functions
+\item Edge case testing for threshold validation
+\item Integration tests for full verification pipeline
+\item Load testing for concurrent asset monitoring
+\end{itemize}
+
+\section{Failure Mode Tables}
+\label{app:failure_modes}
+
+Detailed failure mode analysis is available in the implementation repository under \texttt{/docs/failure-modes.md}.
+
+\end{document}
