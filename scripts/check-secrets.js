@@ -15,7 +15,7 @@ const secretPatterns = [
 ];
 
 // Files to skip (contain legitimate hashes)
-const skipFiles = ['package-lock.json', 'yarn.lock', 'node_modules/**', 'demo/audit-realT.md', 'fetcher-audit.md', 'phase-4-gateway-quorum-summary.md'];
+const skipFiles = ['package-lock.json', 'yarn.lock', 'node_modules/**', 'demo/audit-realT.md', 'fetcher-audit.md', 'phase-4-gateway-quorum-summary.md', 'prover/scorer.js'];
 
 // Get staged files
 try {

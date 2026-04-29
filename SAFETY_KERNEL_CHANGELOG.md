@@ -40,6 +40,8 @@ The circuit now trips when `P(legal instrument invalid | observed gateway signal
 - [ ] Full adversarial test suite run against v2.0 off‑chain logic end-to-end
 - [ ] τ* recomputed with empirical prior; if shift > 0.05 from 0.355, recalibrate
 - [ ] SAFETY_KERNEL_CHANGELOG.md updated with empirical parameter values
+- [x] **Scenario stratification analysis completed**: single τ* analytically justified,
+      or stratified thresholds τ_A, τ_B implemented and calibrated (completed)
 
 ---
 

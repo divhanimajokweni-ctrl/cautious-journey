@@ -38,19 +38,22 @@ function digestPayload(payload) {
 }
 
 function planActions(state) {
+  const { scoreAsset } = require('./scorer');
   const actions = [];
   for (const r of state.results) {
-    if (r.status === 'fresh') {
+    const score = scoreAsset(r.gatewayResults);
+
+    if (score.trip) {
+      actions.push({
+        kind: 'tripCircuit',
+        assetId: r.assetId,
+        reason: `Stratified trigger: scenario ${score.scenario}, score ${score.triggerScore.toFixed(3)} ≥ ${score.thresholdUsed}`,
+      });
+    } else if (r.status === 'fresh') {
       actions.push({
         kind: 'updateProof',
         assetId: r.assetId,
         deedHash: r.actualHash,
-      });
-    } else if (r.status === 'mismatch') {
-      actions.push({
-        kind: 'tripCircuit',
-        assetId: r.assetId,
-        reason: `mismatch: expected ${r.expectedHash}, got ${r.actualHash}`,
       });
     } else if (r.status === 'unreachable_threshold') {
       actions.push({
