@@ -15,7 +15,7 @@ const secretPatterns = [
 ];
 
 // Files to skip (contain legitimate hashes)
-const skipFiles = ['package-lock.json', 'yarn.lock', 'node_modules/**', 'demo/audit-realT.md', 'fetcher-audit.md', 'phase-4-gateway-quorum-summary.md', 'prover/scorer.js', 'docs/calibration-report.md', 'test/calibrate-prior.js', 'test/recalibrate-thresholds.js', 'test/calibration-data.json', 'test/automate-calibration.sh', 'test/calibration-runs/**'];
+const skipFiles = ['package-lock.json', 'yarn.lock', 'node_modules/**', 'demo/audit-realT.md', 'fetcher-audit.md', 'phase-4-gateway-quorum-summary.md', 'prover/scorer.js', 'docs/calibration-report.md', 'test/calibrate-prior.js', 'test/recalibrate-thresholds.js', 'test/calibration-data.json', 'test/automate-calibration.sh', 'test/calibration-runs/**', 'test/diagnose-cid.js'];
 
 // Get staged files
 try {

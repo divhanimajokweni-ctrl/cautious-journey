@@ -1,8 +1,9 @@
 {
   "priorAlpha": 1,
   "priorBeta": 10,
-  "thresholdA": 0.01,
-  "thresholdB": 0.01,
+  "thresholdA": 0.60,
+  "thresholdB": 0.355,
   "minMismatchesB": 2,
-  "minGatewaysB": 2
+  "minGatewaysB": 2,
+  "_note": "Thresholds restored to Monte Carlo validated values. τ_A=0.60 and τ_B=0.355 are derived from γ=10 ROC calibration under Beta(1,10) prior. Do NOT overwrite with recalibration output until μ < 0.05 is confirmed on a verified stable CID."
 }
