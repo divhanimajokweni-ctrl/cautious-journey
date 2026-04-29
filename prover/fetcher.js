@@ -31,7 +31,7 @@ const STATE_DIR = path.join(ROOT, '.local', 'state');
 const STATE_PATH = path.join(STATE_DIR, 'prover-state.json');
 
 const { resolveCID, evaluateResolution } = require('./ipfsResolver');
-const { computeTriggerScore } = require('./scorer');
+const { scoreAsset } = require('./scorer');
 
 const POLL_MS = Number(process.env.FETCHER_POLL_MS || 5 * 60 * 1000);
 
@@ -112,7 +112,10 @@ async function checkAsset(asset, previousResult) {
 
     result.resolutionStatus = outcome.status;
     result.gatewayResults = results;
-    result.triggerScore = computeTriggerScore(result);
+    const score = scoreAsset(results);
+    result.triggerScore = score.triggerScore;
+    result.scenario = score.scenario;
+    result.thresholdUsed = score.thresholdUsed;
 
     switch (outcome.status) {
       case 'CONSISTENT':

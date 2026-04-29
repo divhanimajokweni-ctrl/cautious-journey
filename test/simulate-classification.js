@@ -32,19 +32,32 @@ function binomialSample(n, p) {
   return successes;
 }
 
-function simulatePollCycle() {
+function simulatePollCycle(scenario = null) {
   const H_t = Math.random() < P_DIVERGENCE ? 1 : 0;
-  const theta = H_t === 1 ? THETA_DIVERGENCE : THETA_VALID;
-  const m_t = binomialSample(R_T, theta);
+  let theta = H_t === 1 ? THETA_DIVERGENCE : THETA_VALID;
+
+  // If scenario specified, force the mismatch count
+  let m_t;
+  if (scenario === 'A') {
+    // Class A: exactly 1 mismatch
+    m_t = 1;
+  } else if (scenario === 'B') {
+    // Class B: at least 2 mismatches
+    m_t = Math.random() < 0.5 ? 2 : 3; // 2 or 3 out of 5
+  } else {
+    // General simulation
+    m_t = binomialSample(R_T, theta);
+  }
+
   const tau_t = (ALPHA0 + m_t) / (ALPHA0 + BETA0 + R_T);
   return { H_t, tau_t };
 }
 
-function computeROC(thresholds) {
+function computeROC(thresholds, scenario = null) {
   const roc = thresholds.map(tau => {
     let TP = 0, FP = 0, TN = 0, FN = 0;
     for (let i = 0; i < N_SIMULATIONS; i++) {
-      const { H_t, tau_t } = simulatePollCycle();
+      const { H_t, tau_t } = simulatePollCycle(scenario);
       const decision = tau_t >= tau ? 1 : 0; // Trip if >= tau
       if (H_t === 1 && decision === 1) TP++;
       else if (H_t === 0 && decision === 1) FP++;
@@ -74,6 +87,23 @@ function findOptimalThreshold(roc, costRatio = 10, pValid = 0.99, pInvalid = 0.0
     }
   }
   return bestTau;
+}
+
+function calibrateStratifiedThresholds() {
+  const thresholds = [];
+  for (let i = 0; i <= 100; i++) {
+    thresholds.push(i / 100);
+  }
+
+  console.log('Calibrating Class A threshold (single mismatch scenarios)...');
+  const rocA = computeROC(thresholds, 'A');
+  const tauA = findOptimalThreshold(rocA);
+
+  console.log('Calibrating Class B threshold (multi-gateway mismatch scenarios)...');
+  const rocB = computeROC(thresholds, 'B');
+  const tauB = findOptimalThreshold(rocB);
+
+  return { tauA, tauB };
 }
 
 function generateReport(roc, optimalTau) {
@@ -114,8 +144,22 @@ function main() {
   }
   const roc = computeROC(thresholds);
   const optimalTau = findOptimalThreshold(roc);
-  console.log(`Optimal threshold: ${optimalTau.toFixed(3)}`);
+  console.log(`Global optimal threshold: ${optimalTau.toFixed(3)}`);
+
+  console.log('Calibrating stratified thresholds...');
+  const { tauA, tauB } = calibrateStratifiedThresholds();
+  console.log(`Class A optimal threshold: ${tauA.toFixed(3)}`);
+  console.log(`Class B optimal threshold: ${tauB.toFixed(3)}`);
+
   generateReport(roc, optimalTau);
+
+  // Update config/scoring.json
+  const config = require('../config/scoring.json');
+  config.thresholdA = tauA;
+  config.thresholdB = tauB;
+  const fs = require('fs');
+  fs.writeFileSync('./config/scoring.json', JSON.stringify(config, null, 2));
+  console.log('Updated config/scoring.json with recalibrated thresholds');
 }
 
 if (require.main === module) {

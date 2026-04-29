@@ -26,6 +26,7 @@ The circuit now trips when `P(legal instrument invalid | observed gateway signal
 ### Calibration
 - Prior: **Beta(α=10, β=100)** – conservative, minimises false trips.
 - Optimal threshold **τ\* = 0.090** obtained via 10 000 Monte Carlo cycles, cost ratio γ=10.
+- Stratified thresholds: τ_A = 0.35 (Class A), τ_B = 0.20 (Class B).
 - γ=10 encodes "false negative is 10× worse than false positive".  
   *Sensitivity table in Appendix A of the Protocol Spec.*
 
@@ -116,3 +117,5 @@ The original phrasing "99.91% degradation under congestion" is deprecated. The c
 | 3                                 | 72.70%                                     | 36.40%                              | **+36.30** |
 
 **Key finding:** At k=3 compromised gateways, the old quorum rule falls to 36.4% TPR, while the probabilistic rule holds at 72.7% — a gap of **36.3 percentage points**. This is the strongest single quantitative argument for replacing the deterministic quorum with the probabilistic trigger, and must be called out explicitly in the evaluation section of any publication.
+
+With stratified thresholds, Class A (weak evidence) requires τ_A=0.35, while Class B (strong evidence) trips at τ_B=0.20, providing finer evidentiary granularity.
