@@ -1,6 +1,6 @@
 # ROC Calibration Report for Trigger Score Threshold
 
-Generated: 2026-04-29T00:29:23.164Z
+Generated: 2026-04-29T00:33:33.407Z
 
 ## Simulation Parameters
 

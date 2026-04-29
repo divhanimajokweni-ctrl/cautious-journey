@@ -20,12 +20,12 @@ const CONFIG_PATH = path.resolve(__dirname, '..', 'config', 'scoring.json');
 
 let config = {
   // Prior parameters for Beta-Binomial posterior
-  priorAlpha: 10,
-  priorBeta: 100,
+  priorAlpha: 1,
+  priorBeta: 10,
 
   // Class-specific thresholds (posterior mean)
-  thresholdA: 0.65,   // Class A – single gateway mismatch → require stronger evidence
-  thresholdB: 0.25,   // Class B – consistent multi-gateway mismatch → trip earlier
+  thresholdA: 0.60,   // Class A – single gateway mismatch → require stronger evidence
+  thresholdB: 0.355,   // Class B – consistent multi-gateway mismatch → trip earlier
 
   // Class B definition: at least minMismatchesB mismatches AND
   // at least minGatewaysB responding gateways.
@@ -68,10 +68,10 @@ function classify(mismatches, totalResponded, allUnreachable) {
 // ---------------------------------------------------------------------------
 // Main scoring function — called from fetcher after each poll cycle
 // ---------------------------------------------------------------------------
-function scoreAsset(gatewayResults) {
+function scoreAsset(gatewayResults, expectedHash) {
   const total = gatewayResults.length;
-  const mismatches = gatewayResults.filter(g => g.status === 'mismatch').length;
-  const responded = gatewayResults.filter(g => g.status !== 'unreachable').length;
+  const mismatches = gatewayResults.filter(g => g.ok && g.hash !== expectedHash).length;
+  const responded = gatewayResults.filter(g => g.ok).length;
   const allUnreachable = responded === 0;
 
   // Compute triggerScore (for observability / auditing)

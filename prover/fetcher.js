@@ -112,7 +112,7 @@ async function checkAsset(asset, previousResult) {
 
     result.resolutionStatus = outcome.status;
     result.gatewayResults = results;
-    const score = scoreAsset(results);
+    const score = scoreAsset(results, asset.expectedHash);
     result.triggerScore = score.triggerScore;
     result.scenario = score.scenario;
     result.thresholdUsed = score.thresholdUsed;

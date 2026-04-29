@@ -41,7 +41,8 @@ function planActions(state) {
   const { scoreAsset } = require('./scorer');
   const actions = [];
   for (const r of state.results) {
-    const score = scoreAsset(r.gatewayResults);
+    const score = scoreAsset(r.gatewayResults, r.expectedHash);
+    console.log(`[submitter] Asset ${r.assetId}: scenario ${score.scenario}, score ${score.triggerScore.toFixed(3)}, threshold ${score.thresholdUsed}, trip ${score.trip}`);
 
     if (score.trip) {
       actions.push({

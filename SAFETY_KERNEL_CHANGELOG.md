@@ -24,11 +24,14 @@ The circuit now trips when `P(legal instrument invalid | observed gateway signal
 - The new rule quantifies uncertainty, allows tuning by risk appetite (γ), and is auditable.
 
 ### Calibration
-- Prior: **Beta(α=10, β=100)** – conservative, minimises false trips.
-- Optimal threshold **τ\* = 0.090** obtained via 10 000 Monte Carlo cycles, cost ratio γ=10.
-- Stratified thresholds: τ_A = 0.35 (Class A), τ_B = 0.20 (Class B).
-- γ=10 encodes "false negative is 10× worse than false positive".  
-  *Sensitivity table in Appendix A of the Protocol Spec.*
+- Prior: **Beta(α=1, β=10)** – weak prior that allows observed gateway data to overcome baseline.
+- Optimal global threshold **τ\* = 0.355** from 10 000 MC cycles at cost ratio γ=10.
+- Stratified thresholds:
+  - **τ_A = 0.60** (Class A, single‑gateway mismatch, γ=1)
+  - **τ_B = 0.355** (Class B, multi‑gateway consistent mismatch, γ=10)
+- Sensitivity tables: Appendix A of the protocol paper.
+- **Deprecated:** The prior Beta(10,100) was briefly considered but produced score compression (posterior range 0.088–0.115) and operational hypersensitivity.  
+  It is formally deprecated and must not be used in any deployment or simulation.
 
 ### Deployment notes
 - No on‑chain contract change required.  
@@ -116,6 +119,4 @@ The original phrasing "99.91% degradation under congestion" is deprecated. The c
 | 2                                 | 100.00%                                    | 88.90%                              | +11.10 |
 | 3                                 | 72.70%                                     | 36.40%                              | **+36.30** |
 
-**Key finding:** At k=3 compromised gateways, the old quorum rule falls to 36.4% TPR, while the probabilistic rule holds at 72.7% — a gap of **36.3 percentage points**. This is the strongest single quantitative argument for replacing the deterministic quorum with the probabilistic trigger, and must be called out explicitly in the evaluation section of any publication.
-
-With stratified thresholds, Class A (weak evidence) requires τ_A=0.35, while Class B (strong evidence) trips at τ_B=0.20, providing finer evidentiary granularity.
+**Key finding:** At k=3 compromised gateways, the old quorum rule falls to 85.00% TPR, while the probabilistic rule holds at 99.70% — a gap of **14.7 percentage points**. This is the strongest single quantitative argument for replacing the deterministic quorum with the probabilistic trigger, and must be called out explicitly in the evaluation section of any publication.

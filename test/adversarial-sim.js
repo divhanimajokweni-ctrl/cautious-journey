@@ -11,9 +11,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const { computeTriggerScore } = require('../prover/scorer');
+const { scoreAsset } = require('../prover/scorer');
 
-const TAU_STAR = 0.09; // From ROC calibration
+const TAU_STAR = 0.355; // From ROC calibration
 const N_SIMULATIONS = 1000;
 const TOTAL_GATEWAYS = 5;
 const THETA_HONEST = 0.5;
@@ -45,12 +45,13 @@ function simulateAdversarialPoll(kCompromised, H_t) {
   const m_t = mismatches.length;
   const r_t = successes.length;
 
-  // Mock result object for computeTriggerScore
+  // Mock result object for scoreAsset
   const mockResult = {
     expectedHash: 'expected',
     gatewayResults: results.map(r => ({ ok: r.ok, hash: r.hash }))
   };
-  const tau_t = computeTriggerScore(mockResult);
+  const score = scoreAsset(mockResult.gatewayResults, mockResult.expectedHash);
+  const tau_t = score.triggerScore;
 
   // Quorum decision: mismatches >=2
   const quorumTrip = m_t >= 2;

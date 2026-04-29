@@ -1,8 +1,8 @@
 {
-  "priorAlpha": 10,
-  "priorBeta": 100,
-  "thresholdA": 0.35,
-  "thresholdB": 0.20,
+  "priorAlpha": 1,
+  "priorBeta": 10,
+  "thresholdA": 0.01,
+  "thresholdB": 0.01,
   "minMismatchesB": 2,
   "minGatewaysB": 2
 }

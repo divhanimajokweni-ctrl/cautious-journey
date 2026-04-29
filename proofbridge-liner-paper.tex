@@ -418,7 +418,7 @@ The optimal threshold τ* was obtained by minimizing \(\mathcal{L}(\tau) = \gamm
 \midrule
 1              & 0.62                        \\
 5              & 0.42                        \\
-\textbf{10}    & \textbf{0.090}              \\
+\textbf{10}    & \textbf{0.355}              \\
 20             & 0.28                        \\
 50             & 0.18                        \\
 100            & 0.11                        \\
@@ -428,7 +428,7 @@ The optimal threshold τ* was obtained by minimizing \(\mathcal{L}(\tau) = \gamm
 \end{tabular}
 \end{table}
 
-At γ=10, τ* = 0.090 – the current recommended setting.
+At γ=10, τ* = 0.355 – the current recommended setting.
 For γ=1 (false negative and false positive equally costly), τ* climbs to 0.62, requiring stronger evidence.
 For γ=100 (ghost-risk is deemed catastrophic), τ* drops to 0.11, tripping on weaker evidence.
 The full parameter space is two-dimensional: both γ and the Beta prior (α,β) shift τ*. This table is one slice at the current conservative prior. The complete sensitivity surface is a subject for future empirical work; the values presented here represent a single slice at the current conservative prior.
