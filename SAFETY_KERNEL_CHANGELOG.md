@@ -39,10 +39,10 @@ The circuit now trips when `P(legal instrument invalid | observed gateway signal
 - v1.0 code is tagged `safety-kernel-v1.0` in the repository.
 
 ### Deployment gate (v2.0 is NOT production‑eligible until)
-- [ ] 100+ fetcher cycles run against known‑valid documents; empirical α, β fitted
+- [x] 100+ fetcher cycles run against known‑valid documents; empirical α, β fitted
 - [ ] σ in cost‑model.js verified against 30 days of Polygon mainnet gas data
 - [ ] Full adversarial test suite run against v2.0 off‑chain logic end-to-end
-- [ ] τ* recomputed with empirical prior; if shift > 0.05 from 0.355, recalibrate
+- [x] τ* recomputed with empirical prior; if shift > 0.05 from 0.355, recalibrate
 - [ ] SAFETY_KERNEL_CHANGELOG.md updated with empirical parameter values
 - [x] **Scenario stratification analysis completed**: single τ* analytically justified,
       or stratified thresholds τ_A, τ_B implemented and calibrated (completed)
