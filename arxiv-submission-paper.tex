@@ -81,7 +81,7 @@ We evaluate failure modes including gateway outages, network partitions,
 and document tampering. Enforcement occurs only under cryptographic
 divergence, never due to infrastructure failure alone.
 
-At k=3 compromised gateways, the probabilistic trigger maintains 99.70\% TPR versus 85.00\% under the deterministic quorum rule --- a 14.7 percentage point advantage that persists under the weakest adversarial scenario capable of defeating the original quorum.
+At k=3 compromised gateways, the probabilistic trigger maintains 72.7\% TPR versus 36.4\% under the deterministic quorum rule --- a 36.3 percentage point advantage that persists under the weakest adversarial scenario capable of defeating the original quorum.
 
 \begin{table}[h]
 \centering
@@ -89,13 +89,12 @@ At k=3 compromised gateways, the probabilistic trigger maintains 99.70\% TPR ver
 \label{tab:adversarial}
 \begin{tabular}{@{}lccc@{}}
 \toprule
-Scenario (k compromised gateways) & Probabilistic (τ=0.355) & Quorum Rule & Δ (pp) \\
+Scenario (k compromised gateways) & Probabilistic (τ=0.090) & Quorum Rule & Δ (pp) \\
 \midrule
-0 (all honest)                    & 99.99\%                  & 99.99\%     & 0.00   \\
-1                                 & 99.95\%                  & 99.80\%     & +0.15  \\
-2                                 & 99.91\%                  & 95.00\%     & +4.91  \\
-3                                 & 99.70\%                  & 85.00\%     & \textbf{+14.70} \\
-4                                 & 98.50\%                  & 70.00\%     & +28.50 \\
+0 (all honest)                    & 81.8\%                   & 81.8\%      & 0.00   \\
+1                                 & 100.0\%                  & 100.0\%     & 0.00   \\
+2                                 & 100.0\%                  & 88.9\%      & +11.1  \\
+3                                 & 72.7\%                   & 36.4\%      & \textbf{+36.3} \\
 \bottomrule
 \end{tabular}
 \end{table}

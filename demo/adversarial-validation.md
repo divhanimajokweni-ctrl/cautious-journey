@@ -1,6 +1,6 @@
 # Adversarial Validation Report
 
-Generated: 2026-04-28T23:09:08.295Z
+Generated: 2026-04-29T00:19:40.893Z
 
 ## Simulation Parameters
 
@@ -8,16 +8,16 @@ Generated: 2026-04-28T23:09:08.295Z
 - Total gateways = 5
 - Honest detection θ = 0.5
 - P(H_t=1) = 0.01
-- Probabilistic threshold τ* = 0.07
+- Probabilistic threshold τ* = 0.09
 
 ## Results
 
 | Compromised (k) | Quorum TPR | Quorum FPR | Prob TPR | Prob FPR |
 |-----------------|------------|------------|----------|----------|
-| 0 | 0.800 | 0.000 | 1.000 | 0.000 |
-| 1 | 0.500 | 0.000 | 0.750 | 0.000 |
-| 2 | 0.385 | 0.000 | 0.769 | 0.000 |
-| 3 | 0.250 | 0.000 | 0.750 | 0.000 |
+| 0 | 0.818 | 0.000 | 0.818 | 0.000 |
+| 1 | 1.000 | 0.000 | 1.000 | 0.000 |
+| 2 | 0.889 | 0.000 | 1.000 | 0.000 |
+| 3 | 0.364 | 0.000 | 0.727 | 0.000 |
 
 ## Analysis
 
@@ -25,10 +25,10 @@ The probabilistic rule shows superior resilience under adversarial compromise co
 
 Degradation D(k) = Quorum TPR - Prob TPR:
 
-- k=0: D = -0.200
-- k=1: D = -0.250
-- k=2: D = -0.385
-- k=3: D = -0.500
+- k=0: D = 0.000
+- k=1: D = 0.000
+- k=2: D = -0.111
+- k=3: D = -0.364
 
 ## Figure: Circuit Breaker Reliability Under Adversarial Gateway Compromise
 

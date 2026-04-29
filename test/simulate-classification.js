@@ -58,7 +58,7 @@ function computeROC(thresholds) {
   return roc;
 }
 
-function findOptimalThreshold(roc, costRatio = 100, pValid = 0.99, pInvalid = 0.01) {
+function findOptimalThreshold(roc, costRatio = 10, pValid = 0.99, pInvalid = 0.01) {
   // Slope dTPR/dFPR = (c1/c2) * (P(H=0)/P(H=1))
   const targetSlope = (1 / costRatio) * (pValid / pInvalid);
   let bestTau = 0;
@@ -97,7 +97,7 @@ function generateReport(roc, optimalTau) {
 
   report += `## Optimal Threshold\n\n`;
   report += `Chosen τ* = ${optimalTau.toFixed(3)}\n\n`;
-  report += `Based on cost ratio ρ = c2/c1 = 100 (safety-first posture).\n\n`;
+  report += `Based on cost ratio ρ = c2/c1 = 10 (safety-first posture).\n\n`;
   report += `This threshold minimizes expected loss under conservative assumptions.\n\n`;
 
   const reportPath = path.join(__dirname, '..', 'demo', 'roc-report.md');

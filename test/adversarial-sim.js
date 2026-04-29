@@ -13,7 +13,7 @@ const path = require('path');
 
 const { computeTriggerScore } = require('../prover/scorer');
 
-const TAU_STAR = 0.07; // From ROC calibration
+const TAU_STAR = 0.09; // From ROC calibration
 const N_SIMULATIONS = 1000;
 const TOTAL_GATEWAYS = 5;
 const THETA_HONEST = 0.5;

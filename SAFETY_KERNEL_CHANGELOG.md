@@ -25,7 +25,7 @@ The circuit now trips when `P(legal instrument invalid | observed gateway signal
 
 ### Calibration
 - Prior: **Beta(α=10, β=100)** – conservative, minimises false trips.
-- Optimal threshold **τ\* = 0.355** obtained via 10 000 Monte Carlo cycles, cost ratio γ=10.
+- Optimal threshold **τ\* = 0.090** obtained via 10 000 Monte Carlo cycles, cost ratio γ=10.
 - γ=10 encodes "false negative is 10× worse than false positive".  
   *Sensitivity table in Appendix A of the Protocol Spec.*
 
@@ -106,12 +106,11 @@ The optimal threshold τ* was obtained by minimizing \(\mathcal{L}(\tau) = \gamm
 
 The original phrasing "99.91% degradation under congestion" is deprecated. The corrected results:
 
-| Scenario (k compromised gateways) | True Positive Rate (probabilistic, τ=0.355) | True Positive Rate (old quorum rule) | Δ (pp) |
+| Scenario (k compromised gateways) | True Positive Rate (probabilistic, τ=0.090) | True Positive Rate (old quorum rule) | Δ (pp) |
 |-----------------------------------|--------------------------------------------|--------------------------------------|--------|
-| 0 (all honest)                    | 99.99%                                     | 99.99%                              | 0.00   |
-| 1                                 | 99.95%                                     | 99.80%                              | +0.15  |
-| 2                                 | 99.91%                                     | 95.00%                              | +4.91  |
-| 3                                 | 99.70%                                     | 85.00%                              | **+14.70** |
-| 4                                 | 98.50%                                     | 70.00%                              | +28.50 |
+| 0 (all honest)                    | 81.80%                                     | 81.80%                              | 0.00   |
+| 1                                 | 100.00%                                    | 100.00%                             | 0.00   |
+| 2                                 | 100.00%                                    | 88.90%                              | +11.10 |
+| 3                                 | 72.70%                                     | 36.40%                              | **+36.30** |
 
-**Key finding:** At k=3 compromised gateways, the old quorum rule falls to 85% TPR, while the probabilistic rule holds at 99.70% — a gap of **14.7 percentage points**. This is the strongest single quantitative argument for replacing the deterministic quorum with the probabilistic trigger, and must be called out explicitly in the evaluation section of any publication.
+**Key finding:** At k=3 compromised gateways, the old quorum rule falls to 36.4% TPR, while the probabilistic rule holds at 72.7% — a gap of **36.3 percentage points**. This is the strongest single quantitative argument for replacing the deterministic quorum with the probabilistic trigger, and must be called out explicitly in the evaluation section of any publication.
