@@ -1,0 +1,23 @@
+{
+  "runAt": "2026-04-28T00:01:34.249Z",
+  "results": [
+    {
+      "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+      "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+      "expectedHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "actualHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "fresh",
+      "gateway": "https://ipfs.io/ipfs/",
+      "bytes": 1985,
+      "error": null,
+      "durationMs": 100,
+      "checkedAt": "2026-04-28T00:01:34.249Z"
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "fresh": 1,
+    "mismatch": 0,
+    "unreachable": 0
+  }
+}

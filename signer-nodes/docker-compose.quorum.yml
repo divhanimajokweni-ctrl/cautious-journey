@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  signer1:
+    build: .
+    container_name: pb-signer-1
+    ports: ["7001:3000"]
+    environment:
+      SIGNER_ID: "1"
+      PRIVATE_KEY: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" # Hardhat #0
+
+  signer2:
+    build: .
+    container_name: pb-signer-2
+    ports: ["7002:3000"]
+    environment:
+      SIGNER_ID: "2"
+      PRIVATE_KEY: "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d" # Hardhat #1
+
+  signer3:
+    build: .
+    container_name: pb-signer-3
+    ports: ["7003:3000"]
+    environment:
+      SIGNER_ID: "3"
+      PRIVATE_KEY: "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a" # Hardhat #2
+
+  signer4:
+    build: .
+    container_name: pb-signer-4
+    ports: ["7004:3000"]
+    environment:
+      SIGNER_ID: "4"
+      PRIVATE_KEY: "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6" # Hardhat #3
+
+  signer5:
+    build: .
+    container_name: pb-signer-5
+    ports: ["7005:3000"]
+    environment:
+      SIGNER_ID: "5"
+      PRIVATE_KEY: "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a" # Hardhat #4
