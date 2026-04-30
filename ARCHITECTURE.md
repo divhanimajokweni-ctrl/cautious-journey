@@ -157,8 +157,19 @@ ProofBridge Liner is a decentralized security system for tokenized real-world as
 
 ### Configuration Files
 - **assets.json**: Asset registry with IPFS CIDs
-- **scoring.json**: Probabilistic parameters
+- **scoring.json**: Probabilistic and deterministic parameters
 - **.env**: Environment variables and secrets
+
+### Scoring Configuration Example
+```json
+{
+  "jurisdiction": "South Africa",
+  "deterministicFloor": 0.80,
+  "thresholdA": 0.285,
+  "thresholdB": 0.450,
+  "minMismatchesB": 2
+}
+```
 
 ## Future Extensions
 

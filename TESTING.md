@@ -96,6 +96,22 @@
 - **Circuit States**: Verified behavior in open/tripped states
 - **Recovery Mechanisms**: Automatic retry and backoff working
 
+### TEE-Deterministic Override Testing
+Simulated four critical ghost-risk scenarios with Bayesian scoring and TEE clamping:
+
+| Scenario | Mismatches | Schema Valid | Raw Score | Clamped Score | Decision |
+|----------|------------|--------------|-----------|---------------|----------|
+| Mirror Attack (Consensus on Garbage) | 0 | ❌ | 0.2143 | 0.80 | 🚨 INVALID_SLASH |
+| Partial Collusion + Schema Failure | 1 | ❌ | 0.2857 | 0.80 | 🚨 INVALID_SLASH |
+| Honest Minority (1/3 mismatch) | 1 | ✅ | 0.2857 | 0.2857 | ✅ VALID |
+| High Variance (2/3 mismatch) | 2 | ✅ | 0.4286 | 0.4286 | ✅ VALID |
+
+**Key Results**:
+- Deterministic override successfully neutralizes "consensus on garbage" attacks
+- TEE clamping forces high-severity scores for schema violations
+- Probabilistic model preserved for valid documents
+- System correctly distinguishes structural fraud from network variance
+
 ## Validation Against Requirements
 
 ### Functional Requirements
