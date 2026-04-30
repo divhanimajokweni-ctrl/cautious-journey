@@ -54,7 +54,7 @@ function planActions(state) {
       actions.push({
         kind: 'updateProof',
         assetId: r.assetId,
-        deedHash: r.actualHash,
+        deedHash: '0x' + r.actualHash,
       });
     } else if (r.status === 'unreachable_threshold') {
       actions.push({

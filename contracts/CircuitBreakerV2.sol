@@ -3,10 +3,10 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract CircuitBreakerV2 is Initializable, OwnableUpgradeable {
-    using ECDSAUpgradeable for bytes32;
+    using ECDSA for bytes32;
 
     bool public circuitOpen;
     mapping(bytes32 => bytes32) public latestProof;

@@ -9,6 +9,7 @@ optimizer = true
 optimizer_runs = 200
 verbosity = 2
 fs_permissions = [{ access = "read", path = "./" }]
+remappings = ["@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/"]
 
 [rpc_endpoints]
 amoy = "${POLYGON_AMOY_RPC_URL}"
