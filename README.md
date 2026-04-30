@@ -37,6 +37,7 @@ npm run deploy:amoy
 ## 🎯 Key Features
 
 - **Probabilistic Fraud Detection**: Beta-Binomial posterior scoring
+- **TEE-Deterministic Validation**: Hardware-enforced legal document schema checking
 - **Multi-Gateway Validation**: 5+ IPFS nodes for document verification
 - **Circuit Breaker**: Automatic transfer halting on risk detection
 - **Threshold Signatures**: Decentralized oracle operations

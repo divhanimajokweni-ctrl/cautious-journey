@@ -43,6 +43,7 @@ ProofBridge Liner is a decentralized security system for tokenized real-world as
 #### Scorer (`prover/scorer.js`)
 - **Responsibilities**:
   - Beta-Binomial posterior probability calculation
+  - TEE-deterministic validation override
   - Scenario classification (A/B/C)
   - Threshold-based trip decisions
 - **Algorithm**:
@@ -50,8 +51,16 @@ ProofBridge Liner is a decentralized security system for tokenized real-world as
   α = 1 + mismatches
   β = 10 + (total - mismatches)
   score = α / (α + β)
+
+  // TEE Clamping Logic
+  if (config.deterministicOverride && !validation.valid) {
+      score = Math.max(score, config.deterministicFloor);
+      isClamped = true;
+  }
+
   trip if score > threshold
   ```
+- **TEE Integration**: Hardware-enforced legal document schema validation overrides probabilistic consensus for structural fraud detection
 
 #### Submitter (`prover/submitter.js`)
 - **Responsibilities**:

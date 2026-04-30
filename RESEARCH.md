@@ -23,6 +23,7 @@ Drawing from Bayesian statistics, the system employs Beta-Binomial posterior pro
 
 ### Technical Foundations
 - **IPFS Multi-Gateway Resolution**: Cross-validates documents across 5+ nodes
+- **TEE-Deterministic Validation**: Hardware-enforced legal document schema compliance
 - **AI-Assisted Validation**: Optional Hugging Face integration for content analysis
 - **Smart Contract Integration**: ERC-20 hook for automated trading halts
 - **Threshold Signatures**: TSS quorum for decentralized oracle operations
@@ -111,9 +112,10 @@ The Safety Kernel demonstrated:
 This work contributes several novel elements to the RWA security landscape:
 
 1. **Probabilistic Blockchain Security**: First application of Bayesian inference to decentralized fraud detection
-2. **Multi-Gateway Validation**: Addresses IPFS centralization risks
-3. **Integrated Hook Pattern**: Seamless ERC-20 security enhancement
-4. **Threshold Signature Orchestration**: Decentralized oracle operations
+2. **TEE-Deterministic Override**: Hardware-enforced legal compliance as primary safety gate
+3. **Multi-Gateway Validation**: Addresses IPFS centralization risks
+4. **Integrated Hook Pattern**: Seamless ERC-20 security enhancement
+5. **Threshold Signature Orchestration**: Decentralized oracle operations
 
 ### Limitations and Future Work
 - **AI Integration**: Requires text-extractable documents for full analysis

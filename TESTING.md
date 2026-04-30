@@ -57,8 +57,10 @@
 - **Assets Audited**: 2 RealT properties
 - **Status**: Mismatches detected (as expected for test data)
 - **AI Analysis**: Skipped (API key not configured)
-- **Report Generation**: Successful
-- **Recommendations**: Implement NVIDIA API for enhanced analysis
+- **TEE Validation**: Structural legal compliance enforced
+- **Report Generation**: Successful with deterministic override testing
+- **Stress Test**: Mirror Attack simulation - TEE detected missing TITLE_DEED_NUMBER, clamped score to 0.80, triggered INVALID_SLASH
+- **Recommendations**: Implement NVIDIA API for enhanced analysis, TEE integration operational
 
 ## Performance Metrics
 
