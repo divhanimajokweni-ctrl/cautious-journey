@@ -1,0 +1,242 @@
+[
+  {
+    "cycle": 1,
+    "timestamp": "2026-04-30T02:29:41.117Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  },
+  {
+    "cycle": 2,
+    "timestamp": "2026-04-30T02:29:52.920Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  },
+  {
+    "cycle": 3,
+    "timestamp": "2026-04-30T02:30:04.727Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  },
+  {
+    "cycle": 4,
+    "timestamp": "2026-04-30T02:30:16.451Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  },
+  {
+    "cycle": 5,
+    "timestamp": "2026-04-30T02:30:28.423Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  },
+  {
+    "cycle": 6,
+    "timestamp": "2026-04-30T02:30:40.090Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  },
+  {
+    "cycle": 7,
+    "timestamp": "2026-04-30T02:30:51.852Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  },
+  {
+    "cycle": 8,
+    "timestamp": "2026-04-30T02:31:03.595Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  },
+  {
+    "cycle": 9,
+    "timestamp": "2026-04-30T02:31:15.292Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  },
+  {
+    "cycle": 10,
+    "timestamp": "2026-04-30T02:31:27.033Z",
+    "assets": [
+      {
+        "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      },
+      {
+        "assetId": "0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f",
+        "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+        "status": "mismatch",
+        "health": "compromised",
+        "triggerScore": 0.23076923076923078,
+        "schemaFailures": []
+      }
+    ],
+    "submitOutput": "x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] Asset 0x9f3e2a1b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f: scenario B, score 0.231, threshold 0.355, trip false\n[submitter] planning 0 on-chain action(s)\n[submitter] wrote 0 SafeKrypte attestation(s) to /home/runner/workspace/.local/state/submitter-attestations.json\n[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.\n",
+    "broadcastOutput": "[broadcaster] No attestations — nothing to broadcast.\n"
+  }
+]

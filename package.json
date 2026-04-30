@@ -1,0 +1,38 @@
+{
+  "name": "proofbridge-liner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ghost-Risk Circuit-Breaker for tokenised real-world assets — MVP.",
+  "main": "dashboard/server.js",
+  "scripts": {
+    "start": "node dashboard/server.js",
+    "dev": "node dashboard/server.js",
+    "fetch": "node prover/fetcher.js",
+    "fetch:watch": "node prover/fetcher.js --watch",
+    "submit": "node prover/submitter.js",
+    "submit:dry": "node prover/submitter.js --dry-run",
+    "audit": "node prover/auditor.js",
+    "broadcast": "node prover/broadcaster.js",
+    "broadcast:dry": "node prover/broadcaster.js --dry-run",
+    "test:contracts": "forge test -vvv",
+    "test:contracts:docker": "docker build -t proofbridge-liner . && docker run --rm proofbridge-liner",
+    "deploy:amoy": "/home/runner/workspace/.config/.foundry/bin/forge script script/DeployCircuitBreaker.s.sol --rpc-url $POLYGON_AMOY_RPC_URL --broadcast",
+    "precommit": "node scripts/check-secrets.js"
+  },
+  "dependencies": {
+    "@huggingface/inference": "^4.13.15",
+    "@kilocode/cli": "7.2.31",
+    "axios": "^1.6.0",
+    "ethers": "^6.13.0",
+    "express": "^4.22.1",
+    "opencode-ai": "^1.14.28",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^1.1.1"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

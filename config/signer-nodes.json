@@ -1,0 +1,5 @@
+[
+  { "id": "node-1", "endpoint": "http://localhost:7001", "pubkey": "0x000000000000000000000000000000000000dEaD" },
+  { "id": "node-2", "endpoint": "http://localhost:7002", "pubkey": "0x000000000000000000000000000000000000bEEF" },
+  { "id": "node-3", "endpoint": "http://localhost:7003", "pubkey": "0x000000000000000000000000000000000000cAfE" }
+]

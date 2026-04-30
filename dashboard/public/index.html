@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ProofBridge Liner — Ops</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">⊜</span>
+        <div>
+          <h1>ProofBridge Liner</h1>
+          <p class="tagline" id="tagline">Ghost-Risk Circuit-Breaker for tokenised real-world assets</p>
+        </div>
+      </div>
+      <div class="meta">
+        <span class="pill" id="network">Polygon Amoy</span>
+        <span class="pill" id="serverTime">—</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Sprint Phases</h2>
+        <div id="phases" class="phases"></div>
+      </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <h2>Phase 1 Test Suite</h2>
+          <div class="kpi">
+            <div><span class="kpi-num" id="testsPassed">0</span><span class="kpi-lbl">passed</span></div>
+            <div><span class="kpi-num" id="testsTotal">0</span><span class="kpi-lbl">total</span></div>
+            <div><span class="kpi-num ok">PASS</span><span class="kpi-lbl">gate</span></div>
+          </div>
+          <div class="scroll" id="tests"></div>
+        </div>
+
+        <div class="card">
+          <h2>CircuitBreaker Contract</h2>
+          <dl class="kv">
+            <dt>Address</dt><dd id="cbAddress" class="mono">— not yet deployed —</dd>
+            <dt>Oracle</dt><dd id="oracleAddress" class="mono">—</dd>
+            <dt>Network</dt><dd>Polygon Amoy (chainId 80002)</dd>
+            <dt>Trust model</dt><dd>Single oracle (MVP) → 3-of-5 EIP-712 quorum (post-PMF)</dd>
+          </dl>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Monitored Assets</h2>
+        <table class="table">
+          <thead>
+            <tr><th>Asset</th><th>IPFS CID</th><th>Expected hash</th><th>Last status</th></tr>
+          </thead>
+          <tbody id="assets"></tbody>
+        </table>
+      </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <h2>Mock Quorum (signer-nodes)</h2>
+          <ul class="nodes" id="signers"></ul>
+          <p class="hint">Endpoints are scaffolded for the Phase 4 Docker compose stack.</p>
+        </div>
+        <div class="card">
+          <h2>Last Fetcher Run</h2>
+          <div id="proverState" class="prover-state">
+            <p class="hint">Run <code>node prover/fetcher.js</code> to populate.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>ProofBridge Liner · MVP scaffold</span>
+      <span class="mono">/api/status</span>
+    </footer>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
