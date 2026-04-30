@@ -48,15 +48,21 @@ All 14 contract tests pass:
 - **Auditor** (`prover/auditor.js`): Ready for ghost-risk audits
 
 ## Live Testing Results
-- Fetcher: Checked 2 assets (1 fresh proof, 1 hash mismatch)
-- Scorer: Applied stratified thresholds (scenario A: 0.167 < 0.6, scenario B: 0.231 < 0.355, no trips)
-- Submitter: Planned 1 updateProof action for fresh asset
+- Fetcher: Checked 2 assets, scorer applied stratified thresholds
+- Initial: 1 fresh proof, 1 mismatch (no trips: scenario A 0.167 < 0.6, scenario B 0.231 < 0.355)
+- Demo: Forced mismatch by altering expectedHash, scorer triggered trip (score 0.750 > 0.1), submitter planned 2 tripCircuit actions
 - Broadcasting: Requires TSS quorum (3+ signatures), not running locally
+- Prover pipeline fully integrated: fetcher → validator → scorer → submitter → broadcaster
+
+## Integration Testing Results
+- **MockRealT Deployed:** 0xb91C1aC1Bbc9D7df85A858BCb7705D7edd8fEc82
+- **Hook Integration:** Transfer blocked when proof mismatches (ghost-risk detected)
+- **Audit Report:** Generated in demo/audit-realT.md (mismatches detected, AI analysis skipped)
 
 ## Next Actions
-1. Test live contract with prover pipeline
-2. Deploy MockRealT.sol for integration testing
-3. Run ghost-risk audit
+1. Test live contract with prover pipeline ✅
+2. Deploy MockRealT.sol for integration testing ✅
+3. Run ghost-risk audit ✅
 4. Monitor on-chain performance
 
 ## Security Notes
