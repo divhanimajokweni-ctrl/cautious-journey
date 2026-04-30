@@ -89,17 +89,19 @@ Create `config/assets.json`:
 ```
 
 ### Scoring Configuration
-Create `config/scoring.json`:
+Create `config/scoring.json` (South Africa jurisdiction):
 ```json
 {
-  "priorAlpha": 1,
-  "priorBeta": 10,
-  "thresholdA": 0.6,
-  "thresholdB": 0.355,
+  "jurisdiction": "South Africa",
+  "deterministicFloor": 0.8,
+  "thresholdA": 0.285,
+  "thresholdB": 0.45,
   "minMismatchesB": 2,
-  "minGatewaysB": 2
+  "deterministicOverride": true
 }
 ```
+
+**TEE Setup**: Ensure TEE attestation service is configured for Act 47 of 1937 compliance validation.
 
 ## Verification Steps
 

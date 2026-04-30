@@ -111,11 +111,11 @@ The Safety Kernel demonstrated:
 ### Innovations and Impact
 This work contributes several novel elements to the RWA security landscape:
 
-1. **Probabilistic Blockchain Security**: First application of Bayesian inference to decentralized fraud detection
-2. **TEE-Deterministic Override**: Hardware-enforced legal compliance as primary safety gate
-3. **Multi-Gateway Validation**: Addresses IPFS centralization risks
-4. **Integrated Hook Pattern**: Seamless ERC-20 security enhancement
-5. **Threshold Signature Orchestration**: Decentralized oracle operations
+1. **TEE-First Security Model**: "Hardware is Law" - Deterministic legal schema validation overrides probabilistic consensus
+2. **Probabilistic Blockchain Security**: Bayesian inference for fraud detection in decentralized systems
+3. **Multi-Gateway Validation**: Addresses IPFS centralization risks through quorum consensus
+4. **Integrated Hook Pattern**: Seamless ERC-20 security enhancement with 5-line integration
+5. **Threshold Signature Orchestration**: Decentralized oracle operations with cryptographic quorum
 
 ### Limitations and Future Work
 - **AI Integration**: Requires text-extractable documents for full analysis

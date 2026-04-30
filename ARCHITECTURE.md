@@ -160,14 +160,24 @@ ProofBridge Liner is a decentralized security system for tokenized real-world as
 - **scoring.json**: Probabilistic and deterministic parameters
 - **.env**: Environment variables and secrets
 
-### Scoring Configuration Example
+### Scoring Configuration (Production)
 ```json
 {
   "jurisdiction": "South Africa",
-  "deterministicFloor": 0.80,
+  "deterministicFloor": 0.8,
   "thresholdA": 0.285,
-  "thresholdB": 0.450,
+  "thresholdB": 0.45,
   "minMismatchesB": 2
+}
+```
+
+**TEE Integration Logic**:
+```javascript
+// CONDITION: Deterministic Silicon Gate
+if (config.deterministicOverride && !validation.valid) {
+    // Override probabilistic noise with legal certainty
+    triggerScore = Math.max(triggerScore, config.deterministicFloor);
+    isClamped = true;
 }
 ```
 
