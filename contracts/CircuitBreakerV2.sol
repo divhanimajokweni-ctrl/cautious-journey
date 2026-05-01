@@ -28,7 +28,7 @@ contract CircuitBreakerV2 is Initializable, OwnableUpgradeable {
     }
 
     function initialize(address[] memory _signers, uint256 _threshold) public initializer {
-        __Ownable_init(msg.sender);
+        __Ownable_init();
         require(_signers.length >= _threshold, "Not enough signers");
         require(_threshold > 0, "Threshold must be > 0");
         for (uint256 i = 0; i < _signers.length; i++) {
