@@ -62,8 +62,8 @@ dashboard/
 
 - **Coq Proof** ✅ — 4 theorems; `HALTED` is absorbing for `UNAUTH` actors
 - **Gas analysis** ✅ — `check()` and `assertOpen()` are O(1)
-- **TLA+ Model** ⏳ — no-deadlock confirmation (pending)
-- **SOC 2 CC6** ⏳ — logical access control mapping (pending)
+- **TLA+ Model** ✅ — 4 invariants + liveness; no deadlocks (`proofs/SafetyKernel.tla` + `.cfg`)
+- **SOC 2 CC6** ✅ — CC6.1/2/3/6/7/8 fully mapped (`docs/SOC2-CC6-Mapping.md`)
 
 ## Replit setup
 
