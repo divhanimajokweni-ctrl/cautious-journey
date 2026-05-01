@@ -50,6 +50,29 @@
         </div>
       </section>
 
+      <!-- Institution-grade architecture -->
+      <section class="card">
+        <h2>Institution-Grade Architecture</h2>
+        <div class="arch-layers" id="archLayers"></div>
+      </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <h2>Deployed Contracts</h2>
+          <dl class="kv">
+            <dt>AssetRegistry</dt><dd id="arAddress" class="mono">— not yet deployed —</dd>
+            <dt>TEEVerifier</dt><dd id="teeAddress" class="mono">— not yet deployed —</dd>
+            <dt>Enclave key</dt><dd id="enclaveAddress" class="mono">—</dd>
+            <dt>Deploy script</dt><dd class="mono hint">script/DeployFull.s.sol</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h2>Formal Verification Artifacts</h2>
+          <div id="verificationArtifacts"></div>
+        </div>
+      </section>
+
       <section class="card">
         <h2>Monitored Assets</h2>
         <table class="table">
@@ -76,7 +99,7 @@
     </main>
 
     <footer>
-      <span>ProofBridge Liner · MVP scaffold</span>
+      <span>ProofBridge Liner · Institution-Grade MVP</span>
       <span class="mono">/api/status</span>
     </footer>
 
