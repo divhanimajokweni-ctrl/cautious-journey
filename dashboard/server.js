@@ -31,7 +31,7 @@ const PHASES = [
   { id: 3, name: 'Build fetcher + submitter',           pct: 60  },
   { id: 4, name: 'Mock 3-node quorum (Docker)',         pct: 0   },
   { id: 5, name: 'Institution-grade: TEE + Registry',  pct: 100 },
-  { id: 6, name: 'Coq formal proof (Safety Kernel)',   pct: 100 },
+  { id: 6, name: 'Coq + TLA+ formal proofs',           pct: 100 },
   { id: 7, name: 'E2E demo recording',                  pct: 0   },
   { id: 8, name: 'Ghost-risk audit & pitch',            pct: 0   },
 ];
@@ -129,8 +129,8 @@ app.get('/api/status', (_req, res) => {
       verification: [
         { name: 'Coq Proof',    status: 'complete', note: 'UNAUTH actors cannot reset' },
         { name: 'Gas analysis', status: 'complete', note: 'O(1) check() execution' },
-        { name: 'TLA+ Model',   status: 'pending',  note: 'No deadlocks in state machine' },
-        { name: 'SOC 2 CC6',    status: 'pending',  note: 'Logical access control mapping' },
+        { name: 'TLA+ Model',   status: 'complete', note: 'No deadlocks — 4 invariants + liveness property' },
+        { name: 'SOC 2 CC6',    status: 'complete', note: 'CC6.1/2/3/6/7/8 — all controls mapped' },
       ],
     },
     assets: readJsonSafe(ASSETS_PATH, []),
