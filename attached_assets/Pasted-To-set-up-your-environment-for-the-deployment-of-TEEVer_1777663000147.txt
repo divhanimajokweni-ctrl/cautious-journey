@@ -1,0 +1,45 @@
+To set up your environment for the deployment of TEEVerifier.sol and AssetRegistry.sol using Foundry, follow these steps to install the toolkit locally and configure your environment variables.
+## 1. Install Foundry Locally
+Foundry is a fast smart contract development toolkit written in Rust. You can install it on macOS, Linux, or Windows (via WSL) using the following commands:
+
+* Download the installer: Run this command in your terminal:
+curl -L https://foundry.paradigm.xyz | bash
+* Install the binaries: After the installer completes, restart your terminal or run source ~/.bashrc (or the equivalent for your shell). Then, run:
+foundryup
+* Verify installation: Confirm everything is working by checking the version of Forge:
+forge --version [1, 2, 3] 
+
+This will install the full suite, including Forge (testing/deployment), Cast (chain interaction), and Anvil (local node). [4, 5] 
+------------------------------
+## 2. Configure Environment Variables
+Instead of typing sensitive keys directly into your terminal, it is best practice to use a .env file in your project's root directory.
+
+   1. Create a .env file: In your project folder, create a file named .env and add the variables mentioned in your image:
+   
+   PRIVATE_KEY=your_wallet_private_key
+   ORACLE_ADDRESS=0x...
+   ENCLAVE_ADDRESS=0x...
+   POLYGON_AMOY_RPC_URL=https://polygon.technology
+   ```
+   
+   2. Load the variables: Before running your deployment script, load these into your current terminal session:
+   source .env
+   3. Security Tip: Ensure your .env file is added to your .gitignore to prevent accidentally pushing your private key to GitHub. [6, 7, 8, 9] 
+
+------------------------------
+## 3. Run the Deployment Test
+Once Foundry is installed and variables are loaded, you can execute the command from your image:
+
+forge script script/DeployFull.s.sol --rpc-url $POLYGON_AMOY_RPC_URL --broadcast
+
+If you just want to test without sending a real transaction, add the --dry-run flag as suggested in your screenshot.
+
+[1] https://getfoundry.sh
+[2] [https://updraft.cyfrin.io](https://updraft.cyfrin.io/courses/foundry/foundry-simple-storage/foundry-setup)
+[3] [https://www.youtube.com](https://www.youtube.com/watch?v=13Ujv9It-0Y)
+[4] [https://medium.com](https://medium.com/@regodefies/foundry-installation-on-windows-10-309407e39dee)
+[5] [https://medium.com](https://medium.com/@bugbountydegen/how-to-install-paradigm-foundry-to-debug-smart-contracts-part-1-8019d4bac613)
+[6] [https://docs.polkadot.com](https://docs.polkadot.com/smart-contracts/dev-environments/foundry/)
+[7] [https://www.plasma.to](https://www.plasma.to/docs/guides/smart-contracts/deploy-a-contract)
+[8] [https://www.ethereum-blockchain-developer.com](https://www.ethereum-blockchain-developer.com/courses/ethereum-course-2024/project-erc721-nft-with-remix-truffle-hardhat-and-foundry/deploy-smart-contracts-using-foundry)
+[9] [https://medium.com](https://medium.com/@zarahgathoni76/how-to-deploy-and-verify-contracts-using-foundry-61234841b051)
