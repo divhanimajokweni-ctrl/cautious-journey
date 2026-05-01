@@ -7,6 +7,13 @@ import {AssetRegistry} from "../contracts/AssetRegistry.sol";
 
 /// @notice Adversarial coverage for TEEVerifier.
 contract TEEVerifierTest is Test {
+    event AttestationVerified(
+        bytes32 indexed docHash,
+        uint256 posterior,
+        uint256 threshold,
+        address indexed caller
+    );
+
     AssetRegistry internal registry;
     TEEVerifier   internal verifier;
 
@@ -124,7 +131,7 @@ contract TEEVerifierTest is Test {
         bytes memory sig  = _sign(DOC_HASH, posterior, THRESHOLD);
 
         vm.expectEmit(true, false, false, true);
-        emit TEEVerifier.AttestationVerified(DOC_HASH, posterior, THRESHOLD, address(this));
+        emit AttestationVerified(DOC_HASH, posterior, THRESHOLD, address(this));
         verifier.verifyAndExecute(ASSET_ID, DOC_HASH, sig, posterior, THRESHOLD);
     }
 

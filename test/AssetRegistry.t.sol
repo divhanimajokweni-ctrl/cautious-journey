@@ -36,7 +36,7 @@ contract AssetRegistryTest is Test {
                            REGISTRATION
     //////////////////////////////////////////////////////////////*/
 
-    function testRegistrationSetsOpenState() public {
+    function testRegistrationSetsOpenState() public view {
         assertTrue(registry.isOpen(ASSET_A));
     }
 

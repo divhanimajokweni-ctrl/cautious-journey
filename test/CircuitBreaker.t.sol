@@ -35,7 +35,7 @@ contract CircuitBreakerTest is Test {
                               INITIALISATION
     //////////////////////////////////////////////////////////////*/
 
-    function testInitializeSetsOwnerAndOracle() public {
+    function testInitializeSetsOwnerAndOracle() public view {
         assertEq(cb.owner(), owner);
         assertEq(cb.oracle(), oracle);
         assertTrue(cb.circuitOpen());
