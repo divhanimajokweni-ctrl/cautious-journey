@@ -25,13 +25,15 @@ const PORT = Number(process.env.DASHBOARD_PORT || 5000);
 const HOST = process.env.DASHBOARD_HOST || '0.0.0.0';
 
 const PHASES = [
-  { id: 0, name: 'Env scaffold',                   pct: 100 },
-  { id: 1, name: 'Write & test CircuitBreaker',    pct: 100 },
-  { id: 2, name: 'Deploy to Polygon Amoy',         pct: 30  },
-  { id: 3, name: 'Build fetcher + submitter',      pct: 60  },
-  { id: 4, name: 'Mock 3-node quorum (Docker)',    pct: 0   },
-  { id: 5, name: 'E2E demo recording',             pct: 0   },
-  { id: 6, name: 'Ghost-risk audit & pitch',       pct: 0   },
+  { id: 0, name: 'Env scaffold',                        pct: 100 },
+  { id: 1, name: 'Write & test CircuitBreaker',         pct: 100 },
+  { id: 2, name: 'Deploy to Polygon Amoy',              pct: 30  },
+  { id: 3, name: 'Build fetcher + submitter',           pct: 60  },
+  { id: 4, name: 'Mock 3-node quorum (Docker)',         pct: 0   },
+  { id: 5, name: 'Institution-grade: TEE + Registry',  pct: 100 },
+  { id: 6, name: 'Coq formal proof (Safety Kernel)',   pct: 100 },
+  { id: 7, name: 'E2E demo recording',                  pct: 0   },
+  { id: 8, name: 'Ghost-risk audit & pitch',            pct: 0   },
 ];
 
 const TEST_RESULTS = [
@@ -85,11 +87,51 @@ app.get('/api/status', (_req, res) => {
     network: 'Polygon Amoy (testnet)',
     circuitBreakerAddress: process.env.CIRCUIT_BREAKER_ADDRESS || null,
     oracleAddress: process.env.ORACLE_ADDRESS || null,
+    assetRegistryAddress: process.env.ASSET_REGISTRY_ADDRESS || null,
+    teeVerifierAddress: process.env.TEE_VERIFIER_ADDRESS || null,
+    enclaveAddress: process.env.ENCLAVE_ADDRESS || null,
     phases: PHASES,
     tests: {
       total: TEST_RESULTS.length,
       passed: TEST_RESULTS.filter((t) => t.passed).length,
       results: TEST_RESULTS,
+    },
+    architecture: {
+      layers: [
+        {
+          id: 'logic',
+          name: 'Logic Layer',
+          description: 'Coq-verified total functions',
+          artifact: 'proofs/SafetyKernel.v',
+          theorems: [
+            'unauthorized_halt_is_absorbing',
+            'posterior_above_threshold_trips',
+            'posterior_below_threshold_stays_open',
+            'auth_can_reset',
+          ],
+          status: 'proven',
+        },
+        {
+          id: 'input',
+          name: 'Input Layer',
+          description: 'TEE-signed attestations (EIP-191 ECDSA)',
+          artifact: 'contracts/TEEVerifier.sol',
+          status: 'deployed-pending',
+        },
+        {
+          id: 'enforcement',
+          name: 'Enforcement Layer',
+          description: 'EVM circuit breakers — per-asset isolated kernels',
+          artifact: 'contracts/AssetRegistry.sol',
+          status: 'deployed-pending',
+        },
+      ],
+      verification: [
+        { name: 'Coq Proof',    status: 'complete', note: 'UNAUTH actors cannot reset' },
+        { name: 'Gas analysis', status: 'complete', note: 'O(1) check() execution' },
+        { name: 'TLA+ Model',   status: 'pending',  note: 'No deadlocks in state machine' },
+        { name: 'SOC 2 CC6',    status: 'pending',  note: 'Logical access control mapping' },
+      ],
     },
     assets: readJsonSafe(ASSETS_PATH, []),
     signerNodes: readJsonSafe(SIGNERS_PATH, []),

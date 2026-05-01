@@ -36,6 +36,47 @@
     });
   }
 
+  function renderArchitecture(architecture) {
+    if (!architecture) return;
+
+    const layerRoot = $('#archLayers');
+    layerRoot.innerHTML = '';
+    architecture.layers.forEach((layer) => {
+      const div = document.createElement('div');
+      div.className = 'arch-layer';
+      const statusClass = layer.status === 'proven' ? 'ok'
+        : layer.status === 'deployed-pending' ? 'warn' : 'muted';
+      const theoremHtml = layer.theorems
+        ? `<div class="theorems">${layer.theorems.map(t =>
+            `<span class="theorem mono">${t}</span>`).join('')}</div>`
+        : '';
+      div.innerHTML = `
+        <div class="arch-layer-header">
+          <span class="arch-layer-name">${layer.name}</span>
+          <span class="tag ${statusClass}">${layer.status}</span>
+        </div>
+        <p class="hint" style="margin:4px 0 6px">${layer.description}</p>
+        <span class="mono hint">${layer.artifact}</span>
+        ${theoremHtml}`;
+      layerRoot.appendChild(div);
+    });
+
+    const verRoot = $('#verificationArtifacts');
+    verRoot.innerHTML = '';
+    architecture.verification.forEach((v) => {
+      const div = document.createElement('div');
+      div.className = 'ver-item';
+      const statusClass = v.status === 'complete' ? 'ok' : 'muted';
+      div.innerHTML = `
+        <div class="ver-header">
+          <span class="ver-name">${v.name}</span>
+          <span class="tag ${statusClass}">${v.status}</span>
+        </div>
+        <p class="hint" style="margin:2px 0 0">${v.note}</p>`;
+      verRoot.appendChild(div);
+    });
+  }
+
   function renderAssets(assets, proverState) {
     const map = new Map();
     if (proverState && Array.isArray(proverState.results)) {
@@ -97,8 +138,12 @@
     $('#serverTime').textContent = new Date(data.serverTime).toLocaleString();
     $('#cbAddress').textContent = data.circuitBreakerAddress || '— not yet deployed —';
     $('#oracleAddress').textContent = data.oracleAddress || '—';
+    $('#arAddress').textContent = data.assetRegistryAddress || '— not yet deployed —';
+    $('#teeAddress').textContent = data.teeVerifierAddress || '— not yet deployed —';
+    $('#enclaveAddress').textContent = data.enclaveAddress || '—';
     renderPhases(data.phases);
     renderTests(data.tests);
+    renderArchitecture(data.architecture);
     renderAssets(data.assets, data.proverState);
     renderSigners(data.signerNodes);
     renderProver(data.proverState);
