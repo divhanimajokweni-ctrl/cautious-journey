@@ -105,18 +105,22 @@ app.get('/api/health', async (req, res) => {
     'https://gateway.pinata.cloud/ipfs/',
   ];
   const gatewayHealth = {};
-  for (const gateway of gateways) {
+  await Promise.all(gateways.map(async (gateway) => {
     const start = Date.now();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
     try {
-      await fetch(`${gateway}/QmbWqxBEKC3P8tqsKc98xmWNzrzDRRLbhtJ38WNqHVWojK`, {
+      await fetch(`${gateway}QmbWqxBEKC3P8tqsKc98xmWNzrzDRRLbhtJ38WNqHVWojK`, {
         method: 'HEAD',
-        timeout: 5000
+        signal: controller.signal,
       });
       gatewayHealth[gateway] = { status: 'healthy', latency: Date.now() - start };
     } catch (err) {
       gatewayHealth[gateway] = { status: 'unreachable', error: err.message };
+    } finally {
+      clearTimeout(timer);
     }
-  }
+  }));
 
   // Read prover state if exists
   let proverState = {};
