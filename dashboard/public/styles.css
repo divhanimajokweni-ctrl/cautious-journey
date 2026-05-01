@@ -129,6 +129,37 @@ main {
   color: #cfe1ff;
 }
 
+.arch-layers {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.arch-layer {
+  background: var(--panel-2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+}
+.arch-layer-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;
+}
+.arch-layer-name { font-size: 0.92rem; font-weight: 600; }
+.theorems { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.theorem {
+  font-size: 0.74rem; padding: 3px 8px;
+  background: rgba(92,242,199,0.08); border: 1px solid rgba(92,242,199,0.2);
+  border-radius: 6px; color: var(--accent);
+}
+
+.ver-item {
+  padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.05);
+}
+.ver-item:last-child { border-bottom: none; }
+.ver-header {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.ver-name { font-size: 0.9rem; }
+
+.tag.ok   { background: rgba(92,242,199,0.12); color: var(--ok); }
+.tag.warn { background: rgba(255,180,84,0.14); color: var(--warn); }
+.tag.muted { background: rgba(255,255,255,0.06); color: var(--muted); }
+
 footer {
   border-top: 1px solid var(--border);
   padding: 14px 28px;
