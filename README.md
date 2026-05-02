@@ -24,10 +24,12 @@ A decentralized circuit-breaker for tokenized real-world assets (RWAs), implemen
 
 ## 📚 Documentation
 
+- **[ROADMAP.md](./ROADMAP.md)**: 90-day development milestones and next steps
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)**: Technical system design and TEE integration
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)**: Complete setup and deployment guide
 - **[TESTING.md](./TESTING.md)**: Comprehensive test results including TEE stress tests
 - **[RESEARCH.md](./RESEARCH.md)**: Academic research paper and methodology
+- **[FUNDING_STRATEGY.md](./FUNDING_STRATEGY.md)**: Phased funding approach for project development
 
 ## 🏁 Quick Start
 
