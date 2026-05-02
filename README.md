@@ -7,7 +7,8 @@ A decentralized circuit-breaker for tokenized real-world assets (RWAs), implemen
 ## 🚀 Live Deployment
 
 - **Network**: Polygon Amoy (Testnet)
-- **CircuitBreaker**: `0x770342c49e1F4710E0Eed605dCe41e7f3F7600Eb`
+- **CircuitBreaker**: `0x0DA76b3179d1bce8045c832BB6D8fe9C226BfE57`
+- **Oracle Address**: `0x49A1ba2Bde61B96685385F4Ce012586A518c3E70`
 - **MockRealT Demo**: `0xb91C1aC1Bbc9D7df85A858BCb7705D7edd8fEc82`
 - **TEE Integration**: Deterministic schema validation active
 - **Status**: Operational with 100% test pass rate

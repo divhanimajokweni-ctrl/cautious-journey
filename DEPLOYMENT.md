@@ -21,15 +21,18 @@
 Create `.env` file:
 ```bash
 # Polygon Amoy deployment
-POLYGON_AMOY_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/YOUR_API_KEY
+POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/
 PRIVATE_KEY=0xb25939caa5515f9ded22aedf08ce0ec6778ac2ef5e11cadef24bff24f017fed6
 
 # Contract addresses (after deployment)
-CIRCUIT_BREAKER_ADDRESS=0x...
-MOCK_REAL_T_ADDRESS=0x...
+CIRCUIT_BREAKER_ADDRESS=0x0DA76b3179d1bce8045c832BB6D8fe9C226BfE57
+MOCK_REAL_T_ADDRESS=0xb91C1aC1Bbc9D7df85A858BCb7705D7edd8fEc82
 
 # Oracle configuration
 ORACLE_ADDRESS=0x49A1ba2Bde61B96685385F4Ce012586A518c3E70
+
+# Contract verification
+POLYGONSCAN_API_KEY=your_polygonscan_api_key
 
 # Dashboard
 DASHBOARD_PORT=5000
