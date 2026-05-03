@@ -25,8 +25,8 @@ POLYGON_AMOY_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/YOUR_API_KEY
 PRIVATE_KEY=0xb25939caa5515f9ded22aedf08ce0ec6778ac2ef5e11cadef24bff24f017fed6
 
 # Contract addresses (after deployment)
-CIRCUIT_BREAKER_ADDRESS=0x...
-MOCK_REAL_T_ADDRESS=0x...
+CIRCUIT_BREAKER_ADDRESS=0x770342c49e1F4710E0Eed605dCe41e7f3F7600Eb
+MOCK_REAL_T_ADDRESS=0xb91C1aC1Bbc9D7df85A858BCb7705D7edd8fEc82
 
 # Oracle configuration
 ORACLE_ADDRESS=0x49A1ba2Bde61B96685385F4Ce012586A518c3E70
@@ -63,7 +63,7 @@ FETCHER_POLL_MS=300000
 
 2. Test transfer blocking:
    ```bash
-   cast send <mock_address> "transfer(address,uint256)" <recipient> 1000000000000000000 --private-key $PRIVATE_KEY --rpc-url $POLYGON_AMOY_RPC_URL
+   cast send 0xb91C1aC1Bbc9D7df85A858BCb7705D7edd8fEc82 "transfer(address,uint256)" 0xCc3a353655a2A93fd4d00952bf23D37eb449e465 100000000000000000 --private-key $PRIVATE_KEY --rpc-url $POLYGON_AMOY_RPC_URL
    # Should revert: "MockRealT: ghost-risk detected"
    ```
 
