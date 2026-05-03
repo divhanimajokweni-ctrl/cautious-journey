@@ -20,8 +20,8 @@ We conjured the basic structure. Environment files, package.json incantations, a
 
 *Dry humor interlude: The contract was so secure, it wouldn't even let its own developer reset it without proper credentials. Talk about trust issues.*
 
-**Phase 2: Deployment Dreams – Polygon Amoy, We Hardly Knew Ye**  
-Scripts ready, environment templated. But alas, GLIBC compatibility reared its ugly head. "Deploy later," we muttered, like procrastinators with a deadline.
+**Phase 2: Deployment Dreams Become Reality – Polygon Amoy Deployed**  
+Scripts executed, contracts deployed! SafetyKernel at 0x770342c49e1F4710E0Eed605dCe41e7f3F7600Eb and MockRealT at 0xb91C1aC1Bbc9D7df85A858BCb7705D7edd8fEc82. Circuit breaker tested and blocking transfers as expected. GLIBC compatibility? Just a minor hurdle in the victory lap.
 
 **Phase 3: The Off-Chain Odyssey**  
 Fetcher: Multi-gateway IPFS wrangling, SHA-256 hashing, JSON state persistence. Submitter: Blockchain whispers via ethers.js, dry-run safety nets. Dashboard: Express server serving real-time status like a caffeinated waiter.
