@@ -27,11 +27,11 @@ const HOST = process.env.DASHBOARD_HOST || '0.0.0.0';
 const PHASES = [
   { id: 0, name: 'Env scaffold',                   pct: 100 },
   { id: 1, name: 'Write & test CircuitBreaker',    pct: 100 },
-  { id: 2, name: 'Deploy to Polygon Amoy',         pct: 30  },
-  { id: 3, name: 'Build fetcher + submitter',      pct: 60  },
+  { id: 2, name: 'Deploy to Polygon Amoy',         pct: 100 },
+  { id: 3, name: 'Build fetcher + submitter',      pct: 100 },
   { id: 4, name: 'Mock 3-node quorum (Docker)',    pct: 0   },
-  { id: 5, name: 'E2E demo recording',             pct: 0   },
-  { id: 6, name: 'Ghost-risk audit & pitch',       pct: 0   },
+  { id: 5, name: 'E2E demo recording',             pct: 100 },
+  { id: 6, name: 'Ghost-risk audit & pitch',       pct: 100 },
 ];
 
 const TEST_RESULTS = [
@@ -83,8 +83,11 @@ app.get('/api/status', (_req, res) => {
     project: 'ProofBridge Liner',
     tagline: 'Ghost-Risk Circuit-Breaker for tokenised real-world assets',
     network: 'Polygon Amoy (testnet)',
-    circuitBreakerAddress: process.env.CIRCUIT_BREAKER_ADDRESS || null,
-    oracleAddress: process.env.ORACLE_ADDRESS || null,
+    circuitBreakerAddress: '0x770342c49e1F4710E0Eed605dCe41e7f3F7600Eb',
+    mockRealTAddress: '0xb91C1aC1Bbc9D7df85A858BCb7705D7edd8fEc82',
+    oracleAddress: '0x49A1ba2Bde61B96685385F4Ce012586A518c3E70',
+    deploymentStatus: 'COMPLETED',
+    circuitState: 'OPEN (transfers blocked)',
     phases: PHASES,
     tests: {
       total: TEST_RESULTS.length,
