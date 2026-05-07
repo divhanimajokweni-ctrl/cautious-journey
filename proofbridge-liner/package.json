@@ -1,0 +1,19 @@
+{
+  "name": "proofbridge-liner",
+  "version": "1.1.1",
+  "description": "ProofBridge Liner v1.1.1 - Safety Kernel for Property Deeds with Bayesian Scoring and Regulatory Compliance",
+  "main": "prover/main.js",
+  "scripts": {
+    "demo": "node demo-simulation.js",
+    "red-team": "node scripts/simulate-red-team-attack.js",
+    "test": "node test/stratified-simulation.test.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "@sendgrid/mail": "^8.1.0",
+    "dotenv": "^16.3.1"
+  },
+  "keywords": ["bayesian", "safety-kernel", "regulatory-compliance", "south-africa"],
+  "author": "ProofBridge",
+  "license": "MIT"
+}
