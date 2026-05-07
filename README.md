@@ -109,4 +109,12 @@ For access to the Regulatory Assurance Pack or institutional partnership discuss
 
 ---
 
+---
+
+## 📚 Documentation
+
+- **[Evidence of Operating Effectiveness](./docs/EVIDENCE_OF_OPERATING_EFFECTIVENESS.md)**: Red team simulation results demonstrating regulatory compliance
+- **[Regulatory Assurance Pack](./docs/REGULATORY_ASSURANCE_PACK.md)**: Institutional compliance documentation
+- **[Institutional Deck](./docs/INSTITUTIONAL_DECK.md)**: Executive summary for bank leadership
+
 **License:** [to be added]
