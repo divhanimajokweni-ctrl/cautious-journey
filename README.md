@@ -113,6 +113,7 @@ For access to the Regulatory Assurance Pack or institutional partnership discuss
 
 ## 📚 Documentation
 
+- **[Developer Onboarding Guide](./docs/DEVELOPER_ONBOARDING_GUIDE.md)**: 14-day sandbox integration guide for technical teams
 - **[Evidence of Operating Effectiveness](./docs/EVIDENCE_OF_OPERATING_EFFECTIVENESS.md)**: Red team simulation results demonstrating regulatory compliance
 - **[Regulatory Assurance Pack](./docs/REGULATORY_ASSURANCE_PACK.md)**: Institutional compliance documentation
 - **[Institutional Deck](./docs/INSTITUTIONAL_DECK.md)**: Executive summary for bank leadership
