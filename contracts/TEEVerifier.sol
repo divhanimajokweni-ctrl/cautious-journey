@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+<<<<<<< HEAD
 /// @title  TEEVerifier
 /// @notice Input-admissibility layer for the proofBRIDGE-liner.
 /// @dev    Only data signed by the registered enclave key may influence the
@@ -106,3 +107,25 @@ contract TEEVerifier {
 interface IAssetRegistryKernel {
     function check(bytes32 assetId, uint256 posterior) external;
 }
+=======
+import "./SafetyKernel.sol";
+
+contract TEEVerifier {
+    SafetyKernel public kernel;
+    bytes32 public expectedPCRHash;
+
+    constructor(address _kernel, bytes32 _expectedHash) {
+        kernel = SafetyKernel(_kernel);
+        expectedPCRHash = _expectedHash;
+    }
+
+    function verify(bytes calldata attestation) external {
+        bytes32 hash = keccak256(attestation);
+        if (hash != expectedPCRHash) {
+            // Force halt: call check with posteriorScaled = 0, threshold = 8000
+            kernel.check(0, 8000);
+        }
+        // If match, do nothing, allow normal check
+    }
+}
+>>>>>>> 0e846a22630dd7d830ec1009e45376be9f384fd8
