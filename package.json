@@ -4,13 +4,19 @@
   "description": "Hardened Safety Kernel for Property Collateral",
   "main": "prover/main.js",
   "scripts": {
-    "start": "cd dashboard && npm start",
-    "dashboard": "cd dashboard && npm start",
-    "calibrate": "node test/recalibrate-thresholds.js",
-    "test": "mocha test/*.test.js",
-    "install:all": "cd dashboard && npm install"
+    "start": "node dashboard/server.js",
+    "dev": "node dashboard/server.js",
+    "fetch": "node prover/fetcher.js",
+    "fetch:watch": "node prover/fetcher.js --watch",
+    "submit": "node prover/submitter.js",
+    "submit:dry": "node prover/submitter.js --dry-run",
+    "audit": "node prover/auditor.js",
+    "broadcast": "node prover/broadcaster.js",
+    "broadcast:dry": "node prover/broadcaster.js --dry-run",
+    "test:contracts": "/home/runner/workspace/.config/.foundry/bin/forge test -vvv",
+    "deploy:amoy": "/home/runner/workspace/.config/.foundry/bin/forge script script/DeployCircuitBreaker.s.sol --rpc-url $POLYGON_AMOY_RPC_URL --broadcast",
+    "precommit": "node scripts/check-secrets.js"
   },
-  "postinstall": "cd dashboard && npm install || true",
   "dependencies": {
     "@huggingface/inference": "^4.13.15",
     "@metamask/sdk": "^0.34.0",
