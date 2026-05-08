@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@huggingface/inference": "^4.13.15",
-    "@kilocode/cli": "7.2.40",
     "@metamask/sdk": "^0.34.0",
     "axios": "^1.15.2",
     "ethers": "^6.16.0",
@@ -43,6 +42,7 @@
     "glob": "^11.0.0"
   },
   "devDependencies": {
+    "@kilocode/cli": "^7.2.40",
     "husky": "^9.1.7"
   }
 }
