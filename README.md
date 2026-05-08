@@ -65,10 +65,11 @@ proofbridge-liner/
 
 ## 🛡️ Security
 
-- **TEE Attestation**: Hardware-signed logs prevent tampering (PCR0 binding)
+- **TEE Attestation**: Hardware-signed logs prevent tampering
 - **PII Sanitization**: All audit trails use hashed identifiers
 - **Gamma Pivot**: Automatic escalation to 50:1 threshold on hardware failure
 - **Emergency Fallback**: Stdout streaming for SIEM ingestion
+- **Dependency Audit**: Mocha v11.3.0 - Zero high-severity vulnerabilities (FSCA JS2 compliant)
 - **Forensic Chains**: Immutable evidence bundles for regulatory investigations
 
 ## 📚 Documentation
@@ -81,6 +82,7 @@ proofbridge-liner/
 - [Technical FAQ](docs/TECHNICAL_FAQ.md) - Common questions
 - [Ready State Manifest](READY_STATE_MANIFEST.md) - Current deployment readiness
 - [Forensic Preservation Skill](.claude/skills/forensic-preservation.md) - SAPS evidence handling
+- [Security Attestation](security-attestation.md) - Dependency audit and vulnerability resolution
 - [Ready State Manifest](READY_STATE_MANIFEST.md) - Deployment readiness status
 - [Forensic Preservation Skill](.claude/skills/forensic-preservation.md) - Agentic skill for SAPS evidence
 
