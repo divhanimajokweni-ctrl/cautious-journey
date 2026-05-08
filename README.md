@@ -69,7 +69,7 @@ proofbridge-liner/
 - **PII Sanitization**: All audit trails use hashed identifiers
 - **Gamma Pivot**: Automatic escalation to 50:1 threshold on hardware failure
 - **Emergency Fallback**: Stdout streaming for SIEM ingestion
-- **Dependency Audit**: Mocha v11.3.0 - Zero high-severity vulnerabilities (FSCA JS2 compliant)
+- **Dependency Audit**: Mocha v11.3.0 + NPM Overrides - Zero vulnerabilities (FSCA JS2 compliant)
 - **Forensic Chains**: Immutable evidence bundles for regulatory investigations
 
 ## 📚 Documentation

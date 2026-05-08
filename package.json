@@ -37,6 +37,11 @@
   "engines": {
     "node": ">=20"
   },
+  "overrides": {
+    "serialize-javascript": "^7.0.5",
+    "diff": "^8.0.3",
+    "glob": "^11.0.0"
+  },
   "devDependencies": {
     "husky": "^9.1.7"
   }
