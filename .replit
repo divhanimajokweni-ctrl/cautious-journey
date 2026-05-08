@@ -5,6 +5,7 @@ stack = "BEST_EFFORT_FALLBACK"
 
 [nix]
 channel = "stable-25_05"
+packages = ["run"]
 
 [workflows]
 runButton = "Project"
@@ -33,6 +34,14 @@ outputType = "webview"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
+localPort = 8545
+externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"
