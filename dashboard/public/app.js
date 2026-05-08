@@ -6,6 +6,16 @@
     return addr.length > 14 ? addr.slice(0, 8) + '…' + addr.slice(-6) : addr;
   }
 
+  function fmtUptime(seconds) {
+    if (!seconds && seconds !== 0) return '—';
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    if (h > 0) return `${h}h ${m}m`;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+  }
+
   function renderPhases(phases) {
     const root = $('#phases');
     root.innerHTML = '';
@@ -13,9 +23,9 @@
       const row = document.createElement('div');
       row.className = 'phase';
       row.innerHTML = `
-        <div class="num">${p.id}</div>
+        <div class="num">${String(p.id).padStart(2,'0')}</div>
         <div>
-          <div class="lbl">${p.name}<small>Phase ${p.id}</small></div>
+          <div class="lbl">${p.name}<small class="mono">PHASE-${p.id}</small></div>
           <div class="bar"><span style="width:${p.pct}%"></span></div>
         </div>
         <div class="pct">${p.pct}%</div>`;
@@ -31,7 +41,10 @@
     tests.results.forEach((t) => {
       const row = document.createElement('div');
       row.className = 'test';
-      row.innerHTML = `<span class="dot"></span><span class="mono">${t.name}</span><span class="gas">${t.gas.toLocaleString()} gas</span>`;
+      row.innerHTML = `
+        <span class="dot"></span>
+        <span class="mono">${t.name}</span>
+        <span class="gas">${t.gas.toLocaleString()} gas</span>`;
       root.appendChild(row);
     });
   }
@@ -48,7 +61,7 @@
         : layer.status === 'deployed-pending' ? 'warn' : 'muted';
       const theoremHtml = layer.theorems
         ? `<div class="theorems">${layer.theorems.map(t =>
-            `<span class="theorem mono">${t}</span>`).join('')}</div>`
+            `<span class="theorem">${t}</span>`).join('')}</div>`
         : '';
       div.innerHTML = `
         <div class="arch-layer-header">
@@ -56,7 +69,7 @@
           <span class="tag ${statusClass}">${layer.status}</span>
         </div>
         <p class="hint" style="margin:4px 0 6px">${layer.description}</p>
-        <span class="mono hint">${layer.artifact}</span>
+        <span class="mono dim" style="font-size:0.72rem">${layer.artifact}</span>
         ${theoremHtml}`;
       layerRoot.appendChild(div);
     });
@@ -72,7 +85,7 @@
           <span class="ver-name">${v.name}</span>
           <span class="tag ${statusClass}">${v.status}</span>
         </div>
-        <p class="hint" style="margin:2px 0 0">${v.note}</p>`;
+        <p class="hint" style="margin:3px 0 0">${v.note}</p>`;
       verRoot.appendChild(div);
     });
   }
@@ -85,7 +98,7 @@
     const tbody = $('#assets');
     tbody.innerHTML = '';
     if (!assets.length) {
-      tbody.innerHTML = '<tr><td colspan="4" class="hint">No assets configured.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" class="hint mono" style="padding:16px 10px">No assets configured.</td></tr>';
       return;
     }
     assets.forEach((a) => {
@@ -93,7 +106,7 @@
       const status = r ? r.status : 'unknown';
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${a.label || '—'}<br><span class="mono hint">${shorten(a.assetId)}</span></td>
+        <td>${a.label || '—'}<br><span class="mono dim" style="font-size:0.7rem">${shorten(a.assetId)}</span></td>
         <td class="mono">${shorten(a.ipfsCid)}</td>
         <td class="mono">${shorten(a.expectedHash)}</td>
         <td><span class="tag ${status}">${status}</span></td>`;
@@ -105,12 +118,14 @@
     const root = $('#signers');
     root.innerHTML = '';
     if (!nodes.length) {
-      root.innerHTML = '<li class="hint">No signer nodes configured.</li>';
+      root.innerHTML = '<li class="hint mono" style="list-style:none;padding:4px 0">No signer nodes configured.</li>';
       return;
     }
     nodes.forEach((n) => {
       const li = document.createElement('li');
-      li.innerHTML = `<span><strong>${n.id}</strong> · <span class="mono hint">${shorten(n.pubkey)}</span></span><span class="endpoint mono">${n.endpoint}</span>`;
+      li.innerHTML = `
+        <span><strong>${n.id}</strong> · <span class="mono dim">${shorten(n.pubkey)}</span></span>
+        <span class="endpoint">${n.endpoint}</span>`;
       root.appendChild(li);
     });
   }
@@ -118,39 +133,52 @@
   function renderProver(state) {
     const root = $('#proverState');
     if (!state) {
-      root.innerHTML = '<p class="hint">Run <code>node prover/fetcher.js</code> to populate.</p>';
+      root.innerHTML = '<p class="hint mono">Run <code>node prover/fetcher.js</code> to populate.</p>';
       return;
     }
     root.innerHTML = `
       <div class="kpi">
-        <div><span class="kpi-num">${state.summary.fresh}</span><span class="kpi-lbl">fresh</span></div>
-        <div><span class="kpi-num">${state.summary.mismatch}</span><span class="kpi-lbl">mismatch</span></div>
-        <div><span class="kpi-num">${state.summary.unreachable}</span><span class="kpi-lbl">unreachable</span></div>
+        <div><span class="kpi-num gold">${state.summary.fresh}</span><span class="kpi-lbl">FRESH</span></div>
+        <div><span class="kpi-num" style="color:var(--red)">${state.summary.mismatch}</span><span class="kpi-lbl">MISMATCH</span></div>
+        <div><span class="kpi-num" style="color:var(--gold)">${state.summary.unreachable}</span><span class="kpi-lbl">UNREACH</span></div>
       </div>
       <pre>${JSON.stringify(state, null, 2)}</pre>`;
+  }
+
+  async function loadHealth() {
+    try {
+      const res = await fetch('/api/health');
+      const data = await res.json();
+      const uptimeEl = $('#uptime');
+      if (uptimeEl) uptimeEl.textContent = fmtUptime(data.uptime);
+    } catch (_) {}
   }
 
   async function load() {
     const res = await fetch('/api/status');
     const data = await res.json();
-    $('#tagline').textContent = data.tagline;
-    $('#network').textContent = data.network;
-    $('#serverTime').textContent = new Date(data.serverTime).toLocaleString();
-    $('#cbAddress').textContent = data.circuitBreakerAddress || '— not yet deployed —';
+
+    $('#network').textContent   = data.network || '—';
+    $('#serverTime').textContent = new Date(data.serverTime).toLocaleTimeString();
+
+    $('#cbAddress').textContent     = data.circuitBreakerAddress || '— not deployed —';
     $('#oracleAddress').textContent = data.oracleAddress || '—';
-    $('#arAddress').textContent = data.assetRegistryAddress || '— not yet deployed —';
-    $('#teeAddress').textContent = data.teeVerifierAddress || '— not yet deployed —';
+    $('#arAddress').textContent     = data.assetRegistryAddress || '— not deployed —';
+    $('#teeAddress').textContent    = data.teeVerifierAddress || '— not deployed —';
     $('#enclaveAddress').textContent = data.enclaveAddress || '—';
+
     renderPhases(data.phases);
     renderTests(data.tests);
     renderArchitecture(data.architecture);
     renderAssets(data.assets, data.proverState);
     renderSigners(data.signerNodes);
     renderProver(data.proverState);
+
+    loadHealth();
   }
 
   load().catch((err) => {
-    document.body.innerHTML += `<pre style="color:#ff6b6b;padding:20px">${err.message}</pre>`;
+    document.body.innerHTML += `<pre style="color:var(--red,#ED1C24);padding:20px;font-family:monospace">${err.message}</pre>`;
   });
   setInterval(load, 15000);
 })();
