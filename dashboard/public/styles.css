@@ -574,3 +574,55 @@ footer::before {
   width: 3px;
   background: linear-gradient(180deg, var(--gold), transparent);
 }
+
+/* ══════════════════════════════════════════════════════
+   GITHUB AUTH CARD
+   ══════════════════════════════════════════════════════ */
+.gh-auth-card { border-left-color: var(--gold); }
+.gh-auth {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.gh-status {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.gh-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: var(--void-4);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+}
+.gh-avatar {
+  width: 48px; height: 48px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.device-code-box {
+  padding: 14px;
+  background: var(--void-4);
+  border: 1px dashed var(--gold);
+  border-radius: 4px;
+  text-align: center;
+  max-width: 480px;
+}
+.device-code-box a {
+  color: var(--gold);
+}
+.user-code {
+  display: inline-block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  margin: 10px 0;
+  background: var(--void);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+}

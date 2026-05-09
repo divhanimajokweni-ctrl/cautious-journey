@@ -45,22 +45,29 @@
         </div>
       </div>
 
-      <div class="telemetry">
-        <div class="telem-block">
-          <div class="telem-lbl mono">UPTIME</div>
-          <div class="telem-val gold mono" id="uptime">—</div>
-        </div>
-        <div class="telem-sep"></div>
-        <div class="telem-block">
-          <div class="telem-lbl mono">NETWORK</div>
-          <div class="telem-val mono" id="network">—</div>
-        </div>
-        <div class="telem-sep"></div>
-        <div class="telem-block">
-          <div class="telem-lbl mono">TIME</div>
-          <div class="telem-val mono" id="serverTime">—</div>
-        </div>
-      </div>
+       <div class="telemetry">
+         <div class="telem-block">
+           <div class="telem-lbl mono">UPTIME</div>
+           <div class="telem-val gold mono" id="uptime">—</div>
+         </div>
+         <div class="telem-sep"></div>
+         <div class="telem-block">
+           <div class="telem-lbl mono">NETWORK</div>
+           <div class="telem-val mono" id="network">—</div>
+         </div>
+         <div class="telem-sep"></div>
+         <div class="telem-block">
+           <div class="telem-lbl mono">TIME</div>
+           <div class="telem-val mono" id="serverTime">—</div>
+         </div>
+         <div class="telem-sep"></div>
+         <div class="telem-block">
+           <div class="telem-lbl mono">GH AUTH</div>
+           <div class="telem-val" id="ghAuthStatus">
+             <span class="tag muted">NOT CHECKED</span>
+           </div>
+         </div>
+       </div>
     </header>
 
     <!-- ═══ MAIN ═══ -->
@@ -70,6 +77,32 @@
       <section class="card">
         <h2><span class="section-num">01</span> Sprint Phases</h2>
         <div id="phases" class="phases"></div>
+      </section>
+
+      <!-- GitHub Auth -->
+      <section class="card gh-auth-card">
+        <h2><span class="section-num">00</span> GitHub Authentication</h2>
+        <div id="ghAuth" class="gh-auth">
+          <div class="gh-user" id="ghUser" style="display:none">
+            <img id="ghAvatar" src="" alt="" class="gh-avatar"/>
+            <div>
+              <strong id="ghLogin"></strong>
+              <div id="ghName" class="mono dim"></div>
+              <div id="ghEmail" class="mono dim"></div>
+              <div id="ghExpires" class="mono" style="color:var(--gold)"></div>
+            </div>
+          </div>
+          <div class="gh-status" id="ghStatusMsg">
+            <p>Authentication required to access GitHub repositories and CI integration.</p>
+            <button id="btnDeviceLogin" class="btn primary">Start Device Flow Login</button>
+            <div id="deviceCodeBox" class="device-code-box" style="display:none">
+              <p>Go to <a id="deviceUri" href="#" target="_blank">github.com/login/device</a> and enter code:</p>
+              <code id="deviceUserCode" class="user-code"></code>
+              <p class="hint mono" id="deviceWaitMsg">Waiting for authorization…</p>
+              <button id="btnCancelDevice" class="btn" style="margin-top:8px">Cancel</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Tests + Contract -->
