@@ -177,8 +177,121 @@
     loadHealth();
   }
 
-  load().catch((err) => {
-    document.body.innerHTML += `<pre style="color:var(--red,#ED1C24);padding:20px;font-family:monospace">${err.message}</pre>`;
-  });
-  setInterval(load, 15000);
+   load().catch((err) => {
+     document.body.innerHTML += `<pre style="color:var(--red,#ED1C24);padding:20px;font-family:monospace">${err.message}</pre>`;
+   });
+   setInterval(load, 15000);
+
+  // ─── GitHub OAuth UI handling ─────────────────────────────────────
+  async function loadGhAuthStatus() {
+    try {
+      const res = await fetch('/oauth/status');
+      const data = await res.json();
+      const $authCard = $('#ghAuth');
+      const $user = $('#ghUser');
+      const $statusMsg = $('#ghStatusMsg');
+      const $loginBtn = $('#btnDeviceLogin');
+      const $ghLogin = $('#ghLogin');
+      const $ghName = $('#ghName');
+      const $ghEmail = $('#ghEmail');
+      const $ghAvatar = $('#ghAvatar');
+      const $ghExpires = $('#ghExpires');
+      const $headerStatus = $('#ghAuthStatus');
+
+      if (data.authenticated) {
+        $user.style.display = 'flex';
+        $statusMsg.style.display = 'none';
+        $ghLogin.textContent = data.user.login;
+        $ghName.textContent = data.name || '';
+        $ghEmail.textContent = data.email || '';
+        $ghExpires.textContent = `Expires in ${Math.floor(data.expires_in / 60)}m ${data.expires_in % 60}s`;
+        $ghAvatar.src = `https://github.com/${data.user.login}.png`;
+        $ghAvatar.alt = data.user.login;
+        $headerStatus.innerHTML = `<span class="tag ok">${data.user.login}</span>`;
+      } else {
+        $user.style.display = 'none';
+        $statusMsg.style.display = 'block';
+        $loginBtn.style.display = 'inline-block';
+        $headerStatus.innerHTML = `<span class="tag muted">NOT AUTH</span>`;
+      }
+    } catch (err) {
+      console.error('Failed to load GitHub auth status:', err);
+    }
+  }
+
+  async function startDeviceFlow() {
+    const $loginBtn = $('#btnDeviceLogin');
+    const $codeBox = $('#deviceCodeBox');
+    const $userCode = $('#deviceUserCode');
+    const $uri = $('#deviceUri');
+    const $wait = $('#deviceWaitMsg');
+
+    $loginBtn.disabled = true;
+    $loginBtn.textContent = 'Starting…';
+
+    try {
+      const res = await fetch('/oauth/device/code', { method: 'POST' });
+      const data = await res.json();
+
+      if (data.error) throw new Error(data.error);
+
+      $codeBox.style.display = 'block';
+      $userCode.textContent = data.user_code;
+      $uri.href = data.verification_uri;
+      $wait.textContent = `Polling every ${data.interval}s… waiting for you to authorize.`;
+      $wait.className = 'hint mono';
+
+      pollForToken(data.device_code, data.interval);
+    } catch (err) {
+      alert('Device flow error: ' + err.message);
+      $loginBtn.disabled = false;
+      $loginBtn.textContent = 'Start Device Flow Login';
+    }
+  }
+
+  async function pollForToken(deviceCode, interval) {
+    const $wait = $('#deviceWaitMsg');
+    while (true) {
+      try {
+        const res = await fetch(`/oauth/device/wait?device_code=${encodeURIComponent(deviceCode)}`);
+        const data = await res.json();
+
+        if (data.status === 'authorized') {
+          $wait.textContent = 'Authorized! Refreshing…';
+          setTimeout(() => window.location.reload(), 500);
+          return;
+        }
+
+        if (data.error) {
+          throw new Error(data.error + (data.error_description ? ': ' + data.error_description : ''));
+        }
+
+        if (data.slow_down) {
+          interval = data.interval;
+        }
+
+        await new Promise(r => setTimeout(r, (data.slow_down ? interval * 1000 : interval * 1000)));
+      } catch (err) {
+        alert('Polling error: ' + err.message);
+        cancelDeviceFlow();
+        return;
+      }
+    }
+  }
+
+  function cancelDeviceFlow() {
+    const $loginBtn = $('#btnDeviceLogin');
+    const $codeBox = $('#deviceCodeBox');
+    $loginBtn.disabled = false;
+    $loginBtn.textContent = 'Start Device Flow Login';
+    $codeBox.style.display = 'none';
+  }
+
+  document.getElementById('btnDeviceLogin').addEventListener('click', startDeviceFlow);
+  document.getElementById('btnCancelDevice').addEventListener('click', cancelDeviceFlow);
+
+  // Initial load
+  loadGhAuthStatus();
+  setInterval(loadGhAuthStatus, 30000); // refresh every 30s
+
 })();
