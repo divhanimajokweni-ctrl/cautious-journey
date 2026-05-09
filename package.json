@@ -14,7 +14,10 @@
     "broadcast": "node prover/broadcaster.js",
     "broadcast:dry": "node prover/broadcaster.js --dry-run",
     "test:contracts": "/home/runner/workspace/.config/.foundry/bin/forge test -vvv",
-    "deploy:amoy": "/home/runner/workspace/.config/.foundry/bin/forge script script/DeployCircuitBreaker.s.sol --rpc-url $POLYGON_AMOY_RPC_URL --broadcast",
+    "deploy": "node scripts/deploy.js --target full",
+    "deploy:full": "node scripts/deploy.js --target full",
+    "deploy:cb": "node scripts/deploy.js --target cb",
+    "deploy:simulate": "node scripts/deploy.js --target full --dry-run",
     "precommit": "node scripts/check-secrets.js"
   },
   "dependencies": {
