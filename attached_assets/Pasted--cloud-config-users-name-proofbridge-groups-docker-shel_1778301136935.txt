@@ -1,0 +1,63 @@
+#cloud-config
+
+users:
+  - name: proofbridge
+    groups: docker
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINlukmyly6ZKz2O1E353xir3uwXaAEvzHvK4fg/ewPmX mandela\s217665446@BIRDSC-019
+
+runcmd:
+  # 1. Ensure Docker is running (preinstalled on Quick Start image)
+  - systemctl enable docker
+  - systemctl start docker
+
+  # 2. Clone repo into app user's home
+  - su - proofbridge -c "git clone https://github.com/divhanimajokweni-ctrl/proofbridge-liner.git /home/proofbridge/proofbridge-liner || echo 'Clone failed — upload manually'"
+  - chown -R proofbridge:proofbridge /home/proofbridge/proofbridge-liner
+
+  # 3. Build Docker image from repo's Dockerfile (uses ROCm base eventually)
+  - su - proofbridge -c "cd /home/proofbridge/proofbridge-liner && docker build -t proofbridge-liner:latest ."
+
+  # 4. Create systemd service to run container
+  - |
+    cat > /etc/systemd/system/proofbridge.service << 'EOF'
+    [Unit]
+    Description=ProofBridge Liner TEE Container
+    After=docker.service network.target
+    Requires=docker.service
+
+    [Service]
+    Restart=always
+    ExecStartPre=-/usr/bin/docker rm -f proofbridge-liner
+    ExecStart=/usr/bin/docker run --rm \
+      --name proofbridge-liner \
+      --network host \
+      -e HF_TOKEN=${hf_token} \
+      -e POLYGON_AMOY_RPC_URL=${polygon_rpc} \
+      -e TEE_SECRET=${tee_secret} \
+      -e HF_OAUTH_CLIENT_ID=${hf_oauth_client_id} \
+      -e HF_OAUTH_CLIENT_SECRET=${hf_oauth_client_secret} \
+      -e DASHBOARD_PORT=5000 \
+      proofbridge-liner:latest
+    ExecStop=/usr/bin/docker stop proofbridge-liner
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+  # 5. Firewall — allow HTTP + SSH
+  - ufw allow 22/tcp
+  - ufw allow 7860/tcp
+  - ufw --force enable
+
+  # 6. Enable & start
+  - systemctl daemon-reload
+  - systemctl enable proofbridge
+  - systemctl start proofbridge
+
+  # 7. Wait & verify
+  - sleep 5
+  - curl -f http://localhost:7860/health || echo "Health failed — logs: journalctl -u proofbridge -f"
+
+final_message: "ProofBridge Liner deployed. Server: http://<droplet-ip>:7860/health"

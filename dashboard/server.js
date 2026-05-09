@@ -140,6 +140,8 @@ app.get('/api/status', (_req, res) => {
   });
 });
 
+app.get('/health', (_req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
+
 app.get('/api/health', async (req, res) => {
   const gateways = [
     'https://ipfs.io/ipfs/',

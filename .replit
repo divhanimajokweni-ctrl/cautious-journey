@@ -46,12 +46,3 @@ externalPort = 3000
 [deployment]
 deploymentTarget = "autoscale"
 run = ["node", "dashboard/server.js"]
-
-[userenv]
-
-[userenv.shared]
-GAMMA_COST_RATIO = "20"
-TEE_ATTESTATION_REQUIRED = "true"
-GAMMA_FALLBACK = "50"
-CISO_EMAIL = "ciso@standardbank.co.za"
-VERIFIED_SENDER = "security@proofbridge.liner.io"
