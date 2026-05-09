@@ -1,19 +1,16 @@
-# Dockerfile for ProofBridge Liner
-# Uses Foundry with compatible GLIBC for contract testing
+FROM node:20-slim
 
-FROM ghcr.io/foundry-rs/foundry:latest
-
-# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+COPY package.json ./
+RUN npm install --omit=dev
 
-# Install Node.js dependencies
-RUN npm ci
-
-# Copy source code
 COPY . .
 
-# Default command: run tests
-CMD ["npm", "run", "test:contracts"]
+ENV NODE_ENV=production
+ENV DASHBOARD_PORT=7860
+ENV DASHBOARD_HOST=0.0.0.0
+
+EXPOSE 7860
+
+CMD ["node", "dashboard/server.js"]
