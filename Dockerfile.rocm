@@ -1,36 +1,42 @@
 # Dockerfile.rocm
-# ProofBridge Liner — AMD ROCm 7 variant
+# ProofBridge Liner — AMD MI300X / ROCm 7 variant
 #
-# Targets the DigitalOcean "OpenAI GPT OSS ROCm 7" droplet image.
-# Adds Node.js 20 on top of the ROCm base so the prover can call
-# hipcc / rocBLAS / MIOpen for Bayesian scoring on the AMD GPU,
-# while the Express dashboard runs on the same container.
+# Target: DigitalOcean FX-AM7-gpu-mi300x1-192gb (Ubuntu 24.04, ROCm 7 pre-installed)
+#
+# Strategy: lightweight Node.js 20 image — ROCm libraries are mounted
+# from the HOST at /opt/rocm (already installed by the DO marketplace image).
+# This avoids pulling the 20+ GB rocm/dev base image and gives access to
+# the exact ROCm 7 version the host drivers expect.
 #
 # Build:
 #   docker build -f Dockerfile.rocm -t proofbridge-liner:rocm .
 #
-# Run (with GPU):
+# Run (with MI300X):
 #   docker run --rm \
 #     --device /dev/kfd \
 #     --device /dev/dri \
 #     --group-add video \
 #     --group-add render \
+#     -v /opt/rocm:/opt/rocm:ro \
+#     -e ROCM_PATH=/opt/rocm \
 #     -e DASHBOARD_PORT=7860 \
 #     -p 7860:7860 \
 #     proofbridge-liner:rocm
 
-FROM rocm/dev-ubuntu-22.04:6.2-complete
+FROM node:20-bookworm-slim
 
-LABEL org.opencontainers.image.title="ProofBridge Liner (ROCm)"
-LABEL org.opencontainers.image.description="Ghost-Risk Safety Kernel with AMD GPU-accelerated prover"
+LABEL org.opencontainers.image.title="ProofBridge Liner (MI300X)"
+LABEL org.opencontainers.image.description="Ghost-Risk Safety Kernel — AMD Instinct MI300X, 192 GB HBM3"
+LABEL rocm.version="7"
+LABEL amd.gpu="MI300X"
 
-# ── System deps ───────────────────────────────────────────────────
+# ── System deps needed to call into mounted ROCm libs ─────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
+      libstdc++6 \
+      libnuma1 \
+      libelf1 \
       curl \
       ca-certificates \
-      gnupg \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y --no-install-recommends nodejs \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -42,17 +48,42 @@ RUN npm install --omit=dev
 # ── App source ────────────────────────────────────────────────────
 COPY . .
 
-# ── ROCm device check at startup (non-fatal) ─────────────────────
-RUN echo '#!/bin/sh\n\
-rocm-smi --showproductname 2>/dev/null && echo "[rocm] GPU detected" || echo "[rocm] No GPU — CPU fallback"\n\
-exec node dashboard/server.js' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+# ── Entrypoint: probe GPU, then launch dashboard ──────────────────
+COPY <<'EOF' /app/entrypoint.sh
+#!/bin/sh
+set -e
 
+echo "╔═══════════════════════════════════════╗"
+echo "║  ProofBridge Liner — MI300X Kernel    ║"
+echo "╚═══════════════════════════════════════╝"
+
+# Report GPU if ROCm is mounted
+if [ -x "${ROCM_PATH:-/opt/rocm}/bin/rocm-smi" ]; then
+  "${ROCM_PATH}/bin/rocm-smi" --showproductname --showmeminfo vram 2>/dev/null \
+    && echo "[rocm] AMD MI300X detected — 192 GB HBM3 available" \
+    || echo "[rocm] rocm-smi ran but no GPU reported"
+else
+  echo "[rocm] /opt/rocm not mounted — running CPU-only mode"
+fi
+
+exec node dashboard/server.js
+EOF
+RUN chmod +x /app/entrypoint.sh
+
+# ── Environment ───────────────────────────────────────────────────
 ENV NODE_ENV=production
 ENV DASHBOARD_PORT=7860
 ENV DASHBOARD_HOST=0.0.0.0
+
+# ROCm path (populated at runtime by -v /opt/rocm:/opt/rocm:ro)
 ENV ROCM_PATH=/opt/rocm
 ENV PATH="${ROCM_PATH}/bin:${PATH}"
-ENV LD_LIBRARY_PATH="${ROCM_PATH}/lib:${LD_LIBRARY_PATH}"
+ENV LD_LIBRARY_PATH="${ROCM_PATH}/lib:${ROCM_PATH}/lib64:${LD_LIBRARY_PATH:-}"
+
+# MI300X-specific HIP tuning env vars
+ENV HIP_VISIBLE_DEVICES=0
+ENV GPU_MAX_HW_QUEUES=8
+ENV HSA_ENABLE_SDMA=0
 
 EXPOSE 7860
 
