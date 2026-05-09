@@ -1,0 +1,59 @@
+# Dockerfile.rocm
+# ProofBridge Liner — AMD ROCm 7 variant
+#
+# Targets the DigitalOcean "OpenAI GPT OSS ROCm 7" droplet image.
+# Adds Node.js 20 on top of the ROCm base so the prover can call
+# hipcc / rocBLAS / MIOpen for Bayesian scoring on the AMD GPU,
+# while the Express dashboard runs on the same container.
+#
+# Build:
+#   docker build -f Dockerfile.rocm -t proofbridge-liner:rocm .
+#
+# Run (with GPU):
+#   docker run --rm \
+#     --device /dev/kfd \
+#     --device /dev/dri \
+#     --group-add video \
+#     --group-add render \
+#     -e DASHBOARD_PORT=7860 \
+#     -p 7860:7860 \
+#     proofbridge-liner:rocm
+
+FROM rocm/dev-ubuntu-22.04:6.2-complete
+
+LABEL org.opencontainers.image.title="ProofBridge Liner (ROCm)"
+LABEL org.opencontainers.image.description="Ghost-Risk Safety Kernel with AMD GPU-accelerated prover"
+
+# ── System deps ───────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      curl \
+      ca-certificates \
+      gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# ── Node deps (production only) ───────────────────────────────────
+COPY package.json ./
+RUN npm install --omit=dev
+
+# ── App source ────────────────────────────────────────────────────
+COPY . .
+
+# ── ROCm device check at startup (non-fatal) ─────────────────────
+RUN echo '#!/bin/sh\n\
+rocm-smi --showproductname 2>/dev/null && echo "[rocm] GPU detected" || echo "[rocm] No GPU — CPU fallback"\n\
+exec node dashboard/server.js' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+ENV NODE_ENV=production
+ENV DASHBOARD_PORT=7860
+ENV DASHBOARD_HOST=0.0.0.0
+ENV ROCM_PATH=/opt/rocm
+ENV PATH="${ROCM_PATH}/bin:${PATH}"
+ENV LD_LIBRARY_PATH="${ROCM_PATH}/lib:${LD_LIBRARY_PATH}"
+
+EXPOSE 7860
+
+ENTRYPOINT ["/app/entrypoint.sh"]
