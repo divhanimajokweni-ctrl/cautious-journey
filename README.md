@@ -1,3 +1,23 @@
+---
+title: ProofBridge Liner Safety Kernel
+emoji: ⬡
+colorFrom: gray
+colorTo: yellow
+sdk: docker
+app_port: 7860
+pinned: true
+license: mit
+tags:
+  - amd
+  - blockchain
+  - safety
+  - real-world-assets
+  - formal-verification
+  - tee
+  - solidity
+  - hackathon
+---
+
 # ProofBridge Liner
 
 **Hardened Safety Kernel for Property Collateral Risk in South African Banking**
