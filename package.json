@@ -18,6 +18,9 @@
     "deploy:full": "node scripts/deploy.js --target full",
     "deploy:cb": "node scripts/deploy.js --target cb",
     "deploy:simulate": "node scripts/deploy.js --target full --dry-run",
+    "deploy:droplet": "bash scripts/deploy-droplet.sh",
+    "deploy:droplet:rocm": "bash scripts/deploy-droplet.sh --rocm",
+    "deploy:droplet:dry": "bash scripts/deploy-droplet.sh --dry-run",
     "precommit": "node scripts/check-secrets.js"
   },
   "dependencies": {
