@@ -1,0 +1,75 @@
+#cloud-config
+# ProofBridge Liner — DigitalOcean / Hetzner droplet bootstrap
+# Usage:
+#   doctl compute droplet create proofbridge \
+#     --image docker-20-04 --size s-2vcpu-4gb --region ams3 \
+#     --user-data-file cloud-init.yml
+#
+# Secrets injected via --user-data or droplet env vars:
+#   HF_TOKEN, POLYGON_AMOY_RPC_URL, TEE_SECRET,
+#   HF_OAUTH_CLIENT_ID, HF_OAUTH_CLIENT_SECRET
+
+users:
+  - name: proofbridge
+    groups: docker
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINlukmyly6ZKz2O1E353xir3uwXaAEvzHvK4fg/ewPmX
+
+runcmd:
+  # 1. Ensure Docker is running (pre-installed on Quick Start images)
+  - systemctl enable docker
+  - systemctl start docker
+
+  # 2. Clone repo
+  - su - proofbridge -c "git clone https://github.com/divhanimajokweni-ctrl/proofbridge-liner.git /home/proofbridge/proofbridge-liner || echo 'Clone failed — upload manually'"
+  - chown -R proofbridge:proofbridge /home/proofbridge/proofbridge-liner
+
+  # 3. Build Docker image
+  - su - proofbridge -c "cd /home/proofbridge/proofbridge-liner && docker build -t proofbridge-liner:latest ."
+
+  # 4. Create systemd service
+  - |
+    cat > /etc/systemd/system/proofbridge.service << 'EOF'
+    [Unit]
+    Description=ProofBridge Liner — Safety Kernel Dashboard
+    After=docker.service network.target
+    Requires=docker.service
+
+    [Service]
+    Restart=always
+    RestartSec=5
+    ExecStartPre=-/usr/bin/docker rm -f proofbridge-liner
+    ExecStart=/usr/bin/docker run --rm \
+      --name proofbridge-liner \
+      --network host \
+      -e NODE_ENV=production \
+      -e DASHBOARD_PORT=7860 \
+      -e DASHBOARD_HOST=0.0.0.0 \
+      -e HF_TOKEN=${hf_token} \
+      -e POLYGON_AMOY_RPC_URL=${polygon_rpc} \
+      -e TEE_SECRET=${tee_secret} \
+      -e HF_OAUTH_CLIENT_ID=${hf_oauth_client_id} \
+      -e HF_OAUTH_CLIENT_SECRET=${hf_oauth_client_secret} \
+      proofbridge-liner:latest
+    ExecStop=/usr/bin/docker stop proofbridge-liner
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+  # 5. Firewall — SSH + dashboard port
+  - ufw allow 22/tcp
+  - ufw allow 7860/tcp
+  - ufw --force enable
+
+  # 6. Enable and start
+  - systemctl daemon-reload
+  - systemctl enable proofbridge
+  - systemctl start proofbridge
+
+  # 7. Wait and verify
+  - sleep 8
+  - curl -sf http://localhost:7860/health && echo "Health OK" || echo "Health check failed — run: journalctl -u proofbridge -f"
+
+final_message: "ProofBridge Liner deployed. Dashboard: http://<droplet-ip>:7860  Health: http://<droplet-ip>:7860/health"
