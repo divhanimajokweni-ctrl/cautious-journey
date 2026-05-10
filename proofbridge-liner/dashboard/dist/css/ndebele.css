@@ -1,0 +1,99 @@
+/* Ndebele-inspired geometric overlay pattern 
+   This is a CSS-based pattern that simulates geometric tribal art
+   Used as background texture for the Ubuntu-Bridge design language */
+   
+/* Zig-zag border pattern using conic gradients */
+.ndebele-zigzag {
+  height: 12px;
+  width: 100%;
+  background: conic-gradient(
+    from 0deg at 50% 100%,
+    transparent 0deg,
+    #E2725B 60deg,
+    transparent 120deg,
+    transparent 180deg,
+    #E2725B 240deg,
+    transparent 300deg,
+    transparent 360deg
+  );
+  background-size: 40px 12px;
+  background-repeat: repeat-x;
+}
+
+/* Geometric corner accent */
+.ndebele-corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #FFD700;
+}
+
+.ndebele-corner-tl {
+  top: 0; left: 0;
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 4px;
+}
+
+.ndebele-corner-tr {
+  top: 0; right: 0;
+  border-left: none;
+  border-bottom: none;
+  border-top-right-radius: 4px;
+}
+
+.ndebele-corner-bl {
+  bottom: 0; left: 0;
+  border-right: none;
+  border-top: none;
+  border-bottom-left-radius: 4px;
+}
+
+.ndebele-corner-br {
+  bottom: 0; right: 0;
+  border-left: none;
+  border-top: none;
+  border-bottom-right-radius: 4px;
+}
+
+/* Angular segmentation lines (Ndebele style) */
+.ndebele-divider {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #FFD700 20%,
+    #E2725B 50%,
+    #FFD700 80%,
+    transparent 100%
+  );
+  margin: 1rem 0;
+}
+
+/* Pulse animation for alerts */
+@keyframes ndebele-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.ndebele-pulse {
+  animation: ndebele-pulse 2s ease-in-out infinite;
+}
+
+/* Holographic shader effect */
+.holographic {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.1) 0%,
+    rgba(237, 28, 36, 0.1) 50%,
+    rgba(214, 90, 49, 0.1) 100%
+  );
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
