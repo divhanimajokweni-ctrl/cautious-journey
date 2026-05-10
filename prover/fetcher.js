@@ -24,6 +24,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const notifier = require('./notifier');
 
 const ROOT = path.resolve(__dirname, '..');
 const ASSETS_PATH = path.join(ROOT, 'config', 'assets.json');
@@ -212,6 +213,9 @@ function persistState(results) {
 }
 
 async function runOnce() {
+  // Notify pipeline start
+  try { notifier.fetchStart({ network: 'Polygon Amoy' }); } catch (_) {}
+
   const assets = loadAssets();
   const previous = loadPreviousState();
   const previousResults = previous.results || [];
@@ -240,6 +244,17 @@ async function runOnce() {
     `[fetcher] Phase 4:  consistent=${payload.summary.consistent}  ` +
       `hash_mismatch=${payload.summary.hash_mismatch}  network_unavailable=${payload.summary.network_unavailable}`
   );
+
+  // Notify completion
+  try {
+    notifier.fetchComplete({
+      network: 'Polygon Amoy',
+      count: results.length,
+      successful: results.filter(r => r.status === 'fresh' || r.status === 'mismatch').length,
+      failed: results.filter(r => r.status === 'error' || r.status === 'unreachable' || r.status === 'unreachable_threshold').length,
+    });
+  } catch (_) {}
+
   return payload;
 }
 
@@ -257,6 +272,7 @@ async function watch() {
 if (require.main === module) {
   const watchMode = process.argv.includes('--watch');
   (watchMode ? watch() : runOnce()).catch((err) => {
+    try { notifier.fetchError({ error: err.message, stack: err.stack }); } catch (_) {}
     console.error(err);
     process.exit(1);
   });

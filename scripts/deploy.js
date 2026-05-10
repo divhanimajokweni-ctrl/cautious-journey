@@ -25,6 +25,14 @@ const { execSync, spawnSync } = require('child_process');
 const fs   = require('fs');
 const path = require('path');
 
+// Load notifier if available (optional dependency)
+let notifier;
+try {
+  notifier = require('../prover/notifier');
+} catch (_) {
+  // Notifier not yet available — skip notifications
+}
+
 const ROOT   = path.resolve(__dirname, '..');
 const FORGE  = path.join(ROOT, '.config', '.foundry', 'bin', 'forge');
 
@@ -34,9 +42,9 @@ const SCRIPTS = {
 };
 
 const ADDRESS_PATTERNS = {
-  CircuitBreaker: /CircuitBreaker\s*(?:deployed at)?:\s*(0x[0-9a-fA-F]{40})/,
-  AssetRegistry:  /AssetRegistry\s*:\s*(0x[0-9a-fA-F]{40})/,
-  TEEVerifier:    /TEEVerifier\s*:\s*(0x[0-9a-fA-F]{40})/,
+  CircuitBreaker:  /CircuitBreaker[^\n]*?(0x[0-9a-fA-F]{40})/,
+  AssetRegistry:   /AssetRegistry[^\n]*?(0x[0-9a-fA-F]{40})/,
+  TEEVerifier:     /TEEVerifier[^\n]*?(0x[0-9a-fA-F]{40})/,
 };
 
 // ─── Argument parsing ────────────────────────────────────────────────────────
@@ -71,6 +79,11 @@ function hr() { console.log('\n' + '─'.repeat(62)); }
 step('Pre-flight checks');
 
 if (!fs.existsSync(FORGE)) {
+  if (notifier) notifier.deploymentFailure({
+    target,
+    error: 'forge not found',
+    detail: 'Install Foundry',
+  });
   die(
     `forge not found at ${FORGE}.\n` +
     '  Install Foundry: curl -L https://foundry.paradigm.xyz | bash && foundryup\n' +
@@ -92,8 +105,22 @@ if (missing.length) {
 }
 ok(`All required env vars present (${required.join(', ')})`);
 
-if (!rpcUrl) die('POLYGON_AMOY_RPC_URL is empty.');
+if (!rpcUrl) {
+    if (notifier) notifier.deploymentFailure({ target, error: 'Empty RPC URL' });
+    die('POLYGON_AMOY_RPC_URL is empty.');
+  }
 ok(`RPC: ${rpcUrl.replace(/\/\/.+@/, '//***@')}`);
+
+// Notify deployment start (pre-flight cleared)
+if (notifier) {
+  notifier.deploymentStart({
+    target: target === 'full'
+      ? 'CircuitBreaker + AssetRegistry + TEEVerifier'
+      : 'CircuitBreaker',
+    network: 'Polygon Amoy',
+    rpc: rpcUrl,
+  });
+}
 
 // ─── Build (compile) ─────────────────────────────────────────────────────────
 
@@ -119,6 +146,7 @@ const forgeArgs = [
   'script', scriptPath,
   '--rpc-url', rpcUrl,
   '--private-key', process.env.PRIVATE_KEY,
+  '--gas-price', '30000000000', // 30 gwei minimum for Amoy
   '-vvv',
 ];
 
@@ -165,6 +193,8 @@ for (const [name, pattern] of Object.entries(ADDRESS_PATTERNS)) {
   if (m) {
     deployed[name] = m[1];
     ok(`${name.padEnd(18)} ${m[1]}`);
+  } else {
+    console.log(`[debug] pattern for ${name} did not match. pattern=${pattern}`);
   }
 }
 
@@ -184,9 +214,9 @@ if (!dryRun && Object.keys(deployed).length) {
     '',
   ];
 
-  if (deployed.CircuitBreaker)  envLines.push(`CIRCUIT_BREAKER_ADDRESS=${deployed.CircuitBreaker}`);
-  if (deployed.AssetRegistry)   envLines.push(`ASSET_REGISTRY_ADDRESS=${deployed.AssetRegistry}`);
-  if (deployed.TEEVerifier)     envLines.push(`TEE_VERIFIER_ADDRESS=${deployed.TEEVerifier}`);
+   if (deployed.CircuitBreaker) envLines.push(`CIRCUIT_BREAKER_ADDRESS=${deployed.CircuitBreaker}`);
+   if (deployed.AssetRegistry)   envLines.push(`ASSET_REGISTRY_ADDRESS=${deployed.AssetRegistry}`);
+   if (deployed.TEEVerifier)     envLines.push(`TEE_VERIFIER_ADDRESS=${deployed.TEEVerifier}`);
   if (process.env.ORACLE_ADDRESS)   envLines.push(`ORACLE_ADDRESS=${process.env.ORACLE_ADDRESS}`);
   if (process.env.ENCLAVE_ADDRESS)  envLines.push(`ENCLAVE_ADDRESS=${process.env.ENCLAVE_ADDRESS}`);
   envLines.push('');
@@ -208,6 +238,11 @@ console.log(`  RPC      : ${rpcUrl.replace(/\/\/.+@/, '//***@')}`);
 console.log('');
 
 if (Object.keys(deployed).length) {
+    if (notifier) notifier.deploymentSuccess({
+      target,
+      network: 'Polygon Amoy',
+      deployed,
+    });
   for (const [name, addr] of Object.entries(deployed)) {
     const scanUrl = `https://amoy.polygonscan.com/address/${addr}`;
     console.log(`  ${name.padEnd(18)} ${addr}`);
