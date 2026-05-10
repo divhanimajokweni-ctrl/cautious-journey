@@ -33,16 +33,12 @@ outputType = "webview"
 
 [[ports]]
 localPort = 5000
-externalPort = 80
 
 [[ports]]
 localPort = 8080
-externalPort = 8080
 
 [[ports]]
 localPort = 8545
-externalPort = 3000
-exposeLocalhost = true
 
 [deployment]
 deploymentTarget = "autoscale"
