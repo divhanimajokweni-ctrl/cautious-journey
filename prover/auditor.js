@@ -15,6 +15,7 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 const https = require("node:https");
 const pdfParse = require("pdf-parse");
+const notifier = require("./notifier");
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -253,12 +254,21 @@ async function runAudit() {
     report += `${aiAnalysis}\n\n`;
   }
 
-  // 4. Write report
-  const reportDir = path.dirname(AUDIT_REPORT);
-  if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
-  fs.writeFileSync(AUDIT_REPORT, report, "utf-8");
-  console.log(`[auditor] Report written to ${AUDIT_REPORT}`);
-}
+   // 4. Write report
+   const reportDir = path.dirname(AUDIT_REPORT);
+   if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
+   fs.writeFileSync(AUDIT_REPORT, report, "utf-8");
+   console.log(`[auditor] Report written to ${AUDIT_REPORT}`);
+
+   // Notify completion
+   try {
+     notifier.auditComplete({
+       assetsAnalyzed: proverState.results.length,
+       reportPath: AUDIT_REPORT,
+       aiUsed: !!NVIDIA_API_KEY,
+     });
+   } catch (_) {}
+ }
 
 // ---------------------------------------------------------------------------
 // CLI entry point
@@ -266,6 +276,7 @@ async function runAudit() {
 runAudit()
   .then(() => process.exit(0))
   .catch((err) => {
+    try { notifier.systemError({ error: err.message, component: 'auditor' }); } catch (_) {}
     console.error(`[auditor] Fatal: ${err.message}`);
     process.exit(1);
   });

@@ -18,6 +18,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const { ethers } = require('ethers');
+const notifier = require('./notifier');
 
 const STATE_PATH = path.resolve(__dirname, '..', '.local', 'state', 'prover-state.json');
 const ATTESTATION_PATH = path.resolve(__dirname, '..', '.local', 'state', 'submitter-attestations.json');
@@ -123,6 +124,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Notify start
+  try { notifier.submitStart({}); } catch (_) {}
+
   const state = JSON.parse(fs.readFileSync(STATE_PATH, 'utf8'));
   const actions = planActions(state);
   console.log(`[submitter] planning ${actions.length} on-chain action(s)`);
@@ -140,6 +144,15 @@ async function main() {
   fs.writeFileSync(ATTESTATION_PATH, `${JSON.stringify({ attestations }, null, 2)}\n`);
   console.log(`[submitter] wrote ${attestations.length} SafeKrypte attestation(s) to ${ATTESTATION_PATH}`);
 
+  // Notify completion
+  try {
+    notifier.submitComplete({
+      count: attestations.length,
+      actions: attestations.map(a => a.action.kind),
+      dryRun,
+    });
+  } catch (_) {}
+
   if (dryRun || !process.env.CIRCUIT_BREAKER_ADDRESS) {
     console.log('[submitter] dry-run complete. Set CIRCUIT_BREAKER_ADDRESS to enable broadcast wiring.');
     return;
@@ -150,6 +163,7 @@ async function main() {
 
 if (require.main === module) {
   main().catch((error) => {
+    try { notifier.submitError({ error: error.message, stack: error.stack }); } catch (_) {}
     console.error(`[submitter] ${error.message}`);
     process.exit(1);
   });

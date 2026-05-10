@@ -6,7 +6,6 @@
       "name": "proofbridge-liner",
       "dependencies": {
         "@huggingface/inference": "^4.13.15",
-        "@kilocode/cli": "7.2.40",
         "@metamask/sdk": "^0.34.0",
         "axios": "^1.15.2",
         "ethers": "^6.16.0",
@@ -16,9 +15,15 @@
         "pdf-parse": "^1.1.4",
       },
       "devDependencies": {
+        "@kilocode/cli": "7.2.49",
         "husky": "^9.1.7",
       },
     },
+  },
+  "overrides": {
+    "diff": "^8.0.3",
+    "glob": "^11.0.0",
+    "serialize-javascript": "^7.0.5",
   },
   "packages": {
     "@adraffy/ens-normalize": ["@adraffy/ens-normalize@1.10.1", "", {}, "sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw=="],
@@ -41,31 +46,31 @@
 
     "@huggingface/tasks": ["@huggingface/tasks@0.19.90", "", {}, "sha512-nfV9luJbvwGQ/5oKXkKhCV9h4X7mwh1YaGG3ORd6UMLDSwr1OFSSatcBX0O9OtBtmNK19aGSjbLFqqgcIR6+IA=="],
 
-    "@kilocode/cli": ["@kilocode/cli@7.2.40", "", { "optionalDependencies": { "@kilocode/cli-darwin-arm64": "7.2.40", "@kilocode/cli-darwin-x64": "7.2.40", "@kilocode/cli-darwin-x64-baseline": "7.2.40", "@kilocode/cli-linux-arm64": "7.2.40", "@kilocode/cli-linux-arm64-musl": "7.2.40", "@kilocode/cli-linux-x64": "7.2.40", "@kilocode/cli-linux-x64-baseline": "7.2.40", "@kilocode/cli-linux-x64-baseline-musl": "7.2.40", "@kilocode/cli-linux-x64-musl": "7.2.40", "@kilocode/cli-windows-arm64": "7.2.40", "@kilocode/cli-windows-x64": "7.2.40", "@kilocode/cli-windows-x64-baseline": "7.2.40" }, "bin": { "kilo": "bin/kilo", "kilocode": "bin/kilo" } }, "sha512-M0NKiLErOYWu1cbEcmfhFfGDPdO9mkcWVBChDuORaPE0degB+xCMTQ8rDK12ThcYK8o2rYNVyPtVlpLywd+t0Q=="],
+    "@kilocode/cli": ["@kilocode/cli@7.2.49", "", { "optionalDependencies": { "@kilocode/cli-darwin-arm64": "7.2.49", "@kilocode/cli-darwin-x64": "7.2.49", "@kilocode/cli-darwin-x64-baseline": "7.2.49", "@kilocode/cli-linux-arm64": "7.2.49", "@kilocode/cli-linux-arm64-musl": "7.2.49", "@kilocode/cli-linux-x64": "7.2.49", "@kilocode/cli-linux-x64-baseline": "7.2.49", "@kilocode/cli-linux-x64-baseline-musl": "7.2.49", "@kilocode/cli-linux-x64-musl": "7.2.49", "@kilocode/cli-windows-arm64": "7.2.49", "@kilocode/cli-windows-x64": "7.2.49", "@kilocode/cli-windows-x64-baseline": "7.2.49" }, "bin": { "kilo": "bin/kilo", "kilocode": "bin/kilo" } }, "sha512-P7hlQseEXWfRBnMieO4IbEUReeqFR9Ye2Ck47Uf0oXO5GXfcH+eAWwxCLvBJOhaahICJSBTIvQcDROP/mAxhsg=="],
 
-    "@kilocode/cli-darwin-arm64": ["@kilocode/cli-darwin-arm64@7.2.40", "", { "os": "darwin", "cpu": "arm64" }, "sha512-0Q1H140UaV5SofArlbtSs7Cj++UE4CNHJcyOR/SIbmbdCBRaNoEXX7k8t6eHf8a+GHU5dd35qP8J7zPR7qAcHw=="],
+    "@kilocode/cli-darwin-arm64": ["@kilocode/cli-darwin-arm64@7.2.49", "", { "os": "darwin", "cpu": "arm64" }, "sha512-mr3jmhvGcHfsrgwlsMHLk2im77sbyvHtKFlPuYu1dPm9sLJV1PVrSuaOX2xcrF8dOLiBqgWRxzZDN961od3M/w=="],
 
-    "@kilocode/cli-darwin-x64": ["@kilocode/cli-darwin-x64@7.2.40", "", { "os": "darwin", "cpu": "x64" }, "sha512-CVzUtAaqr7reitwUZ90F8wIXTgAWkOBQzmxukSfN2TXOBpUd/IpBWGqbixKJX9KJXuS36o7jzXDUNydDrafA5w=="],
+    "@kilocode/cli-darwin-x64": ["@kilocode/cli-darwin-x64@7.2.49", "", { "os": "darwin", "cpu": "x64" }, "sha512-GzpMYTfQaUYaQC+vq9F2NHFxbc77DMqs6V79NgpulVOVeH0VBXfV8iroGY92ahPujiXu4dRKEy2m2EGMtZJ1AA=="],
 
-    "@kilocode/cli-darwin-x64-baseline": ["@kilocode/cli-darwin-x64-baseline@7.2.40", "", { "os": "darwin", "cpu": "x64" }, "sha512-YGPZGksxciWJQY/XjBOuBjHfE7+qNceLYRjC/AR+K8wNXY5pRYiNPqf9lrGVAJdsbiWftyFc5NfjvwqXcg64CQ=="],
+    "@kilocode/cli-darwin-x64-baseline": ["@kilocode/cli-darwin-x64-baseline@7.2.49", "", { "os": "darwin", "cpu": "x64" }, "sha512-bH2CQIKyGTOKmdsKfhswMyfFL/UwoqlKsFt9k1xUD9FS0fbygtZe48+C22AOZUQgVnd9wYfNFJMctwsWooYi8g=="],
 
-    "@kilocode/cli-linux-arm64": ["@kilocode/cli-linux-arm64@7.2.40", "", { "os": "linux", "cpu": "arm64" }, "sha512-oD5SjQ6wEzXCJd8eWaYMP4izefDCQWsDMJxGkPxb1eFhmJvW6SC5NtJ8WR0hfjtFXHhiikgOr5QjWSW1zBwypQ=="],
+    "@kilocode/cli-linux-arm64": ["@kilocode/cli-linux-arm64@7.2.49", "", { "os": "linux", "cpu": "arm64" }, "sha512-b10zXoDpK1/zLJ4r3BuUNSPXQ0LuPNylDYMGRCSk4WNc6axai6wMLgbanohRPYtt69DyJBOkmE1UMOmrCx1sJg=="],
 
-    "@kilocode/cli-linux-arm64-musl": ["@kilocode/cli-linux-arm64-musl@7.2.40", "", { "os": "linux", "cpu": "arm64" }, "sha512-S83+I7m7dWTBPirFhV5xStJ8JtkqKj7AniU74ZRDicGDOqK4Rj0S/+fJBCTFYuliJYLsm6UjIBmi7hUR4plTfA=="],
+    "@kilocode/cli-linux-arm64-musl": ["@kilocode/cli-linux-arm64-musl@7.2.49", "", { "os": "linux", "cpu": "arm64" }, "sha512-XKmPRbpCN+GOzMpxd9XA6yiHUvNCNUQaeHqJ3tgEkbijMirb/hmp7HTae3Q2rFoVWpm0XOJso4Lvuh0x4rhgnQ=="],
 
-    "@kilocode/cli-linux-x64": ["@kilocode/cli-linux-x64@7.2.40", "", { "os": "linux", "cpu": "x64" }, "sha512-LclaKHiiWueQKNteErdEm68HtftrT63FyIOPBJxvqlsCeaeTN+CV8DssM8EbIxyVYE7CUzT3hSCFa0FO56b25w=="],
+    "@kilocode/cli-linux-x64": ["@kilocode/cli-linux-x64@7.2.49", "", { "os": "linux", "cpu": "x64" }, "sha512-RjEY0ZtKnxl6worqGx4uxUyYGrruVEIgaubitrr70K+cht7d3VHEcE4ALhLkE+5fYSueqT+tcQB7MgUNAMCG9g=="],
 
-    "@kilocode/cli-linux-x64-baseline": ["@kilocode/cli-linux-x64-baseline@7.2.40", "", { "os": "linux", "cpu": "x64" }, "sha512-sVDrFvX2Gp0Ad/WZcqcRb4M8z+NQyHmI/trAG7bs8NgY0iBeZCa40XAyh1PJDkH5sj9qPYlxYLFD+nzr4OK/DA=="],
+    "@kilocode/cli-linux-x64-baseline": ["@kilocode/cli-linux-x64-baseline@7.2.49", "", { "os": "linux", "cpu": "x64" }, "sha512-PYvPP46VgdCn6ZgMVp025WOk61R0DduSEiEFLuppIWQK9qNuPVEIqhg/7fxyDej0UxOsjbd8oKVi21uBoi21ag=="],
 
-    "@kilocode/cli-linux-x64-baseline-musl": ["@kilocode/cli-linux-x64-baseline-musl@7.2.40", "", { "os": "linux", "cpu": "x64" }, "sha512-DPP4UAO2LRAqMU2DxffPK4ljQf2mi4K5LKsmxR/F8qsCFk2APf+YObdoUtdWmSsR105OfxCIw77vWLwfxZa6Pw=="],
+    "@kilocode/cli-linux-x64-baseline-musl": ["@kilocode/cli-linux-x64-baseline-musl@7.2.49", "", { "os": "linux", "cpu": "x64" }, "sha512-f9sREBzoRrEt278z4GaHg6C3o+Fgvr9SVENZnyKJJYzNsNuixgeaO7qH52gmJnFDi23X5NF6013wTdtNvR+p/w=="],
 
-    "@kilocode/cli-linux-x64-musl": ["@kilocode/cli-linux-x64-musl@7.2.40", "", { "os": "linux", "cpu": "x64" }, "sha512-NCe0pBd1LlROb/Z5CITFPFB1PZFURk92Ll6kzjPZ0zAe0P6gSMDLVSJecrUBRgWXgd+2F1vjxtyzl3CjBC4rsw=="],
+    "@kilocode/cli-linux-x64-musl": ["@kilocode/cli-linux-x64-musl@7.2.49", "", { "os": "linux", "cpu": "x64" }, "sha512-9PGUaA6/IKe57kiHUxEJai+F6HIpnUyUnEDlpx4zSBA/rnCUl+EhKOsDdl3jFVNsnz6nI17IhP6yOOE24B9/Dw=="],
 
-    "@kilocode/cli-windows-arm64": ["@kilocode/cli-windows-arm64@7.2.40", "", { "os": "win32", "cpu": "arm64" }, "sha512-hgkkDwj0vqk7he5Ek+z+wkf3e8IlPPgUOvpsgucxFF8PT9d0fkBZGNvoUXOu6ApqoRcOv6eAeR2am0u84/cQRQ=="],
+    "@kilocode/cli-windows-arm64": ["@kilocode/cli-windows-arm64@7.2.49", "", { "os": "win32", "cpu": "arm64" }, "sha512-awV1rGisRK0BGEhSUC1hwru+f9rhjNqsSpUBZn7uWuNhceR6BiVZRcsYqdkAybheBNIfmYewfo5plK4S23gQVg=="],
 
-    "@kilocode/cli-windows-x64": ["@kilocode/cli-windows-x64@7.2.40", "", { "os": "win32", "cpu": "x64" }, "sha512-P+1pQgwn0vy6kGq8tmwROgSG7E7y7FQ5karZSfdp6QNV/1QczCYKKK1OnTWwkGB6SCUy1KiSz90+QFeVeZAX6w=="],
+    "@kilocode/cli-windows-x64": ["@kilocode/cli-windows-x64@7.2.49", "", { "os": "win32", "cpu": "x64" }, "sha512-Hxgre6JWaZJTGwPgBSnxFNZKm+dvYHRBp3FnSWOKLBHGA0e8itP963uyS33x8EnLRQZJt8UXS969GwhUTHFTvQ=="],
 
-    "@kilocode/cli-windows-x64-baseline": ["@kilocode/cli-windows-x64-baseline@7.2.40", "", { "os": "win32", "cpu": "x64" }, "sha512-e9Z6DGveTUMB2UA67LaM1sckYpnQVQbm3d2/ZeuJqlaD+7tdvFIHWx0AL/zwnFsR1jIBMjBhHRBFKrsH+ola8A=="],
+    "@kilocode/cli-windows-x64-baseline": ["@kilocode/cli-windows-x64-baseline@7.2.49", "", { "os": "win32", "cpu": "x64" }, "sha512-F3PXy4TWownPmHi3fiWuWzlJMFHr/gNZC+OSekApxXeao/CbEDsaEb9e6Y3RkOg07C8SmTbo9AuexyAxRXBv+Q=="],
 
     "@metamask/json-rpc-engine": ["@metamask/json-rpc-engine@8.0.2", "", { "dependencies": { "@metamask/rpc-errors": "^6.2.1", "@metamask/safe-event-emitter": "^3.0.0", "@metamask/utils": "^8.3.0" } }, "sha512-IoQPmql8q7ABLruW7i4EYVHWUbF74yrp63bRuXV5Zf9BQwcn5H9Ww1eLtROYvI1bUXwOiHZ6qT5CWTrDc/t/AA=="],
 
