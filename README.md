@@ -1,6 +1,52 @@
-# ProofBridge Liner — Bayesian Safety Kernel
+# ProofBridge Liner — Trust Layer for Verifiable AI Outputs
 
-Hardware-enforced circuit breaker for tokenised real-world assets. Three-layer kernel: TEE Gate → Bayesian Engine → Circuit Breaker. 100% recall on historical failures, zero false negatives.
+Hardware-enforced circuit-breaker for tokenised real-world assets using post-quantum cryptography, a Bayesian safety kernel, and a TEE-signed MPC quorum. Converts every AI output into a **provable, auditable statement**.
+
+---
+
+## 🎯 The Problem
+
+AI systems are a black box — outputs are unverifiable, un-auditable, and unverifiable in production environments. In high-stakes domains (finance, legal, healthcare, tokenised assets):
+
+- ✅ You **can't prove** the output was correct
+- ✅ You **can't audit** what evidence was used
+- ✅ You **can't hold** anyone accountable for errors
+- ✅ You **can't enforce** risk limits when a model hallucinates or is prompt-injected
+
+> "AI says so" is not a verification strategy.
+
+---
+
+## 💡 The Solution
+
+ProofBridge Liner inserts a **three-layer verification kernel** between any AI generator and its downstream consumer. Every output carries a signed proof trace showing *why* it passed (or failed) verification.
+
+```
+User / System Input
+       │
+       ▼
+  ┌──────────────┐
+  │   AI Model   │  ← generates raw output
+  └──────┬───────┘
+         │ output + context
+         ▼
+  ┌──────────────────────┐
+  │   ProofBridge Liner  │
+  │                      │
+  │ 1. Extract claims    │
+  │ 2. Verify evidence   │
+  │ 3. Calibrate risk    │
+  │ 4. Sign proof trace  │
+  └──────┬───────────────┘
+         │  verdict + signed trail
+         ▼
+  ┌──────────────┐
+  │  Downstream  │  ← only passes SAFE outputs
+  └──────────────┘
+```
+
+The kernel runs a **Beta posterior belief** check against a **calibrated threshold**. Only outputs where the belief exceeds the threshold for the given industry profile are admissible.
+
 
 ## 🚀 Quick Deploy (One-Click)
 
@@ -168,18 +214,80 @@ Safety Margin **S = μ – τ** is the interpretability anchor.
 
 ---
 
-## 📊 Calibration Profiles
+## ✨ Key Features
 
-| Industry | γ | Rationale |
-|----------|---|-----------|
-| Taxi Safety | 1.2 | Passenger safety critical; false negatives costly |
-| Micro-finance | 0.8 | Financial inclusion; false positives exclude vulnerable |
-| Healthcare | 1.5 | Life-critical decisions; maximum sensitivity |
-| Content Moderation | 1.0 | Balanced; scale vs accuracy trade-off |
-
-Profiles stored in `dashboard/index.html` as presets.
+| Feature | What it does |
+|---------|-------------|
+| **Claim Extraction** | Converts raw AI output into structured, verifiable statements |
+| **Proof/Verification Layer** | Bayesian belief engine checks each claim against evidence priors |
+| **Calibrated Thresholds** | Industry-specific \\(\\gamma\\) profiles (healthcare=1.5×, finance=0.8× …) |
+| **Audit Trail** | Every verdict ships with a deterministic, HMAC-signed reasoning chain |
+| **Explainability** | Safety margin \\(S = \\mu - \\tau\\) surfaced alongside every decision |
+| **Circuit Breaker** | Smart-contract enforcement layer — stops unsafe outputs on-chain |
 
 ---
+
+## 🧮 Mathematical Core
+
+### Foundation
+
+We model latent risk \\(\\theta\\) as a **Beta distribution** \\(\\text{Beta}(\\alpha, \\beta)\\):
+
+$$
+\\mu = \\frac{\\alpha + 1}{\\alpha + \\beta + 2}
+$$
+
+### Calibration
+
+Threshold adapts to industry risk appetite via \\(\\gamma\\):
+
+$$
+\\tau = \\frac{\\tau_0}{1 + \\gamma \\cdot \\frac{\\beta}{\\alpha}}
+$$
+
+| Industry | \\(\\gamma\\) | Rationale |
+|----------|------------|-----------|
+| Healthcare | 1.5 | Life-critical — maximum sensitivity |
+| Taxi Safety | 1.2 | Passenger harm costly |
+| Content Moderation | 1.0 | Balanced |
+| Micro-finance | 0.8 | Financial inclusion — lenient |
+
+### Decision Rule
+
+**SAFE** iff \\(\\mu > \\tau\\)
+
+Safety margin **\\(S = \\mu - \\tau\\)** is the human-readable explainability anchor.
+
+---
+
+## 🔬 Testing
+
+```bash
+npm test        # boundary + adversarial tests (jest)
+```
+
+- **Boundary tests:** α→0, β→∞; β→0, α→∞; α=β=0; γ=0; γ→∞; chain determinism
+- **Monte Carlo adversarial:** ε-perturbation stability against clearly safe/trip cases
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Install
+npm install
+
+# Run proof pipeline
+npm run launch:cinematic
+
+# Run API endpoint locally
+curl -X POST http://localhost:3000/api/verify \
+  -H "Content-Type: application/json" \
+  -d '{"alpha":24,"beta":8,"gamma":1.3,"threshold":0.6}'
+
+# Response
+{"kernel_version":"v0.9","verdict":"SAFE","belief":0.759,"safety_margin":0.199,...}
+```
 
 ## 🎥 Hackathon Deliverables
 
@@ -194,34 +302,27 @@ Profiles stored in `dashboard/index.html` as presets.
 
 ---
 
+## 🧪 Demo Use Cases
+
+| Use Case | What it verifies | γ profile |
+|----------|-----------------|-----------|
+| **Mathematical reasoning** | Is the chain-of-thought consistent? | 1.0 — neutral |
+| **Financial decisions** | Did the model use all required disclosures? | 0.8 — inclusive / lenient |
+| **Healthcare triage** | Is the diagnosis grounded in presented symptoms? | 1.5 — maximum caution |
+| **AI content moderation** | Does the classification match platform policy? | 1.0 — balanced |
+
+Every verdict is immutable, time-stamped, and computationally verifiable.
+
+---
+
 ## 🔬 Testing
 
-### Boundary tests (run automatically on CI)
-
 ```bash
-npm test
+npm test        # boundary + adversarial tests (jest)
 ```
 
-Covers:
-- Extreme α/β ratios (0, ∞)
-- Gamma calibration edge cases (γ=0, γ→∞)
-- Reasoning chain field validation
-- Signature consistency
-
-### Adversarial Monte Carlo
-
-Perturbs inputs by ε and verifies verdict stability for clearly safe/trip cases.
-
-### Manual Smoke Test
-
-```bash
-# Test with default values
-curl -X POST http://localhost:3000/api/verify \
-  -H "Content-Type: application/json" \
-  -d '{"alpha":24,"beta":8,"gamma":1.3,"threshold":0.6}'
-```
-
-Expected: `verdict: "SAFE"`, `safety_margin: ~0.20`
+- **Boundary tests:** α→0, β→∞; β→0, α→∞; α=β=0; γ=0; γ→∞; chain determinism
+- **Monte Carlo adversarial:** ε-perturbation stability against clearly safe/trip cases
 
 ---
 
