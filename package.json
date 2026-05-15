@@ -1,29 +1,34 @@
 {
   "name": "proofbridge-liner",
-  "version": "0.9.0",
-  "private": true,
-  "description": "Bayesian Safety Kernel for tokenised RWA — ProofBridge Liner",
-  "main": "index.html",
+  "version": "1.1.1",
+  "description": "Ghost-Risk Circuit-Breaker for tokenised real-world assets",
+  "main": "dashboard/server.js",
   "scripts": {
-    "test": "cd api && npm test",
-    "build:docs": "pandoc docs/whitepaper.md --pdf-engine=xelatex -V geometry:margin=1in -V fontsize=11pt -V mainfont='Noto Serif' -V monofont='JetBrains Mono' -o docs/whitepaper.pdf && pandoc docs/deck.md -V geometry:margin=0.75in -V fontsize=14pt -V mainfont='Orbitron' -V monofont='JetBrains Mono' -o docs/deck.pdf",
-    "launch:cinematic": "node scripts/run-full-pipeline.js --cycles 100 --timeout 120"
-  },
-  "keywords": [
-    "rwa",
-    "tokenisation",
-    "bayesian",
-    "safety-kernel",
-    "vercel",
-    "github-pages"
-  ],
-  "author": "Vaguely Vanity LLC",
-  "license": "MIT",
-  "devDependencies": {},
-  "engines": {
-    "node": ">=18"
+    "start": "node dashboard/server.js",
+    "dev": "node dashboard/server.js",
+    "fetch": "node prover/fetcher.js",
+    "submit": "node prover/submitter.js",
+    "submit:dry": "node prover/submitter.js --dry-run",
+    "audit": "node prover/auditor.js",
+    "broadcast": "node prover/broadcaster.js",
+    "broadcast:dry": "node prover/broadcaster.js --dry-run",
+    "test:contracts": "/home/runner/workspace/.config/.foundry/bin/forge test -vvv",
+    "deploy": "node scripts/deploy.js --target full",
+    "deploy:full": "node scripts/deploy.js --target full",
+    "deploy:cb": "node scripts/deploy.js --target cb",
+    "deploy:simulate": "node scripts/deploy.js --target full --dry-run",
+    "deploy:droplet": "bash scripts/deploy-droplet.sh",
+    "deploy:droplet:rocm": "bash scripts/deploy-droplet.sh --rocm",
+    "deploy:droplet:dry": "bash scripts/deploy-droplet.sh --dry-run",
+    "precommit": "node scripts/check-secrets.js"
   },
   "dependencies": {
-    "@kilocode/cli": "7.3.0"
-  }
+    "axios": "^1.7.2",
+    "ethers": "^6.13.0",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
 }

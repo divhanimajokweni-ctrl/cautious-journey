@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "name": "proofbridge-liner",
+  "builds": [
+    {
+      "src": "dashboard/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "dashboard/public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/health",      "dest": "dashboard/server.js" },
+    { "src": "/api/(.*)",    "dest": "dashboard/server.js" },
+    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?))", "dest": "dashboard/public/$1" },
+    { "src": "/(.*)",        "dest": "dashboard/server.js" }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
