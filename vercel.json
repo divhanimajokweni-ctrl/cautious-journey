@@ -3,7 +3,7 @@
   "name": "proofbridge-liner",
   "builds": [
     {
-      "src": "dashboard/server.js",
+      "src": "api/verify.js",
       "use": "@vercel/node"
     },
     {
@@ -12,10 +12,14 @@
     }
   ],
   "routes": [
-    { "src": "/health",      "dest": "dashboard/server.js" },
-    { "src": "/api/(.*)",    "dest": "dashboard/server.js" },
-    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?))", "dest": "dashboard/public/$1" },
-    { "src": "/(.*)",        "dest": "dashboard/server.js" }
+    { "src": "/api/health",       "dest": "/api/verify.js" },
+    { "src": "/api/status",       "dest": "/api/verify.js" },
+    { "src": "/api/verify",       "dest": "/api/verify.js", "methods": ["POST"] },
+    { "src": "/api/(.*)",         "dest": "/api/verify.js" },
+    { "src": "/$",                "dest": "/dashboard/index.html" },
+    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map))", "dest": "/dashboard/public/$1" },
+    { "src": "/health",           "dest": "/api/verify.js" },
+    { "src": "/(.*)",             "dest": "/dashboard/index.html" }
   ],
   "env": {
     "NODE_ENV": "production"

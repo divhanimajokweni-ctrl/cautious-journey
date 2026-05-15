@@ -140,45 +140,67 @@ app.get('/api/status', (_req, res) => {
   });
 });
 
+app.post('/api/verify', (req, res) => {
+  const { infer, hmacsha256 } = require('../vvv/lib/kernel');
+  const { alpha = 24, beta = 8, gamma = 1.0, threshold = 0.6 } = req.body || {};
+  const a = Number(alpha), b = Number(beta), g = Number(gamma), t = Number(threshold);
+  if (![a, b, g, t].every(Number.isFinite) || a < 0 || b < 0 || g <= 0 || t < 0 || t > 1) {
+    return res.status(400).json({ error: 'Invalid parameters', expected: { alpha: '≥0', beta: '≥0', gamma: '>0', threshold: '0–1' } });
+  }
+  try {
+    const result = infer({ alpha: a, beta: b, gamma: g, threshold: t });
+    const secret = process.env.KERNEL_SECRET || 'dev-secret';
+    const signature = hmacsha256(`${result.belief}:${result.threshold}:${result.verdict}`, secret);
+    res.status(200).json({
+      kernel_version: 'v0.9',
+      verdict: result.verdict,
+      belief: result.belief,
+      threshold: result.threshold,
+      safety_margin: result.safety_margin,
+      reasoning_chain: result.reasoning_chain,
+      signature,
+      metadata: { alpha: a, beta: b, gamma: g, base_threshold: t, timestamp: new Date().toISOString() }
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 app.get('/health', (_req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 
 app.get('/api/health', async (req, res) => {
-  const gateways = [
-    'https://ipfs.io/ipfs/',
-    'https://cloudflare-ipfs.com/ipfs/',
-    'https://gateway.pinata.cloud/ipfs/',
-  ];
-  const gatewayHealth = {};
-  await Promise.all(gateways.map(async (gateway) => {
-    const start = Date.now();
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 4000);
-    try {
-      await fetch(`${gateway}QmbWqxBEKC3P8tqsKc98xmWNzrzDRRLbhtJ38WNqHVWojK`, {
-        method: 'HEAD',
-        signal: controller.signal,
-      });
-      gatewayHealth[gateway] = { status: 'healthy', latency: Date.now() - start };
-    } catch (err) {
-      gatewayHealth[gateway] = { status: 'unreachable', error: err.message };
-    } finally {
-      clearTimeout(timer);
-    }
-  }));
+  let gatewayHealth = {};
+  try {
+    const gateways = ['https://ipfs.io/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'https://gateway.pinata.cloud/ipfs/'];
+    await Promise.all(gateways.map(async (gateway) => {
+      const start = Date.now();
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 4000);
+      try {
+        await fetch(`${gateway}QmbWqxBEKC3P8tqsKc98xmWNzrzDRRLbhtJ38WNqHVWojK`, { method: 'HEAD', signal: controller.signal });
+        gatewayHealth[gateway] = { status: 'healthy', latency: Date.now() - start };
+      } catch (err) {
+        gatewayHealth[gateway] = { status: 'unreachable', error: err.message };
+      } finally { clearTimeout(timer); }
+    }));
+  } catch (_) {}
 
-  // Read prover state if exists
   let proverState = {};
   try {
     const stateFile = path.resolve(__dirname, '..', '.local', 'state', 'prover-state.json');
-    if (fs.existsSync(stateFile)) {
-      proverState = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
-    }
-  } catch (e) { /* ignore */ }
+    if (fs.existsSync(stateFile)) proverState = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+  } catch (_) {}
 
   res.json({
     uptime: process.uptime(),
     gateways: gatewayHealth,
-    proverState
+    proverState,
+    circuitBreakerAddress: process.env.CIRCUIT_BREAKER_ADDRESS || null,
+    oracleAddress: process.env.ORACLE_ADDRESS || null,
+    assetRegistryAddress: process.env.ASSET_REGISTRY_ADDRESS || null,
+    teeVerifierAddress: process.env.TEE_VERIFIER_ADDRESS || null,
+    enclaveAddress: process.env.ENCLAVE_ADDRESS || null,
+    network: 'Polygon Amoy (chainId 80002)',
   });
 });
 
