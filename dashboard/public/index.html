@@ -60,6 +60,11 @@
           <div class="telem-lbl mono">TIME</div>
           <div class="telem-val mono" id="serverTime">—</div>
         </div>
+        <div class="telem-sep"></div>
+        <button id="btn-run-demo" class="run-btn" onclick="runDemoTasks()">
+          <span id="btn-run-icon">▶</span>
+          <span id="btn-run-label">RUN DEMO</span>
+        </button>
       </div>
     </header>
 
@@ -154,6 +159,18 @@
       </section>
 
     
+    <!-- ═══ DEMO NOTIFICATION BAR ═══ -->
+    <div id="demo-bar" class="demo-bar">
+      <span class="mono">▶</span>
+      <span id="demo-bar-text">Initializing demo…</span>
+      <span id="demo-verdict" class="demo-verdict"></span>
+    </div>
+
+    <!-- ═══ DEMO RESULTS LOG ═══ -->
+    <div id="demo-results" class="demo-results">
+      <pre id="demo-results-log" style="margin:0;white-space:pre-wrap;word-break:break-all"></pre>
+    </div>
+
     <!-- ═══ VERIFICATION BADGE ═══ -->
     <div id="verification-badge"
          style="display:none;position:fixed;top:20px;right:20px;z-index:9999;

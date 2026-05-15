@@ -181,4 +181,95 @@
     document.body.innerHTML += `<pre style="color:var(--red,#ED1C24);padding:20px;font-family:monospace">${err.message}</pre>`;
   });
   setInterval(load, 15000);
+
+  // ═══ RUN DEMO TASKS ═══
+  window.runDemoTasks = async function () {
+    var btn = document.getElementById('btn-run-demo');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.classList.add('is-running');
+    document.getElementById('btn-run-label').textContent = 'RUNNING…';
+    document.getElementById('btn-run-icon').textContent = '⏳';
+
+    var bar    = document.getElementById('demo-bar');
+    var barTxt = document.getElementById('demo-bar-text');
+    var verdictEl = document.getElementById('demo-verdict');
+    var results    = document.getElementById('demo-results');
+    var logEl      = document.getElementById('demo-results-log');
+    bar.classList.add('active');
+    results.classList.add('active');
+    verdictEl.className = 'demo-verdict';
+    verdictEl.textContent = '';
+    logEl.textContent = '';
+
+    var apiBase  = location.pathname.startsWith('/dashboard') ? '/' : '/api/verify';
+    var apiUrl   = '/api/verify';
+    var lines    = '';
+    var allOk    = true;
+    var steps    = 0;
+
+    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+    async function postVerify(name, params) {
+      steps++;
+      barTxt.textContent = `[${steps}/4] Running — ${esc(name)}`;
+      verdictEl.textContent = 'WAITING';
+      verdictEl.className = 'demo-verdict';
+      try {
+        var res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(params)
+        });
+        var data = await res.json();
+        var v = (data.verdict || '').toUpperCase();
+        var s = data.safety_margin != null ? data.safety_margin.toFixed(4) : '—';
+        var sig = data.signature || '';
+        var prettySig = sig.length > 16 ? sig.substring(0, 12) + '…' + sig.substring(sig.length - 6) : sig;
+        if (v !== 'SAFE') allOk = false;
+        verdictEl.textContent = v;
+        verdictEl.className = 'demo-verdict ' + (v === 'SAFE' ? 'safe' : 'trip');
+        lines += `[Step ${steps}] ${esc(name)}\n` +
+                 `  Params : α=${params.alpha}  β=${params.beta}  γ=${params.gamma}  τ=${params.threshold}\n` +
+                 `  Verdict : ${v}  (safety margin ${s})\n` +
+                 `  Reasoning chain : ${JSON.stringify(data.reasoning_chain, null, 2)}\n` +
+                 `  Signature : HMAC-SHA256  ${esc(prettySig)}\n\n`;
+        logEl.textContent = lines;
+        try { window.updateVerificationBadge(data); } catch (_) {}
+      } catch (err) {
+        allOk = false;
+        verdictEl.textContent = 'ERROR';
+        verdictEl.className = 'demo-verdict trip';
+        lines += `[Step ${steps}] ${esc(name)}\n  ERROR: ${esc(err.message)}\n\n`;
+        logEl.textContent = lines;
+      }
+    }
+
+    try {
+      await postVerify('Default Kernel Parameters',   { alpha: 24, beta: 8,  gamma: 1.0, threshold: 0.6 });
+      await new Promise(function(r) { setTimeout(r, 800); });
+      await postVerify('Fraudulent Bank Detection',   { alpha: 8,  beta: 80, gamma: 1.5, threshold: 0.6 });
+      await new Promise(function(r) { setTimeout(r, 800); });
+      await postVerify('Ubuntu Pools — Normal',       { alpha: 24, beta: 8,  gamma: 1.0, threshold: 0.6 });
+      await new Promise(function(r) { setTimeout(r, 800); });
+      await postVerify('Falsified Deed',              { alpha: 4,  beta: 95, gamma: 1.5, threshold: 0.6 });
+      await new Promise(function(r) { setTimeout(r, 500); });
+
+      barTxt.textContent = allOk
+        ? '[✓] Demo complete — all kernel checks passed.'
+        : '[!] Demo complete — review results below.';
+      verdictEl.textContent = allOk ? 'ALL SAFE' : 'REVIEW';
+      verdictEl.className = 'demo-verdict ' + (allOk ? 'safe' : 'trip');
+    } catch (err) {
+      barTxt.textContent = '[✗] Demo aborted: ' + esc(err.message);
+    }
+
+    btn.disabled = false;
+    btn.classList.remove('is-running');
+    document.getElementById('btn-run-label').textContent = 'RUN DEMO';
+    document.getElementById('btn-run-icon').textContent = '▶';
+
+    // Auto-hide the live bar after 10 s; leave the results log visible
+    setTimeout(function () { bar.classList.remove('active'); }, 10000);
+  };
 })();
