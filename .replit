@@ -13,3 +13,6 @@ run = ["npm", "run", "launch:cinematic"]
 
 [packager] 
 ignoredPaths = ["node_modules", ".lesson", ".tutorial"]
+
+[agent]
+expertMode = true
