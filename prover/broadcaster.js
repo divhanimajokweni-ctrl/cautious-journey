@@ -4,6 +4,7 @@
 const { ethers } = require("ethers");
 const fs = require("node:fs");
 const path = require("node:path");
+const notifier = require("./notifier");
 
 // ---------------------------------------------------------------------------
 // Files
@@ -24,14 +25,12 @@ const RECEIPTS_FILE = path.resolve(
 );
 
 // ---------------------------------------------------------------------------
-// ABI — exactly matching CircuitBreaker.sol
-// ---------------------------------------------------------------------------
+// ABI — exactly matching CircuitBreaker.sol (MVP)
 const CIRCUIT_BREAKER_ABI = [
-  "function updateProof(bytes32 assetId, bytes32 deedHash, bytes calldata thresholdSigs) external",
-  "function tripCircuit(string calldata reason, bytes calldata thresholdSigs) external",
+  "function updateProof(bytes32 assetId, bytes32 deedHash) external",
+  "function tripCircuit(string calldata reason) external",
   "function circuitOpen() external view returns (bool)",
   "function latestProof(bytes32 assetId) external view returns (bytes32)",
-  "function threshold() external view returns (uint256)",
 ];
 
 // ---------------------------------------------------------------------------
@@ -127,7 +126,7 @@ async function broadcastOne(contract, att, receipts, options = {}) {
     }
 
     console.log(`[broadcaster] SEND updateProof assetId=${assetId.slice(0, 16)}... digest=${digest.slice(0, 16)}...`);
-    tx = await contract.updateProof(assetId, deedHash, att.signature);
+    tx = await contract.updateProof(assetId, deedHash); // MVP: no signature
   }
 
   if (kind === "tripCircuit") {
@@ -145,7 +144,7 @@ async function broadcastOne(contract, att, receipts, options = {}) {
     }
 
     console.log(`[broadcaster] SEND tripCircuit reason="${reason}" digest=${digest.slice(0, 16)}...`);
-    tx = await contract.tripCircuit(reason, att.signature);
+    tx = await contract.tripCircuit(reason); // MVP: no signature
   }
 
   console.log(`[broadcaster] WAIT ${tx.hash}...`);
@@ -163,6 +162,26 @@ async function broadcastOne(contract, att, receipts, options = {}) {
   saveReceipts(receipts);
 
   console.log(`[broadcaster] CONFIRMED block ${receipt.blockNumber} gas ${receipt.gasUsed} tx ${receipt.hash}`);
+  
+  // Notify success
+  try {
+    notifier.broadcastSuccess({
+      txHash: receipt.hash,
+      block: receipt.blockNumber,
+      gasUsed: receipt.gasUsed.toString(),
+      action: att.action.kind,
+      assetId: att.action.assetId,
+    });
+    // Extra alert for circuit trip — high-severity event
+    if (att.action.kind === 'tripCircuit') {
+      notifier.circuitTrip({
+        reason: att.action.reason,
+        txHash: receipt.hash,
+        assetId: att.action.assetId,
+      });
+    }
+  } catch (_) {}
+  
   return { success: true, digest, txHash: receipt.hash, blockNumber: receipt.blockNumber };
 }
 
@@ -170,6 +189,9 @@ async function broadcastOne(contract, att, receipts, options = {}) {
 // Main
 // ---------------------------------------------------------------------------
 async function broadcast(options = {}) {
+  // Notify pipeline start
+  try { notifier.broadcastStart({}); } catch (_) {}
+
   const attestations = loadAttestations();
   if (!attestations.length) {
     console.log("[broadcaster] No attestations — nothing to broadcast.");
@@ -205,6 +227,15 @@ async function broadcast(options = {}) {
       results.push(r);
     } catch (err) {
       console.error(`[broadcaster] FAILED ${att.digest?.slice(0, 16) || "unknown"}: ${err.message}`);
+      // Notify failure
+      try {
+        notifier.broadcastFailure({
+          digest: att.digest,
+          action: att.action?.kind,
+          assetId: att.action?.assetId,
+          error: err.message,
+        });
+      } catch (_) {}
       results.push({ error: true, digest: att.digest, message: err.message });
     }
   }

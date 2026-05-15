@@ -1,13 +1,12 @@
 {
   "name": "proofbridge-liner",
   "version": "1.1.1",
-  "description": "Hardened Safety Kernel for Property Collateral",
-  "main": "prover/main.js",
+  "description": "Ghost-Risk Circuit-Breaker for tokenised real-world assets",
+  "main": "dashboard/server.js",
   "scripts": {
     "start": "node dashboard/server.js",
     "dev": "node dashboard/server.js",
     "fetch": "node prover/fetcher.js",
-    "fetch:watch": "node prover/fetcher.js --watch",
     "submit": "node prover/submitter.js",
     "submit:dry": "node prover/submitter.js --dry-run",
     "audit": "node prover/auditor.js",
@@ -24,25 +23,12 @@
     "precommit": "node scripts/check-secrets.js"
   },
   "dependencies": {
-    "@huggingface/inference": "^4.13.15",
-    "@metamask/sdk": "^0.34.0",
-    "axios": "^1.15.2",
-    "ethers": "^6.16.0",
-    "express": "^4.22.1",
-    "opencode-ai": "^1.14.28",
-    "pdf-lib": "^1.17.1",
-    "pdf-parse": "^1.1.4"
+    "axios": "^1.7.2",
+    "ethers": "^6.13.0",
+    "express": "^4.19.2"
   },
   "engines": {
     "node": ">=20"
   },
-  "overrides": {
-    "serialize-javascript": "^7.0.5",
-    "diff": "^8.0.3",
-    "glob": "^11.0.0"
-  },
-  "devDependencies": {
-    "@kilocode/cli": "^7.2.40",
-    "husky": "^9.1.7"
-  }
+  "license": "MIT"
 }

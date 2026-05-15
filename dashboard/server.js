@@ -182,6 +182,12 @@ app.get('/api/health', async (req, res) => {
   });
 });
 
-app.listen(PORT, HOST, () => {
-  console.log(`[dashboard] ProofBridge Liner Ops listening on http://${HOST}:${PORT}`);
-});
+// Local / Docker / droplet: start the server directly
+// Vercel serverless: import the module — listen() must not be called
+if (require.main === module) {
+  app.listen(PORT, HOST, () => {
+    console.log(`[dashboard] ProofBridge Liner Ops listening on http://${HOST}:${PORT}`);
+  });
+}
+
+module.exports = app;

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-<<<<<<< HEAD
 /// @title  TEEVerifier
 /// @notice Input-admissibility layer for the proofBRIDGE-liner.
 /// @dev    Only data signed by the registered enclave key may influence the
@@ -12,7 +11,7 @@ pragma solidity ^0.8.20;
 ///           keccak256(abi.encodePacked(docHash, posterior, threshold))
 contract TEEVerifier {
     /*//////////////////////////////////////////////////////////////
-                                 STATE
+                                  STATE
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Immutable enclave key.  Only the enclave can produce valid sigs.
@@ -22,7 +21,7 @@ contract TEEVerifier {
     IAssetRegistryKernel public immutable kernel;
 
     /*//////////////////////////////////////////////////////////////
-                                 EVENTS
+                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
     event AttestationVerified(
@@ -33,7 +32,7 @@ contract TEEVerifier {
     );
 
     /*//////////////////////////////////////////////////////////////
-                              CONSTRUCTOR
+                               CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
     /// @param _enclave  The TEE's ECDSA public key (Ethereum address form).
@@ -46,7 +45,7 @@ contract TEEVerifier {
     }
 
     /*//////////////////////////////////////////////////////////////
-                               CORE LOGIC
+                                CORE LOGIC
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Verify the TEE attestation and, if valid, call the kernel.
@@ -74,7 +73,7 @@ contract TEEVerifier {
     }
 
     /*//////////////////////////////////////////////////////////////
-                              SIGNATURE UTIL
+                               SIGNATURE UTIL
     //////////////////////////////////////////////////////////////*/
 
     function _recoverSigner(bytes32 message, bytes calldata sig)
@@ -107,25 +106,3 @@ contract TEEVerifier {
 interface IAssetRegistryKernel {
     function check(bytes32 assetId, uint256 posterior) external;
 }
-=======
-import "./SafetyKernel.sol";
-
-contract TEEVerifier {
-    SafetyKernel public kernel;
-    bytes32 public expectedPCRHash;
-
-    constructor(address _kernel, bytes32 _expectedHash) {
-        kernel = SafetyKernel(_kernel);
-        expectedPCRHash = _expectedHash;
-    }
-
-    function verify(bytes calldata attestation) external {
-        bytes32 hash = keccak256(attestation);
-        if (hash != expectedPCRHash) {
-            // Force halt: call check with posteriorScaled = 0, threshold = 8000
-            kernel.check(0, 8000);
-        }
-        // If match, do nothing, allow normal check
-    }
-}
->>>>>>> 0e846a22630dd7d830ec1009e45376be9f384fd8

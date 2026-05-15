@@ -6,14 +6,11 @@ import {CircuitBreaker}  from "../contracts/CircuitBreaker.sol";
 import {AssetRegistry}   from "../contracts/AssetRegistry.sol";
 import {TEEVerifier}     from "../contracts/TEEVerifier.sol";
 
-/// @notice Full institution-grade deployment: CircuitBreaker + AssetRegistry + TEEVerifier.
+/// @notice Full deployment: CircuitBreaker (MVP) + AssetRegistry + TEEVerifier.
 /// @dev    Required env vars:
-///           PRIVATE_KEY              deployer private key
-///           ORACLE_ADDRESS           MVP single-oracle address (for CircuitBreaker)
-///           ENCLAVE_ADDRESS          TEE public key (address form)
-///
-///         Optional:
-///           CIRCUIT_BREAKER_ADDRESS  skip CircuitBreaker deploy if already deployed
+///           PRIVATE_KEY       deployer private key
+///           ORACLE_ADDRESS    oracle address (may be signer)
+///           ENCLAVE_ADDRESS   TEE public key (address form)
 contract DeployFull is Script {
     function run() external {
         uint256 deployerPk     = vm.envUint("PRIVATE_KEY");
@@ -22,23 +19,20 @@ contract DeployFull is Script {
 
         vm.startBroadcast(deployerPk);
 
-        // 1. CircuitBreaker (MVP single-oracle, Phase 2)
         CircuitBreaker cb = new CircuitBreaker();
         cb.initialize(oracleAddress);
-        console.log("CircuitBreaker :", address(cb));
+        console.log("CircuitBreaker  :", address(cb));
 
-        // 2. AssetRegistry (multi-asset isolated kernels, institution-grade)
         AssetRegistry registry = new AssetRegistry();
-        console.log("AssetRegistry  :", address(registry));
+        console.log("AssetRegistry   :", address(registry));
 
-        // 3. TEEVerifier (input-admissibility bridge)
-        TEEVerifier teeVerifier = new TEEVerifier(enclaveAddress, address(registry));
-        console.log("TEEVerifier    :", address(teeVerifier));
+        TEEVerifier tee = new TEEVerifier(enclaveAddress, address(registry));
+        console.log("TEEVerifier     :", address(tee));
 
         vm.stopBroadcast();
 
         console.log("---");
-        console.log("Oracle         :", oracleAddress);
-        console.log("Enclave        :", enclaveAddress);
+        console.log("Oracle          :", oracleAddress);
+        console.log("Enclave         :", enclaveAddress);
     }
 }

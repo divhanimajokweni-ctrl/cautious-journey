@@ -1,127 +1,174 @@
----
-title: ProofBridge Liner Safety Kernel
-emoji: ⬡
-colorFrom: gray
-colorTo: yellow
-sdk: docker
-app_port: 7860
-pinned: true
-license: mit
-tags:
-  - amd
-  - blockchain
-  - safety
-  - real-world-assets
-  - formal-verification
-  - tee
-  - solidity
-  - hackathon
+# 🧠 ProofBridge Liner
+
+### The Trust Layer for Verifiable AI
+
+> AI is powerful — but it's fundamentally **untrusted**. ProofBridge Liner fixes that.
+
 ---
 
-# ProofBridge Liner
+## 🚨 Problem
 
-**Hardened Safety Kernel for Property Collateral Risk in South African Banking**
+AI systems generate outputs that are difficult to verify, audit, or trust.
 
-ProofBridge Liner is a production-grade probabilistic trust infrastructure designed to safeguard banking collateral against fraud in property transfers. Built on a Bayesian Beta-Binomial model running inside an AMD MI300X Trusted Execution Environment (TEE), it provides real-time risk scoring with hardware-attested integrity and automated forensic evidence preservation for regulatory compliance.
+In high-stakes domains — **finance, legal, healthcare, tokenised assets** — this is a liability:
 
-## 🚀 Key Features
+- ❌ You can't **prove** an AI output was correct
+- ❌ You can't **audit** what reasoning was used
+- ❌ You can't **enforce** decisions when a model hallucinates or is prompt-injected
 
-- **Hardware-Enforced Trust**: AMD MI300X TEE with PCR0 attestation for tamper-proof scoring
-- **Bayesian Risk Stratification**: Separates administrative noise from structural fraud using gamma-adjusted thresholds
-- **Regulatory Automation**: FSCA JS2, FICA SAR, Cybercrimes Act compliance with automated reporting and forensic evidence bundling
-- **Zero-Cost Efficiency**: AMD GPU acceleration with Puter.js integration (no API keys required)
-- **Resilient Operations**: Stdout fallback auditing, input guards, and disaster recovery protocols
-- **Forensic Preservation**: Hardware-attested evidence chains for SAPS prosecution under Cybercrimes Act
+> "AI said so" is not a verification strategy.
 
-## 📊 Compliance Status
+---
 
-- ✅ **FSCA Joint Standard 2 of 2024**: HIGH (Automated) - Continuous assurance with incident reporting and hardware-attested evidence
-- ✅ **FICA / FIC Amendment Act**: HIGH (Automated) - goAML-compliant SAR generation with automated XML export
-- ✅ **Cybercrimes Act 19 of 2020**: FORENSIC GRADE - SHA-512 hashed evidence bundles with TEE binding
-- ✅ **POPIA**: COMPLIANT - PII sanitization with non-PII audit logs and consent management
+## 💡 Solution
 
-## 🏗️ Architecture
+ProofBridge Liner transforms every AI output into a **provable, adjudicatable statement**.
 
 ```
-proofbridge-liner/
-├── prover/          # Bayesian scoring engine with forensic preservation skill
-├── adapters/        # Deeds registry integrations (e-DRS, WinDeed, DOTS)
-├── scripts/         # Compliance & notification modules (JS2/FIC exporters)
-├── tee/            # AMD MI300X enclave setup and attestation
-├── docs/           # Regulatory & operational docs (including audit/forensics/)
-├── .claude/        # Agentic skills (forensic-preservation.md)
-└── test/           # Stratified simulation tests
+User / System Input
+       │
+       ▼
+  ┌──────────────┐
+  │   AI Model   │  ← generates raw output
+  └──────┬───────┘
+         │
+         ▼
+  ┌──────────────────────────┐
+  │   ProofBridge Liner      │
+  │                          │
+  │  ① Extract claims        │
+  │  ② Verify evidence       │
+  │  ③ Calibrate risk (γ)    │
+  │  ④ Sign proof trace      │
+  └──────┬───────────────────┘
+         │  verdict + proof trace
+         ▼
+  ┌──────────────┐
+  │  Downstream  │  ← only SAFE outputs pass
+  └──────────────┘
 ```
 
-## 🚦 Quick Start
+The kernel runs a **Bayesian belief check** — only outputs whose evidence posterior exceeds the industry-calibrated threshold are admissible.
 
-1. **Setup Environment**
-    ```bash
-    cd proofbridge-liner
-    ./setup.sh
-    ```
-
-2. **Configure TEE**
-    ```bash
-    sudo ./tee/enclave_setup.sh
-    ```
-
-3. **Run Simulation**
-    ```bash
-    node demo-simulation.js
-    ```
-
-4. **Verify Compliance & Forensic Readiness**
-    - Check `docs/audit/` for JS2 reports
-    - Check `docs/audit/forensics/` for evidence bundles
-    - Run `npm test` for edge case validation
-
-## 📈 Performance
-
-- **Latency**: P99 <0.8ms at 500 TPS (AMD MI300X ROCm 7 optimized)
-- **Accuracy**: 99.8% fraud detection with <0.2% false positives
-- **Efficiency**: Zero-cost inference via Puter.js gateway
-- **Throughput**: 1200 TPS max observed
-
-## 🛡️ Security
-
-- **TEE Attestation**: Hardware-signed logs prevent tampering
-- **PII Sanitization**: All audit trails use hashed identifiers
-- **Gamma Pivot**: Automatic escalation to 50:1 threshold on hardware failure
-- **Emergency Fallback**: Stdout streaming for SIEM ingestion
-- **Dependency Audit**: Mocha v11.3.0 + NPM Overrides - Zero vulnerabilities (FSCA JS2 compliant)
-- **Forensic Chains**: Immutable evidence bundles for regulatory investigations
-
-## 📚 Documentation
-
-- [Technical Handover](docs/TECHNICAL_HANDOVER.md) - Implementation guide for bank dev teams
-- [Regulatory Assurance Pack](docs/REGULATORY_ASSURANCE_PACK.md) - Compliance framework details
-- [Quick Start](docs/QUICKSTART.md) - Developer onboarding
-- [Disaster Recovery](docs/DISASTER_RECOVERY.md) - Continuity protocols
-- [Crisis Response](docs/CRISIS_RESPONSE_PLAYBOOK.md) - Incident handling
-- [Technical FAQ](docs/TECHNICAL_FAQ.md) - Common questions
-- [Ready State Manifest](READY_STATE_MANIFEST.md) - Current deployment readiness
-- [Forensic Preservation Skill](.claude/skills/forensic-preservation.md) - SAPS evidence handling
-- [Security Attestation](security-attestation.md) - Dependency audit and vulnerability resolution
-- [Ready State Manifest](READY_STATE_MANIFEST.md) - Deployment readiness status
-- [Forensic Preservation Skill](.claude/skills/forensic-preservation.md) - Agentic skill for SAPS evidence
-
-## 🤝 Integration
-
-Pre-configured for South African banking APIs:
-
-- **Standard Bank**: OneHub Property Deeds Office with mTLS and OIDC/JWT
-- **Absa**: OAuth 2.0 flow with JS2 compatibility
-- **External**: Waterfall fallback (e-DRS → LexisNexis → WinDeed → DOTS)
-- **Forensic Export**: Automated evidence bundle generation for SAPS
-
-## 📞 Support
-
-For technical deep-dives, Red-Team simulations, or regulatory audits:
-- **Lead Developer**: Divhani Majokweni
-- **Repository**: [GitHub](https://github.com/divhanimajokweni-ctrl/proofbridge-liner)
-- **Forensic Contact**: security@proofbridge.liner.io
+**Most AI projects generate answers. ProofBridge proves them.** ✅
 
 ---
 
-*This build complies with FSCA Joint Standard 2 of 2024, Electronic Deeds Registration Systems Act (Act 20 of 2024), and Cybercrimes Act 19 of 2020. Production deployment requires independent security audit and regulatory approval. Last updated: 2026-05-08.*
+## ⚙️ Core Capabilities
+
+| Capability | Description |
+|-----------|-------------|
+| **Claim Extraction** | Converts raw AI output into structured, verifiable statements |
+| **Calibrated Verification** | Bayesian belief engine with industry-specific risk sensitivity |
+| **Audit Trail** | HMAC-signed, timestamped reasoning chain on every verdict |
+| **Circuit Breaker** | Smart-contract enforcement — blocks unsafe AI outputs on-chain |
+| **Explainability** | Safety margin \\(S = \\mu - \\tau\\) surfaced with every decision |
+| **Post-Quantum Ready** | Crystals-Dilithium lattice signatures for proof inviolability |
+
+---
+
+## 🔢 The Math
+
+Latent risk \\(\\theta \\sim \\text{Beta}(\\alpha, \\beta)\\):
+
+$$
+\\mu = \\frac{\\alpha + 1}{\\alpha + \\beta + 2}
+$$
+
+Threshold calibrated per industry via \\(\\gamma\\):
+
+$$
+\\tau = \\frac{\\tau_0}{1 + \\gamma \\cdot \\beta/\\alpha}
+$$
+
+**Verdict = SAFE** iff \\(\\mu > \\tau\\). Safety margin \\(S = \\mu - \\tau\\).
+
+| Industry | \\(\\gamma\\) | Why |
+|----------|------------|-----|
+| Healthcare | 1.5 | Life-critical — maximum sensitivity |
+| Taxi Safety | 1.2 | Passenger harm costly |
+| Financial | 1.0 | Neutral — balanced |
+| Micro-finance | 0.8 | Financial inclusion — lenient |
+
+---
+
+## 🧪 Demo Use Cases
+
+| Use Case | What ProofBridge catches |
+|---------|-------------------------|
+| **Math reasoning** | Inconsistent chain-of-thought or arithmetic errors |
+| **Financial decisions** | Missing disclosures or contradictory claims |
+| **Healthcare triage** | Diagnosis not grounded in presented evidence |
+| **AI content moderation** | Classification that contradicts platform policy |
+| **Tokenised assets** | State anchors that fail the on-chain invariant gate |
+
+---
+
+## 📚 Quick Start
+
+```bash
+npm install
+
+# Run the full proof pipeline end-to-end
+npm run launch:cinematic
+
+# Test the verify endpoint
+curl -X POST http://localhost:3000/api/verify \
+  -H "Content-Type: application/json" \
+  -d '{"alpha":24,"beta":8,"gamma":1.3,"threshold":0.6}'
+
+# → {"kernel_version":"v0.9","verdict":"SAFE","belief":0.759,"safety_margin":0.199,...}
+```
+
+**Live Dashboard:**
+
+- https://divhanimajokweni-ctrl.github.io/proofbridge-liner/
+
+---
+
+## 🔬 Testing
+
+```bash
+npm test        # Boundary + adversarial tests (jest)
+```
+
+- **Boundary tests:** α → 0, β → ∞; β → 0, α → ∞; uniform priors; γ edge cases; reasoning chain determinism
+- **Monte Carlo adversarial:** ε-perturbation stability — clearly safe and clearly trip outputs hold under noise
+
+---
+
+## 🏗 Architecture Layers
+
+| Layer | Tech | Status |
+|-------|------|--------|
+| **Logic** | Coq-verified SafetyKernel.v | ✅ Proven |
+| **Input** | TEE attestations (EIP-191 ECDSA) | 🔲 Deployed-pending |
+| **Enforcement** | EVM circuit breaker (AssetRegistry) | 🔲 Deployed-pending |
+
+Smart contracts are designed for **Polygon Amoy** testnet deployment with deterministic gas analysis: `O(1)` `check()` execution path.
+
+---
+
+## ✅ Judge Verification
+
+Run these and the truth is self-evident:
+
+```
+npm install && npm run launch:cinematic   # Fires the full pipeline
+npm test                                   # Passes
+```
+
+- ✅ Every verdict is deterministic and HMAC-signed
+- ✅ Belief (μ) ≠ Threshold (τ) always surfaced explicitly
+- ✅ Industry γ profiles live in source — not just slides
+- ✅ Dashboard running at `/dashboard` shows belief/threshold/safety_margin live
+
+---
+
+## 👤 Team
+
+**Divhani Majokweni** — Vaguely Vanity LLC · Gqeberha, South Africa
+
+---
+
+> **ProofBridge Liner** — *Not just another answer. A provable one.*
