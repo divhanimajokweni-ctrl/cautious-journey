@@ -41,10 +41,10 @@ jobs:
       - name: Pull Vercel Environment
         run: |
           [ -n "$VERCEL_TOKEN" ] || { echo "ERROR: PROOFBRIDGE_LINER_VERCEL secret is missing"; exit 1; }
-          vercel pull --yes --environment=production --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
 
       - name: Build Production
-        run: vercel build --prod --yes --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
+        run: vercel build --prod --yes --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
 
       - name: Deploy Production
-        run: vercel deploy --prod --yes --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
+        run: vercel deploy --prod --yes --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
