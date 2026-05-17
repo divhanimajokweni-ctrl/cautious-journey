@@ -30,10 +30,10 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        run: cd api && npm install
+        run: cd api && npm install && pwd && ls api/
 
       - name: Run tests
-        run: cd api && npm test
+        run: cd api && pwd && npm test
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
