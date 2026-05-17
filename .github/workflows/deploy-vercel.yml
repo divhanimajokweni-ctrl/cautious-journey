@@ -30,7 +30,11 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        run: cd api && npm install
+        run: |
+          echo "CWD=$(pwd)"
+          echo "ROOT_FILES=$(ls)"
+          cat api/package.json
+          cd api && echo "CWD_AFTER=$(pwd)" && npm install
 
       - name: Run tests
         run: cd api && npm test
