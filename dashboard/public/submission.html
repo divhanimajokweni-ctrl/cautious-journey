@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ProofBridge Liner — Lablab.ai Submission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#F26522;--orange-light:#FF8C42;--orange-dim:rgba(242,101,34,0.15);
+  --purple:#6B21A8;--purple-light:#9333EA;--purple-dim:rgba(107,33,168,0.15);
+  --bg:#0A0A0F;--surface:#12121A;--surface2:#1A1A26;
+  --text:#F0EDE8;--muted:#8A8490;--border:rgba(242,101,34,0.2);
+  --green:#86efac;--red:#ED1C24;
+}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+body{padding-bottom:60px}
+
+/* ══ GLOBAL ══ */
+a{color:var(--orange-light);text-decoration:none}
+a:hover{text-decoration:underline}
+code,kbd{font-family:'DM Mono',monospace;font-size:.85em;background:rgba(255,255,255,.06);padding:2px 6px;border-radius:3px}
+pre{font-family:'DM Mono',monospace;font-size:.8rem;background:#0D0D14;border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto}
+
+/* ══ GRID BG ══ */
+.page-bg{position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.25;pointer-events:none;z-index:0}
+
+/* ══ HEADER ══ */
+header{position:relative;z-index:1}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 40px;background:rgba(8,8,8,.93);
+  border-bottom:2px solid var(--orange);backdrop-filter:blur(10px);
+}
+.topbar::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--orange),var(--purple-light))}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,var(--orange),var(--purple-light));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:white;
+}
+.brand-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:.08em}
+.brand-name .gold{color:var(--orange)}
+.brand-sub{font-size:.68rem;color:var(--muted);letter-spacing:.12em;margin-top:2px}
+.badge-submit{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--orange-dim);border:1px solid rgba(242,101,34,.35);
+  border-radius:50px;padding:3px 12px;
+  font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;
+  color:var(--orange);margin-left:8px;
+}
+
+/* ══ MAIN ══ */
+main{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:32px 32px 80px;display:flex;flex-direction:column;gap:28px}
+
+/* ══ HERO ══ */
+.hero{display:flex;gap:48px;align-items:flex-start;padding:36px 40px;background:var(--surface);border:1px solid var(--border);border-radius:14px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--orange),var(--purple-light))}
+.hero-text{flex:1}
+.hero-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(1.8rem,3.5vw,2.8rem);line-height:1.1;letter-spacing:-.02em;margin-bottom:12px}
+.hero-sub{font-size:.95rem;color:var(--muted);line-height:1.6;max-width:600px;margin-bottom:20px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px}
+.hero-chips{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+.chip{display:inline-block;background:var(--orange-dim);border:1px solid rgba(242,101,34,.3);border-radius:50px;padding:3px 10px;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.1em;color:var(--orange)}
+.meta-chip{display:inline-block;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 8px;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.08em;color:var(--muted)}
+/* Score ring */
+.score-ring{margin-top:4px;flex-shrink:0}
+.ring-label{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);text-align:center;letter-spacing:.08em;margin-top:4px}
+
+/* ══ SECTION LABEL ══ */
+.sec-label{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--orange);letter-spacing:.2em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-label::after{content:'';flex:1;display:block;height:1px;background:var(--border)}
+h2{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(1.2rem,2.5vw,1.7rem);margin-bottom:20px;letter-spacing:-.01em}
+.accent{color:var(--orange)}.accent-p{color:var(--purple-light)}
+
+/* ══ 4-TRACK GRID ══ */
+.tracks-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.track-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:22px 20px 20px;position:relative;overflow:hidden;transition:border-color .2s;
+}
+.track-card:hover{border-color:var(--orange-light)}
+.track-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.track-card.t1::before{background:linear-gradient(90deg,#F26522,#FF8C42)}
+.track-card.t2::before{background:linear-gradient(90deg,#9333EA,#C4B5FD)}
+.track-card.t3::before{background:linear-gradient(90deg,#39d98a,#86efac)}
+.track-card.t4::before{background:linear-gradient(90deg,#FFB900,#FFD700)}
+.track-num{font-family:'Syne',sans-serif;font-size:.6rem;font-weight:800;color:var(--muted);letter-spacing:.1em;margin-bottom:8px}
+.track-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px}
+.track-desc{font-size:.8rem;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.track-item{display:flex;align-items:center;gap:6px;font-size:.77rem;color:var(--text);margin-bottom:6px}
+.track-item .icon{font-size:.95rem}
+.track-footer{margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)}
+.track-link{display:inline-flex;align-items:center;gap:4px}
+/* status dots */
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot-done{background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot-pending{background:var(--orange-light);box-shadow:0 0 6px var(--orange-light);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ══ DELIVERABLE ARTIFACTS GRID ══ */
+.del-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.del-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:24px 22px 20px;position:relative;transition:transform .2s,border-color .2s;
+}
+.del-card:hover{transform:translateY(-2px);border-color:var(--orange-light)}
+.del-icon{font-size:2rem;margin-bottom:12px}
+.del-type{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.del-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:6px}
+.del-desc{font-size:.78rem;color:var(--muted);line-height:1.55;margin-bottom:14px}
+.del-tag{display:inline-flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.08em;color:var(--orange);background:var(--orange-dim);border:1px solid rgba(242,101,34,.3);border-radius:50px;padding:2px 8px;margin:2px}
+.del-tag.green{color:var(--green);background:rgba(134,239,172,.1);border-color:rgba(134,239,172,.3)}
+
+/* ══ VIDEO PLAYER ══ */
+.video-wrap{border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#000}.
+.video-meta{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.v-badge{display:inline-flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 8px}
+.v-badge.success{color:var(--green);border-color:rgba(134,239,172,.3)}
+
+/* ══ WHITEPAPER PREVIEW ══ */
+.wp-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 30px}
+.wp-section{margin-bottom:20px}
+.wp-section h3{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:6px;color:var(--orange-light)}
+.wp-section p{font-size:.82rem;color:var(--muted);line-height:1.65}
+.wp-math{
+  background:#0D0D14;border:1px solid rgba(107,33,168,.35);border-radius:10px;
+  padding:18px 22px;font-family:'DM Mono',monospace;font-size:1rem;
+  margin:8px 0;text-align:center;line-height:1.9;color:#C9B8FF;
+}
+.wp-math .k{color:var(--orange-light)}.wp-math .v{color:var(--green)}.wp-math .c{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-icon">PBL</div>
+      <div>
+        <div class="brand-name">PROOF<span class="gold">BRIDGE</span> <span class="badge-submit">LABLAB.AI · HACKATHON</span></div>
+        <div class="brand-sub">Bayesian Safety Kernel · Track 1–4 · Vaguely Vanity LLC · Gqeberha, ZA</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="https://github.com/divhanimajokweni-ctrl/proofbridge-liner" class="button" style="display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 14px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text);letter-spacing:.06em">GitHub ↗</a>
+      <div class="meta-chip">CIPC 2026/259053/07</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-text">
+      <div class="hero-title">ProofBridge<br><span class="accent">Liner</span></div>
+      <div class="hero-sub">The Trust Layer for Verifiable AI — a Bayesian Safety Kernel that converts every AI output into a provable, adjudicatable statement. On-chain circuit breaker. Ghost-risk audit dataset. Deterministic at every decision point.</div>
+      <div class="hero-meta">
+        <span class="meta-chip">Bayesian Safety Kernel</span>
+        <span class="meta-chip">Polygon Amoy 80002</span>
+        <span class="meta-chip">Coq · TLA+ Verified</span>
+        <span class="meta-chip">HMAC-SHA256</span>
+        <span class="meta-chip">TEE Gate · AMD MI300X</span>
+      </div>
+    </div>
+    <!-- Score ring -->
+    <div class="score-ring">
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#2a2a2a" stroke-width="6"/>
+        <circle cx="60" cy="60" r="54" fill="none" stroke="var(--orange)" stroke-width="6"
+          stroke-dasharray="339.3" stroke-dashoffset="0" stroke-linecap="round"
+          transform="rotate(-90 60 60)"/>
+        <text x="60" y="54" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#666">SAFETY</text>
+        <text x="60" y="68" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#666">MARGIN</text>
+        <text x="60" y="86" text-anchor="middle" font-family="Syne,sans-serif" font-size="26" font-weight="800" fill="var(--orange)">+0.316</text>
+        <text x="60" y="100" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#444">μ=0.735 · τ=0.419</text>
+      </svg>
+      <div class="ring-label">μ / τ — SSAFE</div>
+    </div>
+  </div>
+
+  <!-- ═══ 4 TRACK STATUS ═══ -->
+  <div>
+    <div class="sec-label">Submission Tracks</div>
+    <div class="tracks-grid">
+      <div class="track-card t1">
+        <div class="track-num">TRACK 1</div>
+        <div class="track-name">Working Prototype</div>
+        <div class="track-desc">Bayesian kernel with live Vercel API + ops dashboard. 4 scenario POSTs return deterministic HMAC-signed verdicts.</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; POST /api/verify returns μ, τ, S, reasoning_chain, HMAC</div>
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; 3-layer architecture (TEE → Kernel → Breaker)</div>
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; RUN DEMO button — fires 4 live test scenarios</div>
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; Polygon Amoy testnet deployed</div>
+        </div>
+        <div class="track-footer"><a href="https://proofbridge-liner.vercel.app/api/verify" class="track-link" target="_blank">Test endpoint ↗</a></div>
+      </div>
+      <div class="track-card t2">
+        <div class="track-num">TRACK 2</div>
+        <div class="track-name">Video Demo</div>
+        <div class="track-desc">90-second screen recording covering problem statement, math, live dashboard, API calls, and architecture.</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; 6 rendered scenes from SVG → 90 s H.264 / 2.9 MB</div>
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; Hardcoded SRT subtitles across all scenes</div>
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; Problem → Math → Dashboard → API → Architecture → Close</div>
+        </div>
+        <div class="track-footer"><a href="demo/pitch-demo-video.mp4" class="track-link" target="_blank">Watch 90 s demo ↗</a></div>
+      </div>
+      <div class="track-card t3">
+        <div class="track-num">TRACK 3</div>
+        <div class="track-name">Pitch Deck</div>
+        <div class="track-desc">10-slide interactive deck covering problem, architecture, math, ghost-dataset moat, honest disclosures, and roadmap.</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; 10 slides — interactive (arrow keys · click · swipe)</div>
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; Full Limitations slide (Slide 8) — epistemic transparency</div>
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; VV brand (orange/purple) · DM Mono + Syne type</div>
+        </div>
+        <div class="track-footer"><a href="https://vvv/ProofBridge_Liner.html" class="track-link" target="_blank">Open deck ↗</a></div>
+      </div>
+      <div class="track-card t4">
+        <div class="track-num">TRACK 4</div>
+        <div class="track-name">Technical Whitepaper</div>
+        <div class="track-desc">Structured disclosure: problem, architecture, math, audit trail, honest limitations, deployment roadmap.</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; 6-page technical disclosure</div>
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; Full limitations section (5 classes, not footnotes)</div>
+          <div class="track-item"><span class="dot dot-done"></span>&nbsp; Coq theorems · TLA+ deadlock-free · haridev888 dataset</div>
+        </div>
+        <div class="track-footer"><a href="https://vvvv/whitepaper.html" class="track-link" target="_blank">Read whitepaper ↗</a>&nbsp;&nbsp;<a href="https://vvvv/whitepaper.md" class="track-link" target="_blank">Source ↗</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VIDEO DEMO ═══ -->
+  <div>
+    <div class="sec-label">Video Demo — Track 2</div>
+    <h2><span class="accent">90-Second</span> ProofBridge Liner Demo</h2>
+    <div class="video-wrap">
+      <video controls poster="https://via.placeholder.com/1920x540/0a0a0f/F26522?text=ProofBridge+Liner+%E2%80%94+Video+Demo" style="width:100%;display:block" preload="none">
+        <source src="demo/pitch-demo-video.mp4" type="video/mp4"/>
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <div class="video-meta">
+      <span class="v-badge success">▶ 90 s · 30 fps · H.264</span>
+      <span class="v-badge">1920 × 1080 · 2.9 MB</span>
+      <span class="v-badge">SRT subtitles · embedded</span>
+      <span class="v-badge">Scene 1 · Problem</span>
+      <span class="v-badge">Scene 2 · Math (μ / τ / S)</span>
+      <span class="v-badge">Scene 3 · Dashboard Walkthrough</span>
+      <span class="v-badge">Scene 4 · API Verify</span>
+      <span class="v-badge">Scene 5 · Architecture</span>
+      <span class="v-badge">Scene 6 · Closing</span>
+      <a href="demo/pitch-demo-video.mp4" download class="v-badge" style="cursor:pointer">⬇ Download</a>
+    </div>
+  </div>
+
+  <!-- ═══ WHITEPAPER PREVIEW ═══ -->
+  <div>
+    <div class="sec-label">Technical Whitepaper — Track 4</div>
+    <h2><span class="accent">6-Page</span> Technical Disclosure</h2>
+    <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);margin-bottom:16px;letter-spacing:.1em">PROOFBRIDGE LINER — THE TRUST LAYER FOR VERIFIABLE AI · V1.0 · MAY 2026 · MIHLE "DIVHANI" MAJOKWENI · VAGUELY VANITY LLC</div>
+
+    <div class="wp-card" style="margin-bottom:16px">
+      <div class="wp-section">
+        <h3>Abstract</h3>
+        <p>ProofBridge Liner is a Bayesian safety kernel that converts every AI output into a provable, adjudicatable statement. The kernel applies a Beta-Binomial posterior belief check calibrated against an industry-specific risk parameter γ, emitting a live SAFE / TRIP verdict together with a deterministic reasoning chain and a cryptographically signed proof trace. A TRIP verdict is enforced on-chain by an EVM circuit-breaker smart contract. The integrity gap — deed valid on-chain while title is disputed off-chain — is the structural vulnerability this system is designed to eliminate.</p>
+      </div>
+      <div class="wp-section">
+        <h3>Problem Statement</h3>
+        <p><strong>1.1 The Integrity Gap.</strong> A deed hash can be valid on-chain while the underlying property title is disputed, encumbered, or fraudulent. On-chain attestation is binary — no model of accumulated evidence, no Safety Margin, no audit trail a regulator can read.</p>
+        <p><strong>1.2 Why Bayesian Inference.</strong> A Beta-Binomial model is the natural fit. Each deed verification event is a Bernoulli trial. The Beta distribution is the conjugate prior — posterior updates in closed form with no retraining and no latency overhead. α=24, β=8 means 24 clean verifications and 8 anomalies. Self-interpreting at the point of decision.</p>
+      </div>
+      <div class="wp-section">
+        <h3>The Mathematics</h3>
+        <div class="wp-math">
+          <span class="k">μ</span> <span class="c">=</span> <span class="k">(α + 1)</span> <span class="c">/</span> <span class="k">(α + β + 2)</span> &nbsp;<span class="c">— Posterior belief</span><br>
+          <span class="k">τ</span> <span class="c">=</span> <span class="k">τ₀</span> <span class="c">/</span> <span class="k">(1 + γ · β/α)</span> &nbsp;&nbsp;<span class="c">— Calibrated threshold</span><br>
+          <span class="c">S = μ − τ &nbsp;→&nbsp; SAFE iff S &gt; 0 &nbsp;(primary interpretability anchor)</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+          <div style="background:rgba(134,239,172,.07);border:1px solid rgba(134,239,172,.2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:1.5rem;color:var(--green);font-weight:700">0.735</div><div style="font-size:.7rem;color:var(--muted);margin-top:2px">μ (belief) · α=24 β=8</div></div>
+          <div style="background:rgba(147,51,234,.07);border:1px solid rgba(147,51,234,.2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:1.5rem;color:var(--purple-light);font-weight:700">0.419</div><div style="font-size:.7rem;color:var(--muted);margin-top:2px">τ (threshold) · γ=1.3</div></div>
+          <div style="background:rgba(242,101,34,.07);border:1px solid rgba(242,101,34,.2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:1.5rem;color:var(--orange);font-weight:700">+0.316</div><div style="font-size:.7rem;color:var(--muted);margin-top:2px">S (safety margin) → SAFE</div></div>
+        </div>
+      </div>
+      <div class="wp-section">
+        <h3>Limitations &amp; Risk Disclosure</h3>
+        <p>Five classes disclosed in full: prior quality dependency, evidence quality, calibration drift, adversarial α inflation, regulatory scope. We hold that disclosed limitations increase institutional trust; undisclosed limitations destroy it.</p>
+      </div>
+      <div class="wp-section" style="margin:0">
+        <h3>Deployment Roadmap</h3>
+        <p><strong>Phase 1 ✓</strong> — Polygon Amoy testnet, kernel live, ghost-risk baseline populated. <strong>Phase 2</strong> — RealT property audit, Q3 2026. <strong>Phase 3</strong> — Equity-carry term sheet, Q4 2026. <strong>Phase 4</strong> — SA property registry integration, 2027.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ README PREVIEW ═══ -->
+  <div>
+    <div class="sec-label">Project README — Track 3 collateral</div>
+    <h2><span class="accent">README.md</span> — Project Overview</h2>
+    <div class="wp-card">
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+        <a href="https://github.com/divhanimajokweni-ctrl/proofbridge-liner" class="del-tag" target="_blank">📦 GitHub Repository ↗</a>
+        <a href="https://proofbridge-liner.vercel.app/api/health" class="del-tag" target="_blank">🚀 Live API Health ↗</a>
+        <a href="https://divhanimajokweni-ctrl.github.io/proofbridge-liner" class="del-tag" target="_blank">🖥 GitHub Pages ↗</a>
+        <span class="del-tag">💡 MIT License</span>
+        <span class="del-tag green">✅ Deterministic &amp; auditable</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-bottom:8px">CORE FORMULAS</div>
+          <div class="wp-math" style="text-align:left;font-size:.85rem;padding:12px 16px">
+            <span class="k">μ</span> <span class="c">=</span> <span class="k">(α + 1)</span> <span class="c">/</span> <span class="k">(α + β + 2)</span><br><br>
+            <span class="k">τ</span> <span class="c">=</span> <span class="k">τ₀</span> <span class="c">/</span> <span class="k">(1 + γ · β/α)</span><br><br>
+            <span class="k">S</span> <span class="c">=</span> <span class="k">μ − τ</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-bottom:8px">INDUSTRY γ PROFILES</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.78rem">
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 0;color:var(--muted)">Healthcare</td><td style="color:var(--orange);font-family:'DM Mono',monospace;">γ = 1.5</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 0;color:var(--muted)">Taxi / Transport</td><td style="color:var(--orange);font-family:'DM Mono',monospace;">γ = 1.2</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 0;color:var(--muted)">Financial</td><td style="color:var(--orange);font-family:'DM Mono',monospace);">γ = 1.0</td></tr>
+            <tr><td style="padding:6px 0;color:var(--muted)">Micro-finance</td><td style="color:var(--orange);font-family:'DM Mono',monospace;">γ = 0.8</td></tr>
+          </table>
+          <div style="margin-top:16px;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);line-height:1.7">
+            <span class="del-tag green" style="margin:0">npm test passes</span>
+            <span class="del-tag green" style="margin:0">14/14 test suite</span>
+            <span class="del-tag green" style="margin:0">Deterministic</span>
+            <span class="del-tag green" style="margin:0">&lt; 50k gas</span>
+            <span class="del-tag green" style="margin:0">3-of-5 TSS quorum</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>
