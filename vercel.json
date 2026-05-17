@@ -11,6 +11,10 @@
       "use": "@vercel/static"
     },
     {
+      "src": "vvv/**",
+      "use": "@vercel/static"
+    },
+    {
       "src": "demo/**",
       "use": "@vercel/static"
     }
@@ -20,8 +24,10 @@
     { "src": "/api/status",     "dest": "/api/verify.js" },
     { "src": "/api/verify",     "dest": "/api/verify.js", "methods": ["POST"] },
     { "src": "/api/(.*)",       "dest": "/api/verify.js" },
-    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map|mp4|srt|md))", "dest": "/dashboard/public/$1" },
+    { "src": "/pools",          "dest": "/vvv/pools.html" },
+    { "src": "/proofbridge",    "dest": "/vvv/proofbridge.html" },
     { "src": "/demo/(.*)",      "dest": "/demo/$1" },
-    { "src": "/(.*)",           "dest": "/dashboard/public/index.html" }
+    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map|mp4|srt|md))", "dest": "/vvv/$1" },
+    { "src": "/(.*)",           "dest": "/vvv/index.html" }
   ]
 }
