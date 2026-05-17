@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "proofbridge-liner",
+  "name": "workspace",
   "builds": [
     {
       "src": "api/verify.js",
@@ -20,12 +20,10 @@
     { "src": "/api/status",     "dest": "/api/verify.js" },
     { "src": "/api/verify",     "dest": "/api/verify.js", "methods": ["POST"] },
     { "src": "/api/(.*)",       "dest": "/api/verify.js" },
-    { "src": "/submission",     "dest": "/dashboard/submission.html" },
-    { "src": "/$",              "dest": "/dashboard/index.html" },
-    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map|mp4|srt))", "dest": "/dashboard/public/$1" },
+    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map|mp4|srt|md))", "dest": "/dashboard/public/$1" },
     { "src": "/demo/(.*)",      "dest": "/demo/$1" },
     { "src": "/health",         "dest": "/api/verify.js" },
-    { "src": "/(.*)",           "dest": "/dashboard/index.html" }
+    { "src": "/(.*)",           "dest": "/dashboard/public/index.html" }
   ],
   "env": {
     "NODE_ENV": "production"
