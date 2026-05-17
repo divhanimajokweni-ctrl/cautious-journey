@@ -18,9 +18,6 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-    defaults:
-      run:
-        working-directory: api
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,9 +29,11 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
+        working-directory: api
         run: npm install
 
       - name: Run tests
+        working-directory: api
         run: npm test
 
       - name: Install Vercel CLI
@@ -43,10 +42,10 @@ jobs:
       - name: Pull Vercel Environment
         run: |
           [ -n "$VERCEL_TOKEN" ] || { echo "ERROR: VERCEL_TOKEN secret is missing"; exit 1; }
-          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
 
       - name: Build Production
-        run: vercel build --prod --token="$VERCEL_TOKEN"
+        run: vercel build --prod --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
 
       - name: Deploy Production
-        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
