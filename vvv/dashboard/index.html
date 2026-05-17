@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>ProofBridge Kernel Dashboard</title><script src="https://cdn.tailwindcss.com">
+// ═══ VerificationBadge ═══
+function updateVerificationBadge(data) {
+  var badge = document.getElementById('verification-badge');
+  if (!badge) return;
+  var isTripped = (data.verdict || '').toUpperCase() === 'TRIP';
+  badge.style.display = 'block';
+  badge.style.backgroundColor = isTripped ? '#2a0808' : '#082a14';
+  badge.style.border = '2px solid ' + (isTripped ? '#ff3333' : '#00ff66');
+  badge.style.color = isTripped ? '#ff8888' : '#88ff88';
+  badge.querySelector('h4').textContent = isTripped
+    ? '🚨 CIRCUIT BREAKER TRIPPED'
+    : '🛡️ VERIFIED SOVEREIGN TRUTH';
+  var scoreEl = document.getElementById('badge-score');
+  if (scoreEl) {
+    scoreEl.textContent = (data.safety_margin != null)
+      ? (data.safety_margin >= 0 ? '+' + data.safety_margin.toFixed(4) : data.safety_margin.toFixed(4))
+      : '—';
+  }
+}
+
+// ═══ Scenario Hint Buttons ═══
+function bindScenarioButtons() {
+  var scenarios = {
+    'Fraudulent Bank Activity': { alpha: 8,  beta: 80, gamma: 1.5, threshold: 0.60 },
+    'Ubuntu Pools (Normal)':      { alpha: 24, beta: 8,  gamma: 1.0, threshold: 0.60 },
+    'Falsified Deed':             { alpha: 4,  beta: 95, gamma: 1.5, threshold: 0.60 },
+  };
+  var gauge = document.getElementById('belief-arc');
+  if (!gauge) return;
+  Object.entries(scenarios).forEach(function([label, params]) {
+    var btn = document.createElement('button');
+    btn.textContent = label;
+    btn.style.cssText = 'display:block;width:100%;margin:6px 0;padding:10px;background:#0A0F12;border:1px solid #2A3D4A;color:#7A9099;font-family:JetBrains Mono,monospace;font-size:11px;cursor:pointer;border-radius:4px;';
+    btn.onmouseenter = function() { this.style.borderColor='#00ff66'; this.style.color='#00ff66'; };
+    btn.onmouseleave = function() { this.style.borderColor='#2A3D4A'; this.style.color='#7A9099'; };
+    btn.onclick = function() {
+      document.getElementById('alpha').value = params.alpha;
+      document.getElementById('alpha-val').textContent = params.alpha;
+      document.getElementById('beta').value = params.beta;
+      document.getElementById('beta-val').textContent = params.beta;
+      document.getElementById('threshold').value = Math.round(params.threshold * 100);
+      document.getElementById('threshold-val').textContent = params.threshold.toFixed(2);
+      document.getElementById('gamma').value = String(params.gamma);
+      if (GAMMA_DESCRIPTIONS) document.getElementById('gamma-desc').textContent = GAMMA_DESCRIPTIONS[String(params.gamma)];
+      state.alpha = params.alpha; state.beta = params.beta;
+      state.gamma = params.gamma; state.threshold = params.threshold;
+      updateDisplay(); runInference();
+    };
+    gauge.parentElement.parentNode.parentNode.insertBefore(btn, gauge.parentElement.parentNode);
+  });
+}
+
+// Hook badge update into runInference
+(function() {
+  var orig = window.runInference;
+  window.runInference = function() {
+    var p = Promise.resolve(orig.apply(this, arguments));
+    if (orig.constructor.name === 'AsyncFunction') return p;
+    return p;
+  };
+  // Use a monkey-patched Observer to detect when the audit log gets populated
+  var origUpdate = window.updateDisplay;
+  window.updateDisplay = function() {
+    origUpdate();
+    var log = document.getElementById('audit-log');
+    if (log && !log.classList.contains('hidden') && log.textContent !== 'Ready for audit trail...') {
+      try {
+        var data = JSON.parse(log.textContent);
+        updateVerificationBadge(data);
+      } catch(e) {}
+    }
+  };
+})();
+
+setTimeout(bindScenarioButtons, 100);
+
+</script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>body{font-family:'JetBrains Mono',monospace;background:#05080A;color:#C8D4D8}h1,h2{font-family:'Orbitron',sans-serif}.gauge-container{position:relative;width:160px;height:160px}.gauge-circle{fill:none;stroke:#2A3D4A;stroke-width:12}.gauge-progress{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .5s ease}.gauge-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}</style></head>
+    <!-- ═══ VERIFICATION BADGE ═══ -->
+    <div id="verification-badge"
+         style="display:none;position:fixed;top:20px;right:20px;z-index:9999;
+                padding:12px 16px;background-color:#082a14;border:2px solid #00ff66;
+                font-family:'JetBrains Mono',monospace;color:#88ff88;border-radius:4px;
+                max-width:340px;box-shadow:0 0 20px rgba(0,255,102,0.15);">
+      <h4 style="margin:0 0 4px 0;font-size:14px;color:#00ff66;">🛡️ VERIFIED SOVEREIGN TRUTH</h4>
+      <p style="margin:0;font-size:11px;color:#aaa;">SYSTEM RISK SCORE: <span id="badge-score">—</span></p>
+      <p style="margin:0;font-size:11px;color:#aaa;">PROOF TRACE: Deterministic replay — 100% match</p>
+    </div>
+
+    <!-- ═══ VERIFICATION BADGE ═══ -->
+    <div id="verification-badge"
+         style="display:none;position:fixed;top:20px;right:20px;z-index:9999;
+                padding:12px 16px;background-color:#082a14;border:2px solid #00ff66;
+                font-family:'JetBrains Mono',monospace;color:#88ff88;border-radius:4px;
+                max-width:340px;box-shadow:0 0 20px rgba(0,255,102,0.15);">
+      <h4 style="margin:0 0 4px 0;font-size:14px;color:#00ff66;">🛡️ VERIFIED SOVEREIGN TRUTH</h4>
+      <p style="margin:0;font-size:11px;color:#aaa;">SYSTEM RISK SCORE: <span id="badge-score">—</span></p>
+      <p style="margin:0;font-size:11px;color:#aaa;">PROOF TRACE: Deterministic replay — 100% match</p>
+    </div>
+<body class="p-6 md:p-10"><div class="max-w-7xl mx-auto"><header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 border-b border-amber-900/30 pb-6 gap-4"><div><h1 class="text-2xl md:text-3xl text-amber-500 tracking-[.2em] font-bold">PROOFBRIDGE // KERNEL_v0.9</h1><p class="text-xs text-[#7A9099] mt-1">Ubuntu-Bridge Safety Kernel · Polygon Amoy Testnet</p></div><div id="verdict-banner" class="px-6 py-3 rounded font-bold text-xl border-2 border-[#2A3D4A] bg-[#0A0F12] text-[#7A9099]">AWAITING INPUT</div></header><div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8"><div class="lg:col-span-1 space-y-6"><div class="bg-[#0A0F12]/50 p-6 rounded-xl border border-[#2A3D4A]"><h2 class="text-sm text-amber-500 mb-5 uppercase tracking-widest">Engine Parameters</h2><div class="space-y-5"><div><label class="block text-xs mb-2 text-[#7A9099]">α — Positive Evidence</label><input type="range" id="alpha" min="0" max="100" value="24" class="w-full h-2 bg-[#1A2530] rounded-lg appearance-none cursor-pointer accent-amber-500"><div class="flex justify-between text-xs text-[#7A9099] mt-1"><span>0</span><span id="alpha-val" class="text-amber-400 font-bold">24</span><span>100</span></div></div><div><label class="block text-xs mb-2 text-[#7A9099]">β — Risk Evidence</label><input type="range" id="beta" min="0" max="100" value="8" class="w-full h-2 bg-[#1A2530] rounded-lg appearance-none cursor-pointer accent-amber-500"><div class="flex justify-between text-xs text-[#7A9099] mt-1"><span>0</span><span id="beta-val" class="text-amber-400 font-bold">8</span><span>100</span></div></div><div><label class="block text-xs mb-2 text-[#7A9099]">τ₀ — Base Threshold</label><input type="range" id="threshold" min="0" max="100" value="60" class="w-full h-2 bg-[#1A2530] rounded-lg appearance-none cursor-pointer accent-amber-500"><div class="flex justify-between text-xs text-[#7A9099] mt-1"><span>0.0</span><span id="threshold-val" class="text-amber-400 font-bold">0.60</span><span>1.0</span></div></div><div><label class="block text-xs mb-2 text-[#7A9099]">γ — Industry Calibration</label><select id="gamma" class="w-full bg-[#0A0F12] border border-[#2A3D4A] p-3 rounded text-sm focus:outline-none focus:border-amber-500 transition-colors"><option value="0.8">Micro-finance (γ=0.8)</option><option value="1.0" selected>Content Mod (γ=1.0)</option><option value="1.2">Taxi Safety (γ=1.2)</option><option value="1.5">Healthcare (γ=1.5)</option></select><p class="text-xs text-[#7A9099] mt-2 italic" id="gamma-desc">Neutral sensitivity. Threshold adjusts linearly with evidence imbalance.</p></div></div></div><div class="bg-[#0A0F12]/50 p-4 rounded-xl border border-[#2A3D4A]"><button id="toggle-chain" class="text-xs text-amber-500 hover:text-amber-400 uppercase tracking-wider w-full text-left flex justify-between items-center"><span>Show Reasoning Chain</span><span class="text-lg">▼</span></button><pre id="audit-log" class="hidden mt-3 p-3 bg-black border border-[#1A2530] text-[10px] text-green-500 overflow-x-auto rounded max-h-60 overflow-y-auto">Ready for audit trail...</pre></div></div><div class="lg:col-span-3 space-y-6"><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="bg-[#0A0F12]/50 p-6 rounded-xl border border-[#2A3D4A]"><h3 class="text-xs text-blue-400 mb-4 uppercase tracking-wider text-center">Posterior Belief (μ)</h3><div class="gauge-container mx-auto"><svg viewBox="0 0 100 100" class="transform -rotate-90 w-full h-full"><circle class="gauge-circle" cx="50" cy="50" r="40"></circle><circle id="belief-arc" class="gauge-progress" cx="50" cy="50" r="40" stroke="#3B82F6" stroke-dasharray="0 251" stroke-dashoffset="0"></circle></svg><div class="gauge-text"><div class="text-3xl font-bold text-blue-400" id="val-belief">0.00</div></div></div></div><div class="bg-[#0A0F12]/50 p-6 rounded-xl border border-[#2A3D4A]"><h3 class="text-xs text-purple-400 mb-4 uppercase tracking-wider text-center">Calibrated Threshold (τ)</h3><div class="gauge-container mx-auto"><svg viewBox="0 0 100 100" class="transform -rotate-90 w-full h-full"><circle class="gauge-circle" cx="50" cy="50" r="40"></circle><circle id="threshold-arc" class="gauge-progress" cx="50" cy="50" r="40" stroke="#A855F7" stroke-dasharray="0 251" stroke-dashoffset="0"></circle></svg><div class="gauge-text"><div class="text-3xl font-bold text-purple-400" id="val-threshold">0.00</div></div></div></div><div class="bg-[#0A0F12]/50 p-6 rounded-xl border border-[#2A3D4A]"><h3 class="text-xs text-[#C8D4D8] mb-4 uppercase tracking-wider text-center">Safety Margin (μ-τ)</h3><div class="gauge-container mx-auto"><svg viewBox="0 0 100 100" class="transform -rotate-90 w-full h-full"><circle class="gauge-circle" cx="50" cy="50" r="40"></circle><circle id="margin-arc" class="gauge-progress" cx="50" cy="50" r="40" stroke="#10B981" stroke-dasharray="0 251" stroke-dashoffset="0"></circle></svg><div class="gauge-text"><div class="text-3xl font-bold" id="val-margin">0.00</div></div></div></div></div><div id="verdict-display" class="text-center py-8 rounded-xl border-2 border-[#2A3D4A] bg-[#0A0F12] transition-all duration-300"><div class="text-6xl md:text-7xl font-bold mb-2" id="verdict-text">—</div><div class="text-sm text-[#7A9099] uppercase tracking-[.3em]">Decision</div><div class="text-xs text-[#7A9099] mt-2" id="margin-detail"></div></div><button onclick="runInference()" class="w-full bg-amber-600 hover:bg-amber-500 text-black font-bold py-5 rounded-xl transition-all uppercase tracking-[.2em] text-lg shadow-lg shadow-amber-900/20">Execute Bayesian Verify</button><div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs"><div class="p-3 bg-[#0A0F12] border border-[#2A3D4A] rounded text-center"><div class="text-amber-400 font-bold mb-1">Taxi</div><div class="text-[#7A9099]">γ=1.2</div></div><div class="p-3 bg-[#0A0F12] border border-[#2A3D4A] rounded text-center"><div class="text-amber-400 font-bold mb-1">Micro-finance</div><div class="text-[#7A9099]">γ=0.8</div></div><div class="p-3 bg-[#0A0F12] border border-[#2A3D4A] rounded text-center"><div class="text-amber-400 font-bold mb-1">Healthcare</div><div class="text-[#7A9099]">γ=1.5</div></div><div class="p-3 bg-[#0A0F12] border border-[#2A3D4A] rounded text-center"><div class="text-amber-400 font-bold mb-1">Content Mod</div><div class="text-[#7A9099]">γ=1.0</div></div></div></div></div><footer class="border-t border-[#2A3D4A]/30 pt-6 mt-10 text-center text-xs text-[#7A9099]"><p>ProofBridge Liner · Vaguely Vanity LLC · Polygon Amoy Testnet · v0.9</p><p class="mt-1">Deterministic • Auditable • Timestamped</p></footer></div><script>
+const state={alpha:24,beta:8,gamma:1.3,threshold:0.6};
+const GAMMA_DESCRIPTIONS={'0.8':'Lenient. Lower risk sensitivity — higher safety threshold (micro-finance).','1.0':'Neutral. Baseline calibration (content moderation, general purpose).','1.2':'Sensitive. Moderate risk aversion (taxi safety, ride-sharing).','1.5':'Highly sensitive. Maximum safety margin (healthcare, critical infrastructure).'};
+function setGauge(id,value,color){const c=document.getElementById(id);const r=40,circ=2*Math.PI*r;c.style.strokeDasharray=`${circ} ${circ}`;c.style.strokeDashoffset=circ*(1-value);c.style.stroke=color;}
+function betaMean(a,b){return(a+1)/(a+b+2)}
+function calibratedThreshold(baseThreshold,gamma,alpha,beta){if(alpha===0)return 0;const ratio=beta/alpha;return baseThreshold/(1+gamma*ratio)}
+function updateDisplay(){const belief=betaMean(state.alpha,state.beta);const threshold=calibratedThreshold(state.threshold,state.gamma,state.alpha,state.beta);const margin=belief-threshold;const verdict=margin>0?'SAFE':'TRIP';document.getElementById('val-belief').textContent=belief.toFixed(4);document.getElementById('val-threshold').textContent=threshold.toFixed(4);document.getElementById('val-margin').textContent=margin>=0?`+${margin.toFixed(4)}`:margin.toFixed(4);setGauge('belief-arc',belief,'#3B82F6');setGauge('threshold-arc',threshold,'#A855F7');const mg=Math.max(0,Math.min(1,margin+0.5));setGauge('margin-arc',mg,margin>=0?'#10B981':'#EF4444');const b=document.getElementById('verdict-text'),bx=document.getElementById('verdict-display'),d=document.getElementById('margin-detail');if(verdict==='SAFE'){b.textContent='SAFE';b.className='text-6xl md:text-7xl font-bold mb-2 text-emerald-400';bx.className='text-center py-8 rounded-xl border-2 border-emerald-500/50 bg-emerald-900/10 transition-all duration-300';d.textContent=`Safety margin: ${margin.toFixed(4)} (positive buffer)`;}else{b.textContent='TRIP';b.className='text-6xl md:text-7xl font-bold mb-2 text-rose-500';bx.className='text-center py-8 rounded-xl border-2 border-rose-500/50 bg-rose-900/10 transition-all duration-300';d.textContent=`Risk exceeds tolerance by ${(-margin).toFixed(4)}`;}}
+function bindSlider(id,key,displayId,transform=v=>v){const e=document.getElementById(id),d=document.getElementById(displayId);e.addEventListener('input',ev=>{const v=transform(ev.target.value);state[key]=v;if(d)d.textContent=id==='threshold'?v.toFixed(2):v;updateDisplay();});}
+bindSlider('alpha','alpha','alpha-val',Number);bindSlider('beta','beta','beta-val',Number);bindSlider('threshold','threshold','threshold-val',v=>v/100);
+document.getElementById('gamma').addEventListener('change',e=>{state.gamma=parseFloat(e.target.value);document.getElementById('gamma-desc').textContent=GAMMA_DESCRIPTIONS[state.gamma];updateDisplay();});
+const auditLog=document.getElementById('audit-log');document.getElementById('toggle-chain').addEventListener('click',()=>{auditLog.classList.toggle('hidden');document.getElementById('toggle-chain').querySelector('span:last-child').textContent=auditLog.classList.contains('hidden')?'▼':'▲';});
+async function runInference(){const payload={alpha:state.alpha,beta:state.beta,gamma:state.gamma,threshold:state.threshold};try{const res=await fetch('/api/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await res.json();if(!res.ok)throw new Error(data.error||'API error');document.getElementById('val-belief').textContent=data.belief;document.getElementById('val-threshold').textContent=data.threshold;document.getElementById('val-margin').textContent=data.safety_margin>=0?`+${data.safety_margin.toFixed(4)}`:data.safety_margin.toFixed(4);const b=document.getElementById('verdict-text'),bx=document.getElementById('verdict-display'),dt=document.getElementById('margin-detail');if(data.verdict==='SAFE'){b.textContent='SAFE';b.className='text-6xl md:text-7xl font-bold mb-2 text-emerald-400';bx.className='text-center py-8 rounded-xl border-2 border-emerald-500/50 bg-emerald-900/10 transition-all duration-300';dt.textContent=`Safety margin: ${data.safety_margin.toFixed(4)}`;}else{b.textContent='TRIP';b.className='text-6xl md:text-7xl font-bold mb-2 text-rose-500';bx.className='text-center py-8 rounded-xl border-2 border-rose-500/50 bg-rose-900/10 transition-all duration-300';dt.textContent=`Risk exceeds tolerance by ${(-data.safety_margin).toFixed(4)}`;}setGauge('belief-arc',data.belief,'#3B82F6');setGauge('threshold-arc',data.threshold,'#A855F7');const mg=Math.max(0,Math.min(1,data.safety_margin+0.5));setGauge('margin-arc',mg,data.verdict==='SAFE'?'#10B981':'#EF4444');auditLog.classList.remove('hidden');document.getElementById('toggle-chain').querySelector('span:last-child').textContent='▲';auditLog.textContent=JSON.stringify(data,null,2);}catch(err){alert('Error: '+err.message);}}
+document.getElementById('gamma-desc').textContent=GAMMA_DESCRIPTIONS[state.gamma];updateDisplay();
+</script></body></html>

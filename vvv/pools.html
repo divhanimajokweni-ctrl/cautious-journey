@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ubuntu Pools — Community Finance</title>
+  <meta name="description" content="A ROSCA platform rooted in the stokvel tradition. Pool capital transparently, on your terms." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F4F1EC; --ink: #0F1A16; --sage: #2D6355; --sage2: #4A7C6F;
+      --earth: #8C6A42; --sand: #C9B99A; --mist: #6B8078; --light: #DDD8CF; --white: #FAF8F4;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--ink);
+      font-family: 'DM Sans', sans-serif; font-weight: 300; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 999;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.1rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(244,241,236,0.9); backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(109,128,120,0.15);
+    }
+    .nav-back {
+      font-family: 'Space Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--mist);
+      text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--sage); }
+    .nav-back::before { content: '←'; }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem;
+      letter-spacing: 0.08em; color: var(--sage); text-decoration: none; text-transform: uppercase;
+    }
+    .nav-status {
+      display: flex; align-items: center; gap: 0.45rem;
+      font-family: 'Space Mono', monospace; font-size: 0.58rem;
+      color: var(--mist); letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #3A9D6E;
+      box-shadow: 0 0 6px #3A9D6E; animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 2.5rem 4rem; position: relative; overflow: hidden;
+    }
+    .hero-bg-char {
+      position: absolute; top: -0.05em; left: -0.02em;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(220px, 45vw, 500px); line-height: 1; color: transparent;
+      -webkit-text-stroke: 1px rgba(45,99,85,0.07); pointer-events: none; user-select: none;
+      letter-spacing: -0.05em;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 780px; }
+    .hero-eyebrow {
+      font-family: 'Space Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--sage);
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--sage); }
+    h1 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(3.2rem, 8vw, 6.5rem); line-height: 0.92;
+      letter-spacing: -0.025em; color: var(--ink); margin-bottom: 1.5rem;
+    }
+    h1 span { color: var(--sage); }
+    .hero-tagline {
+      font-size: clamp(1rem, 2.2vw, 1.25rem); color: var(--mist);
+      line-height: 1.6; max-width: 480px; margin-bottom: 2.5rem;
+    }
+    .cta-strip { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--sage); color: var(--white);
+      font-family: 'Space Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700;
+      padding: 0.9rem 1.75rem; text-decoration: none; border-radius: 2px;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #1f4d42; transform: translateY(-1px); }
+    .btn-whatsapp {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      border: 1px solid rgba(45,99,85,0.35); color: var(--sage);
+      font-family: 'Space Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700;
+      padding: 0.9rem 1.75rem; text-decoration: none; border-radius: 2px;
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .btn-whatsapp:hover { border-color: var(--sage); background: rgba(45,99,85,0.06); }
+    .wa-icon { width: 14px; height: 14px; fill: currentColor; }
+    .stats-bar {
+      background: var(--ink); padding: 2rem 2.5rem;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    }
+    .stat {
+      padding: 0.5rem 2rem 0.5rem 0; border-right: 1px solid rgba(244,241,236,0.08);
+    }
+    .stat:last-child { border-right: none; padding-left: 2rem; padding-right: 0; }
+    .stat:not(:first-child):not(:last-child) { padding: 0.5rem 2rem; }
+    .stat-val {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 2rem;
+      color: var(--sand); line-height: 1; margin-bottom: 0.3rem;
+    }
+    .stat-label {
+      font-family: 'Space Mono', monospace; font-size: 0.58rem;
+      color: rgba(201,185,154,0.45); letter-spacing: 0.18em; text-transform: uppercase;
+    }
+    .section { padding: 5rem 2.5rem; }
+    .section-eyebrow {
+      font-family: 'Space Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--sage);
+      margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--sage); }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: clamp(1.8rem, 4vw, 3rem); color: var(--ink);
+      margin-bottom: 3rem; max-width: 480px; line-height: 1.15;
+    }
+    .steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; border: 1px solid var(--light);
+    }
+    .step {
+      padding: 2rem 1.75rem; border-right: 1px solid var(--light); position: relative;
+    }
+    .step:last-child { border-right: none; }
+    .step-num {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3rem;
+      color: var(--light); line-height: 1; margin-bottom: 1rem;
+    }
+    .step-title {
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: 1rem;
+      color: var(--ink); margin-bottom: 0.5rem;
+    }
+    .step-desc { font-size: 0.85rem; color: var(--mist); line-height: 1.65; }
+    .pilot-band {
+      margin: 0 2.5rem; background: var(--sage);
+      padding: 2rem 2.5rem; display: flex; align-items: center;
+      justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; border-radius: 2px;
+    }
+    .pilot-text {
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: 1.1rem; color: var(--white);
+    }
+    .pilot-sub {
+      font-size: 0.8rem; color: rgba(250,248,244,0.65); margin-top: 0.3rem;
+      font-family: 'Space Mono', monospace; letter-spacing: 0.08em;
+    }
+    .pilot-btn {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--white); color: var(--sage);
+      font-family: 'Space Mono', monospace; font-size: 0.68rem;
+      font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.85rem 1.5rem; text-decoration: none; border-radius: 2px;
+      transition: opacity 0.2s; white-space: nowrap;
+    }
+    .pilot-btn:hover { opacity: 0.88; }
+    .governance {
+      background: var(--ink); color: var(--sand); padding: 4rem 2.5rem;
+    }
+    .gov-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 2.5rem;
+    }
+    .gov-item-label {
+      font-family: 'Space Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--mist); margin-bottom: 0.4rem;
+    }
+    .gov-item-val {
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: 1rem; color: var(--sand);
+    }
+    footer {
+      padding: 2rem 2.5rem; border-top: 1px solid var(--light);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-left {
+      font-family: 'Space Mono', monospace; font-size: 0.58rem;
+      color: var(--mist); letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .footer-right {
+      font-family: 'Syne', sans-serif; font-size: 0.75rem; color: var(--sand); font-style: italic;
+    }
+    @media (max-width: 680px) {
+      nav { padding: 1rem 1.25rem; }
+      .hero { padding: 0 1.25rem 3rem; }
+      .stats-bar { grid-template-columns: 1fr; }
+      .stat { border-right: none; border-bottom: 1px solid rgba(244,241,236,0.08); padding: 1rem 0; }
+      .stat:last-child { border-bottom: none; padding: 1rem 0 0; }
+      .stat:not(:first-child):not(:last-child) { padding: 1rem 0; }
+      .section { padding: 4rem 1.25rem; }
+      .pilot-band { margin: 0 1.25rem; }
+      footer { padding: 1.5rem 1.25rem; flex-direction: column; align-items: flex-start; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-eyebrow { animation: fadeUp 0.6s 0.1s ease both; }
+    h1 { animation: fadeUp 0.7s 0.2s ease both; }
+    .hero-tagline { animation: fadeUp 0.6s 0.3s ease both; }
+    .cta-strip { animation: fadeUp 0.6s 0.4s ease both; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-back" href="/">VVU</a>
+    <a class="nav-logo" href="/pools">Ubuntu Pools</a>
+    <div class="nav-status">
+      <span class="status-dot"></span>
+      Pilot Active
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="hero-bg-char" aria-hidden="true">U</div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Community Finance · ROSCA Platform</p>
+      <h1>Pool.<br><span>Together.</span><br>Grow.</h1>
+      <p class="hero-tagline">
+        The stokvel, reimagined for the digital age. Ubuntu Pools brings transparent, community-governed savings cycles to your phone — no bank required.
+      </p>
+      <div class="cta-strip">
+        <a class="btn-primary" href="https://chat.whatsapp.com/HcncFfDYrWb3G2ZiBx8BYL" target="_blank" rel="noopener">
+          Join a Pool
+        </a>
+        <a class="btn-whatsapp" href="https://wa.me/27623506594" target="_blank" rel="noopener">
+          <svg class="wa-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp Us
+        </a>
+      </div>
+    </div>
+  </section>
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-val">R0</div>
+      <div class="stat-label">Bank fees charged</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">100%</div>
+      <div class="stat-label">Community owned</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">Pilot</div>
+      <div class="stat-label">Now recruiting members</div>
+    </div>
+  </div>
+  <section class="section">
+    <p class="section-eyebrow">How it works</p>
+    <h2 class="section-title">Simple cycles. Real trust.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Join a Group</h3>
+        <p class="step-desc">Connect via WhatsApp. A pool facilitator verifies your identity and sets up your cycle — no paperwork.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Contribute Monthly</h3>
+        <p class="step-desc">Each member contributes a fixed amount via Dodo Payments. All flows are recorded and visible to the group.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3 class="step-title">Receive Your Payout</h3>
+        <p class="step-desc">Members rotate to receive the full pool pot. The order is agreed by governance vote before the cycle begins.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3 class="step-title">Complete the Cycle</h3>
+        <p class="step-desc">Every member receives once. The cycle closes, the record is archived, and the community decides whether to renew.</p>
+      </div>
+    </div>
+  </section>
+  <div class="pilot-band">
+    <div>
+      <p class="pilot-text">Join the founding pilot cycle</p>
+      <p class="pilot-sub">Manual facilitation · Small cohort · Real money · Real governance</p>
+    </div>
+    <a class="pilot-btn" href="https://wa.me/27623506594" target="_blank" rel="noopener">
+      Apply via WhatsApp →
+    </a>
+  </div>
+  <section class="governance">
+    <p class="section-eyebrow" style="color:var(--mist)">Governance</p>
+    <h2 class="section-title" style="color:var(--sand);margin-bottom:0">Built on Ubuntu principles</h2>
+    <div class="gov-grid">
+      <div>
+        <p class="gov-item-label">Pool structure</p>
+        <p class="gov-item-val">ROSCA / Stokvel</p>
+      </div>
+      <div>
+        <p class="gov-item-label">Payment rails</p>
+        <p class="gov-item-val">Dodo Payments</p>
+      </div>
+      <div>
+        <p class="gov-item-label">Onboarding</p>
+        <p class="gov-item-val">WhatsApp-native</p>
+      </div>
+      <div>
+        <p class="gov-item-label">Dispute resolution</p>
+        <p class="gov-item-val">Community vote</p>
+      </div>
+      <div>
+        <p class="gov-item-label">Oversight</p>
+        <p class="gov-item-val">VV LLC · Veto gate</p>
+      </div>
+      <div>
+        <p class="gov-item-label">Phase</p>
+        <p class="gov-item-val">Manual pilot</p>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <p class="footer-left">Ubuntu Pools · Vaguely Vanity LLC · Gqeberha, ZA</p>
+    <p class="footer-right">Umuntu ngumuntu ngabantu</p>
+  </footer>
+</body>
+</html>

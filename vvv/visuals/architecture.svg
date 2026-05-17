@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <style>
+      .box { fill: #0A0F12; stroke: #C8502A; stroke-width: 2; rx: 6; }
+      .arrow { stroke: #4A7C6F; stroke-width: 2; marker-end: url(#arrowhead); }
+      .text { font-family: 'JetBrains Mono', monospace; fill: #C8D4D8; font-size: 12px; }
+      .header { font-family: 'Orbitron', sans-serif; fill: #C8502A; font-size: 14px; font-weight: bold; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4A7C6F"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="400" y="40" class="header" text-anchor="middle">ProofBridge Liner Architecture</text>
+
+  <!-- Layer 1: TEE Gate -->
+  <rect class="box" x="50" y="100" width="200" height="80"/>
+  <text x="150" y="135" class="header" text-anchor="middle">Layer 1: TEE Gate</text>
+  <text x="150" y="160" class="text" text-anchor="middle">Hardware Attestation</text>
+
+  <!-- Layer 2: Bayesian Engine -->
+  <rect class="box" x="300" y="100" width="200" height="80"/>
+  <text x="400" y="135" class="header" text-anchor="middle">Layer 2: Bayesian</text>
+  <text x="400" y="160" class="text" text-anchor="middle">Beta-Binomial Posterior</text>
+
+  <!-- Layer 3: Circuit Breaker -->
+  <rect class="box" x="550" y="100" width="200" height="80"/>
+  <text x="650" y="135" class="header" text-anchor="middle">Layer 3: Circuit</text>
+  <text x="650" y="160" class="text" text-anchor="middle">Breaker</text>
+
+  <!-- Arrows between layers -->
+  <line class="arrow" x1="250" y1="140" x2="300" y2="140"/>
+  <line class="arrow" x1="500" y1="140" x2="550" y2="140"/>
+
+  <!-- Input -->
+  <rect class="box" x="50" y="280" width="150" height="60"/>
+  <text x="125" y="310" class="text" text-anchor="middle">Evidence (α, β)</text>
+  <text x="125" y="330" class="text" text-anchor="middle" font-size="10">来自实体提取</text>
+  <line class="arrow" x1="125" y1="280" x2="125" y2="240"/>
+
+  <!-- Output -->
+  <rect class="box" x="600" y="280" width="150" height="60"/>
+  <text x="675" y="310" class="text" text-anchor="middle">Verdict (SAFE/TRIP)</text>
+  <text x="675" y="330" class="text" text-anchor="middle" font-size="10">Safety Margin S</text>
+  <line class="arrow" x1="675" y1="280" x2="675" y2="240"/>
+
+  <!-- Log Chain -->
+  <rect class="box" x="300" y="400" width="200" height="60"/>
+  <text x="400" y="420" class="header" text-anchor="middle">Audit Log</text>
+  <text x="400" y="445" class="text" text-anchor="middle">JSON + HMAC + Timestamp</text>
+
+  <!-- Polygon Amoy -->
+  <rect class="box" x="550" y="500" width="200" height="60"/>
+  <text x="650" y="525" class="text" text-anchor="middle">Polygon Amoy</text>
+  <text x="650" y="545" class="text" text-anchor="middle">Anchor TX</text>
+
+  <!-- Connections -->
+  <line class="arrow" x1="400" y1="180" x2="400" y2="240"/>
+  <line class="arrow" x1="400" y1="260" x2="400" y2="280"/>
+  <line class="arrow" x1="675" y1="260" x2="675" y2="280"/>
+  <line class="arrow" x1="400" y1="460" x2="650" y2="500"/>
+</svg>

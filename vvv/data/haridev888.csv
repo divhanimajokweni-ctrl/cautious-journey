@@ -1,0 +1,12 @@
+alpha,beta,label,industry
+5,2,0,taxi
+8,3,0,taxi
+12,4,0,taxi
+24,8,0,property
+30,10,0,property
+3,5,1,taxi
+6,8,1,taxi
+10,15,1,healthcare
+15,20,1,healthcare
+8,12,1,microfinance
+12,18,1,microfinance

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Venture Vision Ubuntu — VVU</title>
+  <meta name="description" content="Vaguely Vanity LLC · Ubuntu-first infrastructure for community finance and property trust." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --night: #080C0E; --ink: #0E1518; --ember: #C8502A; --gold: #D4A843;
+      --sage: #4A7C6F; --fog: #A8B5B0; --chalk: #EAE6DF; --white: #F8F5F0;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--night); color: var(--chalk);
+      font-family: 'DM Sans', sans-serif; font-weight: 300;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 999;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.25rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(168,181,176,0.08);
+      background: rgba(8,12,14,0.85); backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+      letter-spacing: 0.12em; color: var(--white); text-transform: uppercase; text-decoration: none;
+    }
+    .nav-logo span { color: var(--ember); }
+    .nav-tag {
+      font-family: 'Space Mono', monospace; font-size: 0.65rem;
+      color: var(--fog); letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .hero {
+      min-height: 100vh; display: grid; place-items: center;
+      padding: 8rem 2.5rem 5rem; position: relative;
+    }
+    .hero::after {
+      content: ''; position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(ellipse, rgba(200,80,42,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 860px; width: 100%; position: relative; z-index: 1; }
+    .hero-eyebrow {
+      font-family: 'Space Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--ember);
+      margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--ember); }
+    .hero-headline {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(3rem, 7vw, 5.5rem); line-height: 0.95;
+      letter-spacing: -0.02em; color: var(--white); margin-bottom: 1rem;
+    }
+    .hero-headline em { font-style: normal; color: var(--ember); }
+    .hero-sub {
+      font-family: 'Syne', sans-serif; font-weight: 400;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: var(--fog);
+      margin-bottom: 2.5rem; max-width: 560px; line-height: 1.45;
+    }
+    .hero-philosophy {
+      font-size: 0.85rem; color: rgba(168,181,176,0.6);
+      letter-spacing: 0.05em; font-style: italic; margin-bottom: 4rem;
+    }
+    .divider {
+      width: 48px; height: 2px;
+      background: linear-gradient(90deg, var(--ember), transparent);
+      margin-bottom: 4rem;
+    }
+    .portals {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5px;
+      max-width: 900px; margin: 0 auto; position: relative;
+    }
+    .portal-card {
+      position: relative; padding: 3rem 2.5rem; background: var(--ink);
+      text-decoration: none; overflow: hidden; transition: background 0.3s ease; display: block;
+    }
+    .portal-card:first-child { border-radius: 2px 0 0 2px; }
+    .portal-card:last-child { border-radius: 0 2px 2px 0; }
+    .portal-card::before {
+      content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s ease;
+    }
+    .portal-card.pools::before { background: linear-gradient(135deg, rgba(74,124,111,0.12) 0%, transparent 70%); }
+    .portal-card.proof::before { background: linear-gradient(135deg, rgba(200,80,42,0.12) 0%, transparent 70%); }
+    .portal-card:hover::before { opacity: 1; }
+    .portal-card:hover { background: #111618; }
+    .portal-card::after {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 0; transition: height 0.35s ease;
+    }
+    .portal-card.pools::after { background: var(--sage); }
+    .portal-card.proof::after { background: var(--ember); }
+    .portal-card:hover::after { height: 100%; }
+    .portal-tag {
+      font-family: 'Space Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .portal-card.pools .portal-tag { color: var(--sage); }
+    .portal-card.proof .portal-tag { color: var(--ember); }
+    .portal-tag::before {
+      content: ''; display: inline-block; width: 6px; height: 6px;
+      border-radius: 50%; background: currentColor;
+    }
+    .portal-title {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.6rem;
+      color: var(--white); margin-bottom: 0.75rem; line-height: 1.1;
+    }
+    .portal-desc {
+      font-size: 0.875rem; color: var(--fog); line-height: 1.65;
+      margin-bottom: 2rem; max-width: 300px;
+    }
+    .portal-specs {
+      display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 2.5rem;
+    }
+    .portal-spec {
+      font-family: 'Space Mono', monospace; font-size: 0.6rem;
+      color: rgba(168,181,176,0.45); letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .portal-cta {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-family: 'Space Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700;
+      transition: gap 0.25s ease;
+    }
+    .portal-card.pools .portal-cta { color: var(--sage); }
+    .portal-card.proof .portal-cta { color: var(--ember); }
+    .portal-card:hover .portal-cta { gap: 1rem; }
+    .portal-cta::after { content: '→'; }
+    footer {
+      text-align: center; padding: 3rem 2rem;
+      border-top: 1px solid rgba(168,181,176,0.06);
+    }
+    .footer-entity {
+      font-family: 'Space Mono', monospace; font-size: 0.6rem;
+      color: rgba(168,181,176,0.3); letter-spacing: 0.2em; text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .footer-ubuntu {
+      font-family: 'Syne', sans-serif; font-size: 0.75rem;
+      color: rgba(168,181,176,0.25); font-style: italic;
+    }
+    @media (max-width: 680px) {
+      nav { padding: 1rem 1.25rem; }
+      .hero { padding: 7rem 1.25rem 4rem; }
+      .portals { grid-template-columns: 1fr; }
+      .portal-card:first-child { border-radius: 2px 2px 0 0; }
+      .portal-card:last-child { border-radius: 0 0 2px 2px; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-eyebrow { animation: fadeUp 0.6s ease both; }
+    .hero-headline { animation: fadeUp 0.7s 0.1s ease both; }
+    .hero-sub { animation: fadeUp 0.7s 0.2s ease both; }
+    .hero-philosophy { animation: fadeUp 0.6s 0.3s ease both; }
+    .divider { animation: fadeUp 0.6s 0.35s ease both; }
+    .portals { animation: fadeUp 0.7s 0.4s ease both; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="/">VVU<span>.</span></a>
+    <span class="nav-tag">venturevisionubuntu.co.za</span>
+  </nav>
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="hero-eyebrow">Vaguely Vanity LLC · Gqeberha, ZA</p>
+        <h1 class="hero-headline">Venture<br>Vision<br><em>Ubuntu</em></h1>
+        <p class="hero-sub">Ubuntu-first infrastructure. Community finance and verified property trust — built on the irreducible truth that trust must be earned, layer by layer.</p>
+        <p class="hero-philosophy">Umuntu ngumuntu ngabantu</p>
+        <div class="divider"></div>
+        <div class="portals">
+          <a class="portal-card pools" href="/pools">
+            <p class="portal-tag">Community Finance</p>
+            <h2 class="portal-title">Ubuntu<br>Pools</h2>
+            <p class="portal-desc">A ROSCA platform rooted in the stokvel tradition. Pool your community's capital — transparently, securely, and on your terms.</p>
+            <div class="portal-specs">
+              <span class="portal-spec">· WhatsApp-native onboarding</span>
+              <span class="portal-spec">· Dodo Payments gateway</span>
+              <span class="portal-spec">· Community-governed cycles</span>
+            </div>
+            <span class="portal-cta">Enter</span>
+          </a>
+          <a class="portal-card proof" href="/proofbridge">
+            <p class="portal-tag">Property Trust</p>
+            <h2 class="portal-title">ProofBridge<br>Liner</h2>
+            <p class="portal-desc">Hardware-enforced circuit breaker for tokenised real-world assets. Bayesian Safety Kernel. Zero ghost risk. JS2 compliant.</p>
+            <div class="portal-specs">
+              <span class="portal-spec">· TEE-attested decisions</span>
+              <span class="portal-spec">· Polygon Amoy testnet live</span>
+              <span class="portal-spec">· FSCA JS2 continuous assurance</span>
+            </div>
+            <span class="portal-cta">Enter</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p class="footer-entity">Vaguely Vanity LLC · Est. 2024 · Gqeberha, Eastern Cape, ZA</p>
+    <p class="footer-ubuntu">A person is a person through other persons</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# CI / CD
+.cache/
+coverage/
+
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build artifacts
+dist/
+build/
+*.log
+
+# Data (large files — keep small sample only)
+data/*.csv.gz
+data/*.parquet
+
+# Vercel
+.now/
+.vercel
