@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "workspace",
   "builds": [
     {
       "src": "api/verify.js",
@@ -19,8 +20,8 @@
     { "src": "/api/status",     "dest": "/api/verify.js" },
     { "src": "/api/verify",     "dest": "/api/verify.js", "methods": ["POST"] },
     { "src": "/api/(.*)",       "dest": "/api/verify.js" },
+    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map|mp4|srt|md))", "dest": "/dashboard/public/$1" },
     { "src": "/demo/(.*)",      "dest": "/demo/$1" },
     { "src": "/(.*)",           "dest": "/dashboard/public/index.html" }
-  ],
-  "public": true
+  ]
 }
