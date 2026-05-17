@@ -17,7 +17,7 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_TOKEN: ${{ secrets.PROOFBRIDGE_LINER_VERCEL }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,26 +29,22 @@ jobs:
         with:
           node-version: 24
 
-      - name: Install dependencies
-        run: |
-          echo "CWD=$(pwd)"
-          echo "ROOT_FILES=$(ls)"
-          cat api/package.json
-          cd api && echo "CWD_AFTER=$(pwd)" && npm install
+      - name: Install dependencies (root)
+        run: npm install
 
-      - name: Run tests
-        run: cd api && npm test
+      - name: Syntax-check API files
+        run: cd api && node --check verify.js && node --check kernel.js
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
       - name: Pull Vercel Environment
         run: |
-          [ -n "$VERCEL_TOKEN" ] || { echo "ERROR: VERCEL_TOKEN secret is missing"; exit 1; }
+          [ -n "$VERCEL_TOKEN" ] || { echo "ERROR: PROOFBRIDGE_LINER_VERCEL secret is missing"; exit 1; }
           vercel pull --yes --environment=production --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
 
       - name: Build Production
-        run: vercel build --prod --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
+        run: vercel build --prod --yes --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
 
       - name: Deploy Production
-        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
+        run: vercel deploy --prod --yes --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"

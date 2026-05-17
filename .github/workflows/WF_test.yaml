@@ -1,0 +1,33 @@
+name: CI / Syntax Test (no deploy)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [lablab.ai-hackathon, main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GH_PAT }}
+          submodules: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      # Root deps only needed if dashboard/server.js references them
+      - run: cat package.json | grep -A5 '"dependencies"'
+
+      # Quick syntax check on the two JS files in api/
+      - run: cd api && node --check verify.js && echo "verify.js: OK"
+      - run: cd api && node --check kernel.js && echo "kernel.js: OK"
+
+      # Verify vercel.json well-formed
+      - run: test -f vercel.json && cat vercel.json | grep -E '"version"|"builds"|"routes"'
