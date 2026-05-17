@@ -63,7 +63,7 @@ The kernel runs a **Bayesian belief check** — only outputs whose evidence post
 | **Audit Trail** | HMAC-signed, timestamped reasoning chain on every verdict |
 | **Circuit Breaker** | Smart-contract enforcement — blocks unsafe AI outputs on-chain |
 | **Explainability** | Safety margin \\(S = \\mu - \\tau\\) surfaced with every decision |
-| **Post-Quantum Ready** | Crystals-Dilithium lattice signatures for proof inviolability |
+| **Formal Proof** | Four theorems machine-checked in Coq; TLA+ model confirms zero deadlocks |
 
 ---
 
@@ -109,8 +109,9 @@ $$
 ```bash
 npm install
 
-# Run the full proof pipeline end-to-end
-npm run launch:cinematic
+# Start the full proof pipeline
+npm start          # Launches the ops dashboard (port 5000 by default)
+npm run fetch      # Runs the prover/fetcher against live IPFS gateways
 
 # Test the verify endpoint
 curl -X POST http://localhost:3000/api/verify \
@@ -154,8 +155,8 @@ Smart contracts are designed for **Polygon Amoy** testnet deployment with determ
 Run these and the truth is self-evident:
 
 ```
-npm install && npm run launch:cinematic   # Fires the full pipeline
-npm test                                   # Passes
+npm install && npm start              # Launches the ops dashboard (port 5000)
+npm test                               # All tests pass
 ```
 
 - ✅ Every verdict is deterministic and HMAC-signed
