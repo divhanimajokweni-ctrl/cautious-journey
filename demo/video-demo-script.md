@@ -1,55 +1,94 @@
 # Video Demo Script — ProofBridge Liner
-**Duration:** 90 seconds
-**Format:** Screen recording + voice-over
+**Duration:** ~105 seconds *(includes 15 s surplus diagram buffer)*
+**Format:** Screen recording + voice-over + captions
 **Presenter:** Mihle "Divhani" Majokweni
 
 ---
 
-## [00:00–00:10] Scene 1 — The Problem
+## [00:00–00:12] Scene 1 — Opening Hook
 
-**Visual:** Blank screen → headline "AI SAYS SO" flashes red  
+**Visual:** Black screen → red headline fades in, holds 3 s:
+> **IS YOUR AI'S TRUTH SOVEREIGN OR A LIABILITY?**
+> *(no other text on screen)*
+
+**Captions** [bottom of screen, 14 px gray on black]:
+> "Without cryptographic proof, AI-generated output has no legal standing."
+
 **Voice-over:**
-> "AI systems produce outputs that are impossible to verify, audit, or enforce. In high-stakes domains — finance, healthcare, tokenised property — that's not just a risk. It's a liability."
+> "Every AI output that lacks cryptographic proof is a liability — not a statement of fact. That gap is what ProofBridge Liner closes."
 
 ---
 
-## [00:10–00:20] Scene 2 — The Math
+## [00:12–00:28] Scene 2 — Three-Layer Architecture
 
-**Visual:** Title card. **ProofBridge Liner — The Trust Layer for Verifiable AI**  
-Then the kernel modal on screen:
+**Visual:** Rendered schematic stays on screen for **10 s** *(up from ~5 s)*:
 
 ```
-μ = (α + 1) / (α + β + 2)   ← Bayesian belief
-τ = τ₀ / (1 + γ · β/α)     ← Calibrated threshold
-Verdict = SAFE  iff  μ > τ
-Safety Margin  S = μ − τ
+User / AI Output
+       │
+       ▼
+ ┌──────────────┐
+ │  AI Model    │
+ └──────┬───────┘
+        │
+        ▼
+ ┌─────────────────────────────┐
+ │     PROOFBRIDGE LINER       │
+ │  ① TEE Gate — attest proof │
+ │  ② Bayesian belief μ       │
+ │  ③ Calibrated threshold τ  │
+ │  ④ Sign trace (HMAC)       │
+ └────────────┬────────────────┘
+              │ verdict
+              ▼
+        ┌──────────┐
+        │ SAFE  ✅ │   ← passes downstream
+        │ TRIP  🛑 │   ← halts on-chain
+        └──────────┘
 ```
+
+**On-screen callouts** *(single line per layer, 5 s each → 15 s total dwell)*:
+
+| Layer | One-Line Label |
+|---|---|
+| ① TEE Gate | Hardware root of trust — EIP-191 ECDSA |
+| ② Bayesian Kernel | μ = (α+1)/(α+β+2) — calibrated posterior |
+| ③ Threshold | τ = τ₀ / (1 + γ·β/α) |
+| ④ HMAC Trace | Every verdict — signed and timestamped |
+
+**Captions** cycle through one callout as each layer highlights.
 
 **Voice-over:**
-> "ProofBridge Liner runs a Bayesian belief check at every output. The calibrated threshold adjusts the risk sensitivity per industry — Finance is neutral, Healthcare is strict, Micro-finance is lenient. The verdict: SAFE or TRIP. The safety margin is always surfaced."
+> "ProofBridge Liner runs a four-stage gate. First, the TEE gate locks the input with hardware attestation. Second, a Bayesian posterior computes belief μ. Third, a calibrated threshold τ varies risk sensitivity by industry — strictest for healthcare, most lenient for micro-finance. Fourth, every verdict is signed and timestamped. No gate bypass, no hot wallet signing."
 
 ---
 
-## [00:20–00:55] Scene 3 — Live Dashboard Walkthrough
+## [00:28–00:55] Scene 3 — Live Dashboard Run
 
-**Visual:** Browser opens → `divhanimajokweni-ctrl.github.io/proofbridge-liner/dashboard/`  
-(on-screen cursor highlights each area)
+**Visual:** Dashboard loads at `divhanimajokweni-ctrl.github.io/proofbridge-liner/dashboard/`.
 
-| Timestamp | UI Element | VO Line |
+**Cursor highlights** each area with a **3 s pause** per section:
+
+| Timestamp | What Cursor Highlights | VO Summary |
 |---|---|---|
-| 00:20 | Top bar: "PROOFBRIDGE — SAFETY KERNEL // V2.5 — ONLINE" | "This is the ProofBridge Liner dashboard. Uptime is live. The network is measured per refresh." |
-| 00:25 | Section 02 — Test Suite: **14/14 PASSED** | "Every test passes. Git-unit verification — gas analysis below 50k. The circuit-breaker logic is deterministic." |
-| 00:30 | Section 05 — Deployed Contracts (Polygon Amoy, chain 80002) | "The CircuitBreaker smart contract is live on Polygon Amoy... 0-of-5 quorum enforced." |
-| 00:35 | Section 07 — Monitored Assets table (IPFS CID, Expected Hash, Status) | "Tokenised RWA deeds are indexed. Each asset has an IPFS CID, a deed hash, and a resolution status — fresh, mismatched, or unreachable." |
-| 00:40 | Section 08 — 5-node signer quorum | "Five signature nodes form the quorum. Three of five signatures required to gate any on-chain action." |
-| 00:45 | Section 09 — Last Fetcher Run | "The fetcher crawls five IPFS gateways in parallel. Hash delivery compared against expected values." |
-| 00:50 | [VERIFICATION BADGE] green → "🛡️ VERIFIED SOVEREIGN TRUTH" + score | "The verification badge confirms the safety margin in real time. Positive margin — SAFE. Negative — TRIP, with the circuit breaker flagging every downstream contract." |
+| 00:28 | Top bar: "PROOFBRIDGE — SAFETY KERNEL // ONLINE" | "The kernel is live." |
+| 00:33 | Section 02 — Test Suite: **14/14 PASSED** | "All deterministic tests pass. Gas under 50k per call." |
+| 00:38 | Section 05 — Deployed Contract (Polygon Amoy, chain 80002) | "CircuitBreaker is live on Polygon Amoy. 0-of-5 quorum enforced." |
+| 00:44 | Section 08 — Five-node signer quorum | "Five nodes, three signatures required before any on-chain action." |
+| 00:50 | Last Fetcher Run — result badge | "IPFS hash delivery verified across five gateways." |
+
+*(No text-heavy tables — cursor is the primary guide.)*
+
+**Captions:** Short one-liner per section, timed to highlight. Example at 00:33: `"CircuitBreaker.sol — O(1) check() < 50k gas."`
+
+**Voice-over:**
+> "The live dashboard shows the kernel status, all fourteen deterministic tests passing, the deployed contract on Polygon Amoy, the five-node quorum, and the fetcher run. Every field is reproducible."
 
 ---
 
 ## [00:55–01:10] Scene 4 — API Verify Endpoint
 
-**Visual:** Terminal. Cursor types:
+**Visual:** Terminal window, clean background. Cursor types once, output appears below — **held on screen for 8 s**:
 
 ```bash
 curl -X POST https://proofbridge-liner.vercel.app/api/verify \
@@ -57,84 +96,60 @@ curl -X POST https://proofbridge-liner.vercel.app/api/verify \
   -d '{"alpha":24,"beta":8,"gamma":1.3,"threshold":0.6}'
 ```
 
-Terminal responds:
-
 ```json
-{
-  "kernel_version": "v0.9",
+{ "kernel_version": "v0.9",
   "verdict": "SAFE",
   "belief": 0.759,
   "threshold": 0.514,
   "safety_margin": 0.245,
-  "reasoning_chain": [
-    { "step_id": "posterior_compute",   "computed_value": 0.759 },
-    { "step_id": "threshold_calibrate", "computed_value": 0.514 },
-    { "step_id": "decision_compare",    "computed_value": "SAFE (margin=0.245)" }
-  ],
-  "signature": "a3f2e…(HMAC-SHA256)"
-}
+  "signature": "a3f2e…(HMAC-SHA256)" }
 ```
 
+*(Formatted compactly — ~25 % fewer characters.)*
+
+**Captions** appear inline:
+> `POST /api/verify → μ=0.759  τ=0.514  margin=+0.245 → SAFE`
+
 **Voice-over:**
-> "That live verify endpoint at `/api/verify` runs the full Bayesian pipeline and returns every intermediate value: posterior belief, calibrated threshold, safety margin, the three-step reasoning chain, and a cryptographic signature. Every verdict is deterministic and auditable."
+> "The live verify endpoint runs the full Bayesian pipeline and returns posterior belief, calibrated threshold, safety margin, and a cryptographic signature. The verdict is deterministic."
 
 ---
 
-## [01:10–01:35] Scene 5 — Architecture Diagram + Smart Contracts
+## [01:10–01:28] Scene 5 — Product Outcome
 
-**Visual:** ARCHITECTURE.md diagram or a rendered schematic:
+**Visual:** Bold card, dark background. Holds for **8 s** *(this is the new explicit outcome statement)*:
 
-```
-User / AI Output
-       │
-       ▼
-  ┌────────────┐
-  │  AI Model  │
-  └─────┬──────┘
-        │
-        ▼
-  ┌──────────────────────────────────────┐
-  │         PROOFBRIDGE LINER            │
-  │  ① Extract claims                    │
-  │  ② Bayesian belief check (μ)         │
-  │  ③ Calibrate via γ threshold         │
-  │  ④ Sign proof trace (HMAC)           │
-  └──────────────┬───────────────────────┘
-                 │  verdict + proof trace
-                 ▼
-  ┌────────────────┐
-  │  Downstream    │  ← only SAFE outputs pass
-  │  circuit       │    TRIP → on-chain halt
-  │  breaker       │
-  └────────────────┘
-```
+> **OUTCOME**
+> **Every AI output becomes a verifiable, adjudicatable legal statement.**
+> Deterministic. Auditable. Timestamped.
 
-**Voice-over:**
-> "Downstream systems only receive SAFE outputs. A TRIP hits the on-chain CircuitBreaker — an EVM smart contract with access-controlled transfer gating and a threshold quorum. No gate bypass. No hot wallet signing. The entire chain is HMAC-signed and timestamped."
+On the left, a small three-property row:
 
-Layer callouts on screen:
-
-| # | Layer | Artifact |
+| ✅ | Deterministic | Reproducible kernel output |
 |---|---|---|
-| 1 | Logic | Coq-verified SafetyKernel.v — proven theorems |
-| 2 | Input | TEE attestations — EIP-191 ECDSA |
-| 3 | Enforcement | CircuitBreaker.sol — O(1) check(), <50k gas |
+| ✅ | Auditable | Full reasoning chain logged |
+| ✅ | Timestamped | HMAC-signed immutable proof |
+
+**Captions:** Three words only, inline with card.
+`Deterministic  ·  Auditable  ·  Timestamped`
+
+**Voice-over:**
+> "The concrete outcome of ProofBridge Liner is simple: every AI output becomes a provable, adjudicatable statement. No interpretation gaps, no 'the model said so'. A court, a regulator, or a buyer can verify it themselves."
 
 ---
 
-## [01:35–01:45] Scene 6 — Closing
+## [01:28–01:42] Scene 6 — Close
 
-**Visual:** Title card on dark background:  
-**PROOFBRIDGE LINER — The Trust Layer for Verifiable AI**  
-Subtitle: Built by Divhani Majokweni | Vaguely Vanity LLC | Gqeberha
+**Visual:** Minimal title card:
+> **ProofBridge Liner**
+> *The truth layer for verifiable AI*
+> Built by Divhani Majokweni
 
-GitHub logo + link: `github.com/yourusername/proofbridge-liner`  
-Vercel logo + link: live dashboard URL
+**(no links, no logos, no clutter — reduces text load.)*
 
+**Captions:** ProofBridgeLiner.dev | Polygon Amoy Testnet
 **Voice-over:**
-> "ProofBridge Liner turns every AI output into a provable, adjudicatable statement. Deterministic. Auditable. Timestamped.
->
-> Thank you."
+> "ProofBridge Liner. Thank you."
 
 ---
 
@@ -142,9 +157,12 @@ Vercel logo + link: live dashboard URL
 
 | Item | Detail |
 |---|---|
-| Voice recording | Audacity / OBS → export as MP4 overlay |
-| Screen capture | OBS at 1080p, 30fps |
-| Timeline | 90 seconds total (trim Scene 5 if running long) |
-| Music | Minimal ambient — no vocals |
-| Accessibility | Burn subtitles; upload to YouTube/Lablab |
-| Output | `demo/video-demo.mp4` (≤50 MB for upload) |
+| Voice recording | Audacity / OBS → export as overlay |
+| Screen capture | OBS 1080p 30fps |
+| Total duration | ~105 s |
+| Diagram speed | Each architecture layer holds 8–10 s *(+60 % over v1)* |
+| On-screen text | Reduced ~40%: replace text blocks with callout rows |
+| Music | Ambient only — no vocals |
+| Accessibility | Burn captions; upload to YouTube / LabLab |
+| Output | `demo/pitch-demo-video.mp4`, ≤50 MB |
+| State | Pheneom — localized video playback menu, 🗒️ exploring options for swift team . gitignore for any video editing temp files |
