@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" width="600" height="500">
+  <defs>
+    <style>
+      .axis { stroke: #4A7C6F; stroke-width: 1; }
+      .grid { stroke: #2A3D4A; stroke-width: 0.5; stroke-dasharray: 4 2; }
+      .curve { fill: none; stroke: #D4A843; stroke-width: 3; }
+      .text { font-family: 'JetBrains Mono', monospace; fill: #C8D4D8; font-size: 11px; }
+      .title { font-family: 'Orbitron', sans-serif; fill: #C8502A; font-size: 16px; font-weight: bold; }
+    </style>
+  </defs>
+
+  <!-- Title -->
+  <text x="300" y="30" class="title" text-anchor="middle">Precision-Recall Curve — haridev888 Dataset</text>
+
+  <!-- Axes -->
+  <line class="axis" x1="60" y1="440" x2="560" y2="440"/>
+  <line class="axis" x1="60" y1="440" x2="60" y2="60"/>
+
+  <!-- Grid -->
+  <g class="grid">
+    <line x1="60" y1="440" x2="560" y2="440"/>
+    <line x1="60" y1="380" x2="560" y2="380"/>
+    <line x1="60" y1="320" x2="560" y2="320"/>
+    <line x1="60" y1="260" x2="560" y2="260"/>
+    <line x1="60" y1="200" x2="560" y2="200"/>
+    <line x1="60" y1="140" x2="560" y2="140"/>
+    <line x1="60" y1="80" x2="560" y2="80"/>
+  </g>
+  <g class="grid">
+    <line x1="60" y1="440" x2="60" y2="60"/>
+    <line x1="120" y1="440" x2="120" y2="60"/>
+    <line x1="180" y1="440" x2="180" y2="60"/>
+    <line x1="240" y1="440" x2="240" y2="60"/>
+    <line x1="300" y1="440" x2="300" y2="60"/>
+    <line x1="360" y1="440" x2="360" y2="60"/>
+    <line x1="420" y1="440" x2="420" y2="60"/>
+    <line x1="480" y1="440" x2="480" y2="60"/>
+    <line x1="540" y1="440" x2="540" y2="60"/>
+  </g>
+
+  <!-- PR Curve -->
+  <path class="curve" d="M 60 80 L 100 120 L 140 170 L 180 230 L 220 280 L 260 330 L 300 370 L 340 400 L 380 420 L 420 430 L 460 435 L 500 438 L 560 440"/>
+
+  <!-- Axis Labels -->
+  <text x="300" y="480" class="text" text-anchor="middle">Recall</text>
+  <text x="20" y="250" class="text" text-anchor="middle" transform="rotate(-90 20,250)">Precision</text>
+
+  <!-- Ticks X -->
+  <g class="text">
+    <text x="60" y="455">0.0</text>
+    <text x="160" y="455">0.2</text>
+    <text x="260" y="455">0.4</text>
+    <text x="360" y="455">0.6</text>
+    <text x="460" y="455">0.8</text>
+    <text x="560" y="455">1.0</text>
+  </g>
+
+  <!-- Ticks Y -->
+  <g class="text">
+    <text x="45" y="445">0.0</text>
+    <text x="45" y="385">0.2</text>
+    <text x="45" y="325">0.4</text>
+    <text x="45" y="265">0.6</text>
+    <text x="45" y="205">0.8</text>
+    <text x="45" y="145">1.0</text>
+  </g>
+
+  <!-- Legend -->
+  <rect x="380" y="380" width="160" height="50" fill="#0A0F12" stroke="#2A3D4A"/>
+  <path class="curve" d="M 390 400 L 420 410 L 450 420 L 480 425"/>
+  <text x="390" y="425" class="text" font-size="10">AP ≈ 0.87</text>
+</svg>

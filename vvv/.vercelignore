@@ -1,0 +1,15 @@
+# Files/folders to exclude from Vercel deployment (but keep in git)
+
+test/
+data/
+docs/
+*.md
+*.csv
+*.log
+.git/
+.gitignore
+.vercel/
+node_modules/
+*.parquet
+*.tar.gz
+*.zip

@@ -1,0 +1,36 @@
+$ORIGIN venturevisionubuntu.co.za.
+$TTL 3600
+venturevisionubuntu.co.za.                                               86400 IN SOA   (
+                                                                                        ns1.host-ww.net            ; MNAME
+                                                                                        server-admin.cloud2m.co.za ; RNAME
+                                                                                        2026051223                 ; SERIAL
+                                                                                        3600                       ; REFRESH
+                                                                                        1800                       ; RETRY
+                                                                                        1209600                    ; EXPIRE
+                                                                                        86400                      ; MINIMUM
+                                                                                        )
+
+; NS RECORDS
+venturevisionubuntu.co.za.                                               86400 IN NS    ns1.host-ww.net
+venturevisionubuntu.co.za.                                               86400 IN NS    ns2.host-ww.net
+
+; A RECORDS
+; NOTE: api subdomain kept for Vercel backend (will point to Vercel IPs later)
+api.venturevisionubuntu.co.za.                                           300   IN A     76.76.21.21
+
+; GitHub Pages apex records — replace all existing A records with these four
+venturevisionubuntu.co.za.                                               300   IN A     185.199.108.153
+venturevisionubuntu.co.za.                                               300   IN A     185.199.109.153
+venturevisionubuntu.co.za.                                               300   IN A     185.199.110.153
+venturevisionubuntu.co.za.                                               300   IN A     185.199.111.153
+
+; CNAME RECORDS
+ftp.venturevisionubuntu.co.za.                                           14400 IN CNAME venturevisionubuntu.co.za
+mail.venturevisionubuntu.co.za.                                          14400 IN CNAME venturevisionubuntu.co.za
+www.venturevisionubuntu.co.za.                                           14400 IN CNAME divhanimajokweni-ctrl.github.io
+
+; MX RECORDS
+venturevisionubuntu.co.za.                                               14400 IN MX    0 venturevisionubuntu.co.za
+
+; TXT RECORDS — GitHub Pages domain verification (keep unchanged)
+_github-pages-challenge-divhanimajokweni-ctrl.venturevisionubuntu.co.za. 300   IN TXT   "959b84c8ec710837b5ee4f82b56e98"

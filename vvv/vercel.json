@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "name": "proofbridge-liner",
+  "builds": [
+    {
+      "src": "api/verify.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "dashboard/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/api/verify",  "dest": "/api/verify.js", "methods": ["POST"] },
+    { "src": "/api/health",  "dest": "/api/verify.js" },
+    { "src": "/api/(.*)",    "dest": "/api/verify.js" },
+    { "src": "/health",      "dest": "/api/verify.js" },
+    { "src": "/",            "dest": "/dashboard/index.html" }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
