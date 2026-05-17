@@ -36,8 +36,8 @@ After deploy, set `KERNEL_SECRET` in Vercel dashboard (Environment Variables).
 ### GitHub Pages (Landing)
 
 The VVU gateway is already deployed at:
-- https://venturevisionubuntu.co.za (once DNS propagates)
-- https://divhanimajokweni-ctrl.github.io/proofbridge-liner/
+- https://venturevisionubuntu.co.za (DNS configured to Vercel)
+- https://proofbridge-liner.vercel.app/
 
 ---
 

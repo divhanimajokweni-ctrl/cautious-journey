@@ -1,16 +1,4 @@
 {
-  "projectId": "prj_KlbxI8tUIVwLcckl3KpnkhvVPCsT",
-  "orgId": "team_oSaLEdmc8m1I6oEuexLCfWpw",
-  "projectName": "workspace",
-  "settings": {
-    "createdAt": 1778732026785,
-    "framework": null,
-    "devCommand": null,
-    "installCommand": null,
-    "buildCommand": null,
-    "outputDirectory": null,
-    "rootDirectory": null,
-    "directoryListing": false,
-    "nodeVersion": "24.x"
-  }
+  "projectId": "prj_vjCCZQLgL4VymDQiWRv8oK0jbrBV",
+  "orgId": "team_oSaLEdmc8m1I6oEuexLCfWpw"
 }
