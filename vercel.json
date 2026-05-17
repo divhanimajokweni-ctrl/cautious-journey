@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "workspace",
+  "name": "proofbridge-liner",
   "builds": [
     {
       "src": "api/verify.js",
@@ -26,6 +26,7 @@
     { "src": "/api/(.*)",       "dest": "/api/verify.js" },
     { "src": "/pools",          "dest": "/vvv/pools.html" },
     { "src": "/proofbridge",    "dest": "/vvv/proofbridge.html" },
+    { "src": "/submission",     "dest": "/vvv/submission.html" },
     { "src": "/demo/(.*)",      "dest": "/demo/$1" },
     { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map|mp4|srt|md))", "dest": "/vvv/$1" },
     { "src": "/(.*)",           "dest": "/vvv/index.html" }

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProofBridge Liner — Hackathon Submission</title>
+  <meta name="description" content="ProofBridge Liner hackathon deliverables and project status" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --night: #05080A; --void: #090D10; --ember: #C8502A; --ember2: #E06840;
+      --amber: #D4943A; --steel: #2A3D4A; --fog: #7A9099; --chalk: #C8D4D8; --white: #EEF2F4; --green: #2A7A50;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--night); color: var(--chalk);
+      font-family: 'Inter', sans-serif; font-weight: 300; overflow-x: hidden;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.1rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(5,8,10,0.9); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(42,61,74,0.4);
+    }
+    .nav-back {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--fog);
+      text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--ember); }
+    .nav-back::before { content: '←'; }
+    .nav-logo {
+      font-family: 'Orbitron', monospace; font-weight: 700; font-size: 0.75rem;
+      letter-spacing: 0.18em; color: var(--ember); text-decoration: none; text-transform: uppercase;
+    }
+    .hero {
+      min-height: 100vh; padding: 8rem 2.5rem 0; position: relative;
+    }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--ember);
+      margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--ember); }
+    h1 {
+      font-family: 'Orbitron', monospace; font-weight: 900;
+      font-size: clamp(2.5rem, 6vw, 5rem); line-height: 1; letter-spacing: -0.01em;
+      color: var(--white); margin-bottom: 0.5rem;
+    }
+    h1 .accent { color: var(--ember); }
+    .hero-subtitle {
+      font-family: 'JetBrains Mono', monospace; font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+      color: var(--fog); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem;
+    }
+    .deliverables-section {
+      padding: 4rem 2.5rem; background: var(--void);
+      border-top: 1px solid rgba(42,61,74,0.3);
+    }
+    .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--ember);
+      margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-eyebrow::before { content: ''; width: 16px; height: 1px; background: var(--ember); }
+    .section-title {
+      font-family: 'Orbitron', monospace; font-weight: 700;
+      font-size: clamp(1.5rem, 3.5vw, 2.25rem); color: var(--white);
+      margin-bottom: 3rem; line-height: 1.2;
+    }
+    .deliverables-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;
+    }
+    .deliverable-card {
+      background: var(--night); border: 1px solid rgba(42,61,74,0.4); padding: 1.75rem;
+      transition: border-color 0.2s;
+    }
+    .deliverable-card:hover { border-color: rgba(200,80,42,0.4); }
+    .deliverable-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;
+    }
+    .deliverable-name {
+      font-family: 'Orbitron', monospace; font-weight: 700; font-size: 1rem; color: var(--white);
+    }
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.5rem;
+      letter-spacing: 0.15em; text-transform: uppercase; padding: 0.25rem 0.5rem;
+      border-radius: 2px;
+    }
+    .status-complete { background: rgba(58,157,110,0.15); color: #3A9D6E; }
+    .status-in-progress { background: rgba(212,148,58,0.15); color: var(--amber); }
+    .status-pending { background: rgba(122,144,153,0.15); color: var(--fog); }
+    .deliverable-desc {
+      font-size: 0.85rem; color: var(--chalk); line-height: 1.6; margin-bottom: 1rem;
+    }
+    .deliverable-meta {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--fog);
+    }
+    .deliverable-link {
+      color: var(--ember); text-decoration: none; margin-left: 0.5rem;
+    }
+    .deliverable-link:hover { text-decoration: underline; }
+    footer {
+      background: var(--void); padding: 2rem 2.5rem;
+      border-top: 1px solid rgba(42,61,74,0.3);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-left {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.58rem;
+      color: rgba(122,144,153,0.4); letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    @media (max-width: 680px) {
+      nav { padding: 1rem 1.25rem; }
+      .hero { padding: 7rem 1.25rem 0; }
+      .deliverables-section { padding: 3rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-back" href="/proofbridge">Back</a>
+    <a class="nav-logo" href="/submission">Hackathon Submission</a>
+  </nav>
+  <section class="hero">
+    <p class="hero-eyebrow">ProofBridge Liner · Hackathon Deliverables</p>
+    <h1>Project <span class="accent">Status</span></h1>
+    <p class="hero-subtitle">Ubuntu-Bridge Safety Kernel · v0.9 Testnet</p>
+  </section>
+  <section class="deliverables-section">
+    <p class="section-eyebrow">Deliverables</p>
+    <h2 class="section-title">Hackathon Submission Tracker</h2>
+    <div class="deliverables-grid">
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">TEE Gate (Hardware Layer)</span>
+          <span class="status-badge status-complete">Complete</span>
+        </div>
+        <p class="deliverable-desc">Trusted Execution Environment with hardware-signed attestations. Every decision is wrapped in a cryptographic proof before leaving the enclave.</p>
+        <div class="deliverable-meta">
+          Location: /api/verify.js
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">Bayesian Engine</span>
+          <span class="status-badge status-complete">Complete</span>
+        </div>
+        <p class="deliverable-desc">Beta-Binomial conjugate posterior calibrated against the haridev888 ground-truth dataset. 100% recall on historical failures.</p>
+        <div class="deliverable-meta">
+          Status: Active on Polygon Amoy Testnet
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">Circuit Breaker</span>
+          <span class="status-badge status-complete">Complete</span>
+        </div>
+        <p class="deliverable-desc">Automated trip mechanism with calibrated threshold τ* for risk-based halting of asset flows.</p>
+        <div class="deliverable-meta">
+          Latency: 157ms P95 (Featherless inference)
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">Frontend UI</span>
+          <span class="status-badge status-complete">Complete</span>
+        </div>
+        <p class="deliverable-desc">Static HTML + Enclave-Direct architecture with cryptographically hashed UI for compliance.</p>
+        <div class="deliverable-meta">
+          Files: /vvv/proofbridge.html, /vvv/index.html
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">Whitepaper</span>
+          <span class="status-badge status-complete">Complete</span>
+        </div>
+        <p class="deliverable-desc">Technical documentation covering the three-layer safety kernel architecture and compliance framework.</p>
+        <div class="deliverable-meta">
+          Location: /demo/whitepaper.md
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">Pitch Deck</span>
+          <span class="status-badge status-complete">Complete</span>
+        </div>
+        <p class="deliverable-desc">Investor presentation covering problem, solution, market opportunity, and technical differentiation.</p>
+        <div class="deliverable-meta">
+          Location: /demo/pitch-deck.md
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">ROC Report</span>
+          <span class="status-badge status-complete">Complete</span>
+        </div>
+        <p class="deliverable-desc">Receiver Operating Characteristic analysis demonstrating 100% recall on historical failure data.</p>
+        <div class="deliverable-meta">
+          Location: /demo/roc-report.md
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">Demo Video</span>
+          <span class="status-badge status-in-progress">Available</span>
+        </div>
+        <p class="deliverable-desc">Pitch demonstration video walking through the ProofBridge Liner architecture and testnet status.</p>
+        <div class="deliverable-meta">
+          Location: /demo/pitch-demo-video.mp4
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">Deployment Config</span>
+          <span class="status-badge status-complete">Complete</span>
+        </div>
+        <p class="deliverable-desc">Vercel deployment configuration with API routes for /api/health, /api/status, and /api/verify endpoints.</p>
+        <div class="deliverable-meta">
+          Location: /vercel.json
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="deliverable-header">
+          <span class="deliverable-name">Audit Manual</span>
+          <span class="status-badge status-complete">Complete</span>
+        </div>
+        <p class="deliverable-desc">TEE-deterministic audit logs documentation for Cybercrimes Act compliance.</p>
+        <div class="deliverable-meta">
+          Location: /demo/audit-manual.md
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <p class="footer-left">ProofBridge Liner · Hackathon Submission · Polygon Amoy Testnet</p>
+  </footer>
+</body>
+</html>
