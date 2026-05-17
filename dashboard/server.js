@@ -204,6 +204,14 @@ app.get('/api/health', async (req, res) => {
   });
 });
 
+// Submission dashboard — delivers the full hackathon submission page
+app.get('/submission', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'submission.html'));
+});
+
+// Serve demo/ folder directly (demo assets: video, pptx, pitch deck markdown, whitepaper)
+app.use('/demo', express.static(path.join(__dirname, '..', 'demo')));
+
 // Local / Docker / droplet: start the server directly
 // Vercel serverless: import the module — listen() must not be called
 if (require.main === module) {

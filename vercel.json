@@ -9,17 +9,23 @@
     {
       "src": "dashboard/public/**",
       "use": "@vercel/static"
+    },
+    {
+      "src": "demo/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
-    { "src": "/api/health",       "dest": "/api/verify.js" },
-    { "src": "/api/status",       "dest": "/api/verify.js" },
-    { "src": "/api/verify",       "dest": "/api/verify.js", "methods": ["POST"] },
-    { "src": "/api/(.*)",         "dest": "/api/verify.js" },
-    { "src": "/$",                "dest": "/dashboard/index.html" },
-    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map))", "dest": "/dashboard/public/$1" },
-    { "src": "/health",           "dest": "/api/verify.js" },
-    { "src": "/(.*)",             "dest": "/dashboard/index.html" }
+    { "src": "/api/health",     "dest": "/api/verify.js" },
+    { "src": "/api/status",     "dest": "/api/verify.js" },
+    { "src": "/api/verify",     "dest": "/api/verify.js", "methods": ["POST"] },
+    { "src": "/api/(.*)",       "dest": "/api/verify.js" },
+    { "src": "/submission",     "dest": "/dashboard/submission.html" },
+    { "src": "/$",              "dest": "/dashboard/index.html" },
+    { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map|mp4|srt))", "dest": "/dashboard/public/$1" },
+    { "src": "/demo/(.*)",      "dest": "/demo/$1" },
+    { "src": "/health",         "dest": "/api/verify.js" },
+    { "src": "/(.*)",           "dest": "/dashboard/index.html" }
   ],
   "env": {
     "NODE_ENV": "production"
