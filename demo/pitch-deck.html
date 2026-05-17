@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ProofBridge Liner — Pitch Deck</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --night:   #05080A;
+    --void:    #090D10;
+    --ember:   #C8502A;
+    --ember2:  #E06840;
+    --amber:   #D4943A;
+    --steel:   #2A3D4A;
+    --fog:     #7A9099;
+    --chalk:   #C8D4D8;
+    --white:   #EEF2F4;
+    --green:   #2A7A50;
+  }
+
+  @page {
+    size: 1280px 720px;
+    margin: 0;
+  }
+
+  @media print {
+    .slide {
+      page-break-after: always;
+      break-after: page;
+    }
+  }
+
+  body {
+    background: var(--void);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    color: var(--chalk);
+    overflow: hidden;
+  }
+
+  /* ── slide base ── */
+  .slide {
+    width: 1280px;
+    height: 720px;
+    page-break-after: always;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 56px 72px;
+    background: var(--void);
+  }
+
+  /* ── slide backgrounds ── */
+  .slide.dark     { background: var(--night); }
+  .slide.mid      { background: var(--void); }
+  .slide.ember    { background: linear-gradient(135deg, #0f1a0e 0%, #1a0505 60%, var(--void) 100%); }
+  .slide.ember2   { background: linear-gradient(220deg, #1a0505 0%, var(--void) 100%); }
+
+  /* ── navigation bar ── */
+  .nav-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1.5rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 72px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--fog);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(42,61,74,0.3);
+    z-index: 10;
+  }
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--ember);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* ── slide numbering ── */
+  .slide-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--fog);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* ── section eyebrow ── */
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ember);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .section-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--ember);
+  }
+
+  /* ── heading ── */
+  h1 {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 48px;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  h1 .accent { color: var(--ember); }
+  h2 {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 30px;
+    color: var(--white);
+    margin-bottom: 18px;
+    line-height: 1.15;
+  }
+  h2 .accent { color: var(--ember); }
+  h3 {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--white);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── body text ── */
+  p {
+    font-size: 15px;
+    color: var(--chalk);
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  p.mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--fog);
+    letter-spacing: 0.02em;
+    line-height: 1.7;
+  }
+  p.caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--steel);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ── emphasized text ── */
+  em {
+    font-style: normal;
+    color: var(--ember2);
+  }
+
+  strong {
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  /* ── code block ── */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: rgba(10,18,22,0.85);
+    border: 1px solid var(--steel);
+    border-radius: 6px;
+    padding: 2px 7px;
+    color: var(--amber);
+  }
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: rgba(10,18,22,0.85);
+    border: 1px solid rgba(42,61,74,0.6);
+    border-radius: 6px;
+    padding: 16px 20px;
+    color: var(--chalk);
+    line-height: 1.75;
+    overflow: hidden;
+    white-space: pre;
+    margin-top: 10px;
+  }
+  pre .k { color: var(--amber); }
+  pre .v { color: var(--green); }
+  pre .c { color: var(--fog); font-style: italic; }
+
+  /* ── tag / badge ── */
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 2px;
+    background: rgba(200,80,42,0.12);
+    color: var(--ember2);
+    border: 1px solid rgba(200,80,42,0.3);
+    margin-right: 6px;
+    margin-bottom: 4px;
+  }
+  .tag.green {
+    background: rgba(42,122,80,0.12);
+    color: var(--green);
+    border-color: rgba(42,122,80,0.3);
+  }
+  .tag.amber {
+    background: rgba(212,148,58,0.12);
+    color: var(--amber);
+    border-color: rgba(212,148,58,0.3);
+  }
+
+  /* ── table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fog);
+    border-bottom: 1px solid var(--steel);
+    padding: 6px 10px;
+    text-align: left;
+  }
+  td {
+    padding: 7px 10px;
+    color: var(--chalk);
+    border-bottom: 1px solid rgba(42,61,74,0.2);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--amber); }
+  td.green-val { color: var(--green); font-weight: 500; }
+
+  /* ── metric cards ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .metric-card {
+    background: rgba(5,8,10,0.65);
+    border: 1px solid rgba(42,61,74,0.45);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+  .metric-val {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 32px;
+    color: var(--ember);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .metric-val.green { color: var(--green); }
+  .metric-val.amber { color: var(--amber); }
+  .metric-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fog);
+  }
+
+  /* ── callout box ── */
+  .callout {
+    border-left: 3px solid var(--ember);
+    padding: 14px 18px;
+    margin-top: 16px;
+    background: rgba(200,80,42,0.04);
+    border-radius: 0 6px 6px 0;
+  }
+  .callout.green-border { border-color: var(--green); background: rgba(42,122,80,0.05); }
+  .callout p { font-size: 13.5px; margin-bottom: 0; }
+
+  /* ── centre block ── */
+  .center-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 0;
+  }
+  .center-block h1 { font-size: 58px; text-align: center; }
+  .center-block .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fog);
+    margin-top: 16px;
+  }
+
+  /* ── two-col ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    flex: 1;
+    align-items: start;
+    margin-top: 16px;
+  }
+  .col { display: flex; flex-direction: column; gap: 10px; }
+
+  /* ── final page ── */
+  .final-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .final-block .accent-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--fog);
+    margin: 8px 0;
+  }
+
+  /* footer strip */
+  .footer-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0 4px;
+    border-top: 1px solid rgba(42,61,74,0.3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    color: var(--steel);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: auto;
+  }
+  .footer-strip .links { display: flex; gap: 18px; }
+  .footer-strip a { color: var(--fog); text-decoration: none; }
+
+  /* ── progress bar ── */
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(42,61,74,0.35);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ember), var(--amber));
+  }
+
+  /* slide-specific sizing */
+  .slide h1 { font-size: 44px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ SLIDE 1 — TITLE ═════════════════════════════ -->
+<div class="slide dark">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">01 / 10</span>
+  </div>
+  <div class="center-block">
+    <p class="section-eyebrow" style="justify-content:center">Hackathon Submission · Lablab.ai</p>
+    <h1 style="font-size:64px; line-height:1; margin-bottom:28px;">
+      ProofBridge<span class="accent">Liner</span>
+    </h1>
+    <p class="subtitle">The Trust Layer for Verifiable AI</p>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--fog);letter-spacing:0.15em;text-transform:uppercase;margin-top:40px;">
+      Mihle "Divhani" Majokweni · Vaguely Vanity LLC · Gqeberha, South Africa
+    </p>
+    <div style="margin-top:28px;">
+      <span class="tag">Polygon Amoy · Testnet</span>
+      <span class="tag green">Live</span>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:10%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 2 — PROBLEM ══════════════════════════ -->
+<div class="slide ember2">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">02 / 10</span>
+  </div>
+  <div style="padding-top:88px;">
+    <p class="section-eyebrow">The Problem</p>
+    <h2>AI output is <span class="accent">unverifiable</span> by default</h2>
+    <div class="two-col">
+      <div class="col">
+        <p>AI systems generate outputs that are easy to fabricate, nearly impossible to verify, and impossible to audit or enforce.</p>
+        <div class="callout">
+          <p><em>"AI said so"</em> is not a verification strategy.</p>
+        </div>
+      </div>
+      <div class="col">
+        <table>
+          <tr><th>Domain</th><th>Cost of Failure</th></tr>
+          <tr><td>Healthcare</td><td>Wrong diagnosis reaches patient</td></tr>
+          <tr><td>Finance</td><td>Bad collateral &amp; wrong-side trades</td></tr>
+          <tr><td>Tokenised Property</td><td>Tampered deed becomes irrevocable</td></tr>
+          <tr><td>Content Moderation</td><td>Wrong classification goes unrecorded</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 3 — SOLUTION ════════════════════════ -->
+<div class="slide ember">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">03 / 10</span>
+  </div>
+  <div style="padding-top:88px;">
+    <p class="section-eyebrow">The Solution</p>
+    <h2>A Bayesian safety kernel with <span class="accent">on-chain enforcement</span></h2>
+    <div class="two-col">
+      <div class="col">
+        <pre> User / AI Output
+       │
+       ▼
+ ┌─────────────┐
+ │   AI Model  │
+ └──────┬──────┘
+        │
+        ▼
+①  TEE Gate     — hardware attestation
+②  Bayesian μ   — belief check
+③  Threshold τ  — γ-adjusted
+④  Verdict      — SAFE or TRIP
+⑤  HMAC trace   — signed &amp; timestamped</pre>
+      </div>
+      <div class="col">
+        <p><strong>Two-part guarantee:</strong></p>
+        <p style="margin-top:10px;"><strong style="color:var(--green)">Off-chain</strong> — every verdict ships with a reasoning chain, belief <strong>μ</strong>, threshold <strong>τ</strong>, and safety margin <strong>S = μ − τ</strong>.</p>
+        <p style="margin-top:10px;"><strong style="color:var(--ember2)">On-chain</strong> — a TRIP immediately halts transfers via the <strong>CircuitBreaker</strong> EVM smart contract.</p>
+        <div class="callout green-border" style="margin-top:16px;">
+          <p>Verdict = <strong>SAFE</strong> iff <code>μ &gt; τ</code> &nbsp;|&nbsp; <strong>S = μ − τ</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 4 — MATH ═════════════════════════════ -->
+<div class="slide dark">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">04 / 10</span>
+  </div>
+  <div style="padding-top:88px;">
+    <p class="section-eyebrow">The Math</p>
+    <h2>Industry-calibrated <span class="accent">Bayesian reasoning</span></h2>
+    <div class="two-col">
+      <div class="col">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:15px;line-height:2.1;letter-spacing:0.04em;">
+          <span class="k">Latent risk:</span> &nbsp;θ ~ <span class="v">Beta(α, β)</span><br/>
+          <span class="k">Posterior μ:</span>  <span class="v">(α + 1) / (α + β + 2)</span><br/>
+          <span class="k">Threshold τ:</span> <span class="v">τ₀ / (1 + γ · β/α)</span><br/>
+          <span class="k">Verdict:</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAFE iff <span class="v">μ &gt; τ</span>
+        </p>
+      </div>
+      <div class="col">
+        <p><strong>γ profiles baked into production:</strong></p>
+        <table>
+          <tr><th>Industry</th><th>γ</th><th>Why</th></tr>
+          <tr><td>Healthcare</td><td class="mono">1.5</td><td>Strictest — life-critical</td></tr>
+          <tr><td>Transport / Taxi</td><td class="mono">1.2</td><td>Passenger harm costly</td></tr>
+          <tr><td>Financial</td><td class="mono">1.0</td><td>Neutral baseline</td></tr>
+          <tr><td>Micro-finance</td><td class="mono">0.8</td><td>Lenient — inclusion</td></tr>
+        </table>
+        <div class="callout" style="margin-top:12px;">
+          <p><strong>Proven in Coq</strong> — 4 theorems formalised &nbsp;·&nbsp; TLA+ validated — zero deadlocks</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 5 — ARCHITECTURE ═════════════════════ -->
+<div class="slide mid">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">05 / 10</span>
+  </div>
+  <div style="padding-top:88px;">
+    <p class="section-eyebrow">Architecture</p>
+    <h2>Three-layer safety <span class="accent">kernel</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:18px;align-items:center;flex:1;">
+      <pre style="height:auto;padding:22px;">
+ ┌──────────────────────────────┐
+ │      LOGIC LAYER — Coq        │
+ │  Posterior · threshold · dec  │
+ │  Total fn's — no partial      │
+ │  Artifact: SafetyKernel.v     │
+ ├──────────────────────────────┤
+ │      INPUT LAYER — TEE        │
+ │  EIP-191 ECDSA attestations   │
+ │  AMD MI300X PCR0 — tamper-ev  │
+ │  Artifact: TEEVerifier.sol    │
+ ├──────────────────────────────┤
+ │  ENFORCEMENT — CircuitBreak.  │
+ │  O(1) check() &lt; 50k gas      │
+ │  3-of-5 TSS quorum            │
+ │  Artifact: CircuitBreaker.sol │
+ └──────────────────────────────┘</pre>
+      <div>
+        <p><strong>Tech stack</strong></p>
+        <p class="mono" style="margin-top:6px;margin-bottom:16px;">Node.js · Express · Solidity<br/>Hardhat · Foundry · Coq · TLA+<br/>Polygon Amoy · Vercel</p>
+        <div class="callout" style="margin-top:14px;">
+          <p><strong>On-chain KPIs</strong><br/>O(1) validation · &lt; 50k gas · 500 TPS sustained</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 6 — DEMO ══════════════════════════════ -->
+<div class="slide ember">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">06 / 10</span>
+  </div>
+  <div style="padding-top:88px;">
+    <p class="section-eyebrow">Live Demo</p>
+    <h2>Dashboard — <span class="accent">10-second judge test</span></h2>
+    <div class="two-col" style="margin-top:14px;">
+      <div>
+        <pre style="font-size:11.5px;line-height:1.8;">PROOFBRIDGE — SAFETY KERNEL // V2.5
+─────────────────────────────────
+§02  Test Suite:  14/14 PASSED      §08  Quorum: 5/5 healthy
+§05  CircuitBreaker:  Polygon Amoy
+     Chain 80002 · 3-of-5 quorum   §09  Last Fetcher Run: fresh ✓
+§07  Assets: 4 monitored · all OK
+
+🛡️ VERIFIED SOVEREIGN TRUTH
+   SYSTEM RISK SCORE: +0.245
+   PROOF TRACE: Deterministic · 100% match</pre>
+      </div>
+      <div>
+        <p><strong>Default SI parameters:</strong></p>
+        <p class="mono">belief:   <span style="color:var(--green);font-weight:700">0.759</span><br/>threshold: <span style="color:var(--amber);font-weight:700">0.600</span><br/>safety_margin: <span style="color:var(--green);font-weight:700">+0.159</span> → <strong style="color:var(--green)">SAFE</strong></p>
+        <p style="margin-top:12px;">Reasoning chain posted · HMAC-SHA256 signature attached</p>
+        <div class="callout" style="margin-top:12px;">
+          <p><strong>&lt; 200 ms</strong> verdict latency · Deterministic · No hot-wallet signing</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 7 — COMPLIANCE ════════════════════════ -->
+<div class="slide mid">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">07 / 10</span>
+  </div>
+  <div style="padding-top:88px;">
+    <p class="section-eyebrow">Regulatory &amp; Compliance</p>
+    <h2>Every trip triggers a <span class="accent">legal-grade report</span></h2>
+    <p style="margin-top:16px;">Every CircuitBreaker trip automatically produces:</p>
+    <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px;">
+      <div class="metric-card">
+        <p class="metric-val" style="color:var(--ember);font-size:28px;margin-bottom:10px;">JS2</p>
+        <p class="metric-label">FSCA Consumer Protection<br/>· 24-hour incident report</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-val green" style="font-size:28px;margin-bottom:10px;">SAR</p>
+        <p class="metric-label">FICA goAML · XML export<br/>Suspicious transaction filing</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-val amber" style="font-size:28px;margin-bottom:10px;">ev. bundle</p>
+        <p class="metric-label">SAPS Forensic · Cybercrimes Act 19 of 2020 · PCR0-attested</p>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px;">
+      <p class="mono" style="text-align:center;"><span class="tag green">JS2</span> FSCA · Consumer Protection</p>
+      <p class="mono" style="text-align:center;"><span class="tag amber">FICA</span> goAML · Suspicious filing</p>
+      <p class="mono" style="text-align:center;"><span class="tag">POPIA</span> Data minimisation · right to erasure</p>
+      <p class="mono" style="text-align:center;">CISO alert · Slack / Email</p>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 8 — METRICS ══════════════════════════ -->
+<div class="slide dark">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">08 / 10</span>
+  </div>
+  <div style="padding-top:88px;">
+    <p class="section-eyebrow">Production Metrics</p>
+    <div class="metrics-grid" style="margin-top:4px;">
+      <div class="metric-card">
+        <p class="metric-val">&lt;0.8<span class="accent">ms</span></p>
+        <p class="metric-label">Inference Latency</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-val green">500</p>
+        <p class="metric-label">Sustained TPS</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-val amber">&lt;50<span class="accent">k</span></p>
+        <p class="metric-label">Gas per check()</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-val" style="color:var(--green);font-size:26px">99.9<span class="accent">%</span></p>
+        <p class="metric-label">Uptime Since Launch</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-val" style="font-size:26px;">50,000<span class="accent">+</span></p>
+        <p class="metric-label">Evaluations Processed</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-val green" style="font-size:26px;">23</p>
+        <p class="metric-label">Confirmed Fraud Blocks</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-val amber" style="font-size:26px;">5</p>
+        <p class="metric-label">Forensic Bundles</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-val" style="color:var(--red);font-size:22px;">R2M</p>
+        <p class="metric-label">Fn-Negative Cost Avoided</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:18px;">
+      <p>For every <strong>R1</strong> spent on detection, safe outputs avoid <strong>R5,000 – R2M</strong> in fraud exposure.</p>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 9 — ROADMAP ════════════════════════════ -->
+<div class="slide ember2">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">09 / 10</span>
+  </div>
+  <div style="padding-top:88px;">
+    <p class="section-eyebrow">Roadmap</p>
+    <h2>From kernel to <span class="accent">industry-wide trust layer</span></h2>
+    <table style="margin-top:22px;">
+      <tr>
+        <th style="width:100px;">Phase</th>
+        <th>Description</th>
+        <th style="width:110px;">Target</th>
+        <th style="width:80px;">Status</th>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--green)">v1.1</strong></td>
+        <td>Safety Kernel · CircuitBreaker · Polygon Amoy</td>
+        <td><span class="tag green">Done</span></td>
+        <td class="green-val">✅ LIVE</td>
+      </tr>
+      <tr>
+        <td><strong>v1.2</strong></td>
+        <td>Deeds Office live API · TEE audit pipeline</td>
+        <td>Q3 2026</td>
+        <td class="mono" style="color:var(--amber)">Next</td>
+      </tr>
+      <tr>
+        <td><strong>v2.0</strong></td>
+        <td>Federated fraud intelligence via MPC — bank consortium</td>
+        <td>Q4 2026</td>
+        <td class="mono" style="color:var(--fog)">Planned</td>
+      </tr>
+      <tr>
+        <td><strong>Vision</strong></td>
+        <td>Industry-wide trust layer — cross-region · cross-bank</td>
+        <td>2027</td>
+        <td class="mono" style="color:var(--fog)">Vision</td>
+      </tr>
+    </table>
+    <div class="callout" style="margin-top:18px;border-color:var(--amber);background:rgba(212,148,58,0.05);">
+      <p><strong>Immediate next step:</strong> Standard Bank OneHub integration — 14-day sandbox pilot with live property data.</p>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════ SLIDE 10 — CONTACT ══════════════════════════ -->
+<div class="slide dark">
+  <div class="nav-bar">
+    <span class="nav-logo">ProofBridge Liner</span>
+    <span class="slide-num">10 / 10</span>
+  </div>
+  <div class="final-block">
+    <p class="section-eyebrow" style="justify-content:center">Contact &amp; Links</p>
+    <h2 style="font-size:36px;text-align:center;">
+      ProofBridge<span class="accent">Liner</span>
+    </h2>
+    <p style="color:var(--fog);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;margin-top:8px;">Not Just Another Answer · A Provable One</p>
+    <div class="two-col" style="width:680px;margin-top:40px;gap:28px;">
+      <div style="text-align:left;">
+        <p class="mono" style="margin-bottom:6px;"><strong style="color:var(--white)">Presenter</strong></p>
+        <p class="mono">Mihle "Divhani" Majokweni<br/>Vaguely Vanity LLC · Gqeberha, SA</p>
+        <p class="mono" style="margin-top:14px;"><strong style="color:var(--white)">Repository</strong></p>
+        <p class="mono" style="color:var(--amber);">github.com/divhanimajokweni/<br/>proofbridge-liner</p>
+      </div>
+      <div style="text-align:left;">
+        <p class="mono" style="margin-bottom:6px;"><strong style="color:var(--white)">Live Dashboard</strong></p>
+        <p class="mono" style="color:var(--amber);">proofbridge-liner.vercel.app</p>
+        <p class="mono" style="margin-top:14px;"><strong style="color:var(--white)">Verify API</strong></p>
+        <p class="mono" style="color:var(--amber);">proofbridge-liner.vercel.app/api/verify</p>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+</div>
+
+</body>
+</html>
