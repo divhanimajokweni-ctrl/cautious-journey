@@ -1,4 +1,4 @@
-name: Deploy Workspace Production
+name: Deploy ProofBridge Liner
 
 on:
   workflow_dispatch:
