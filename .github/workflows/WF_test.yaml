@@ -3,7 +3,7 @@ name: CI / Syntax Test (no deploy)
 on:
   workflow_dispatch:
   push:
-    branches: [lablab.ai-hackathon, main]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -26,8 +26,8 @@ jobs:
       - run: cat package.json | grep -A5 '"dependencies"'
 
       # Quick syntax check on the two JS files in api/
-      - run: cd api && node --check verify.js && echo "verify.js: OK"
-      - run: cd api && node --check kernel.js && echo "kernel.js: OK"
+      - run: cd api && node --check verify.js && echo 'verify.js: OK'
+      - run: cd api && node --check kernel.js && echo 'kernel.js: OK'
 
       # Verify vercel.json well-formed
       - run: test -f vercel.json && cat vercel.json | grep -E '"version"|"builds"|"routes"'
