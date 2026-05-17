@@ -23,18 +23,17 @@ jobs:
         with:
           ref: ${{ github.ref }}
           token: ${{ secrets.GH_PAT }}
+          submodules: false
 
       - uses: actions/setup-node@v6
         with:
           node-version: 24
 
       - name: Install dependencies
-        working-directory: api
-        run: npm install
+        run: cd api && npm install
 
       - name: Run tests
-        working-directory: api
-        run: npm test
+        run: cd api && npm test
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
