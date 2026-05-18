@@ -25,6 +25,8 @@
   ],
   "routes": [
     { "src": "/gate-1",         "dest": "/vvv/gate-1.html" },
+    { "src": "/api/health",     "dest": "/api/verify.js" },
+    { "src": "/api/status",     "dest": "/api/verify.js" },
     { "src": "/api/verify",     "dest": "/api/verify.js", "methods": ["POST"] },
     { "src": "/api/mint",       "dest": "/api/mint.js",   "methods": ["POST"] },
     { "src": "/api/(.*)",       "dest": "/api/verify.js" },
