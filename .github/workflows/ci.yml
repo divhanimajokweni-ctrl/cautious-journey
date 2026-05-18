@@ -6,19 +6,41 @@ on:
   pull_request:
 
 jobs:
-  gate-1-smoke:
+  smoke:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: test
+      # Local unit tests use a known dev secret
       PROOFBRIDGE_HMAC_SECRET: ci-gate-1-hmac-secret
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - name: Install dependencies
-        run: npm install
-      - name: Run Gate-1 smoke tests
-        run: node --test test/gate1-smoke.test.js
+        run: npm install --save-dev jest@29 2>&1 | tail -3
+
+      # ── Local unit: Gate-1 smoke test + /api/mint nonce serialisation ───────
+      - name: Unit — Gate-1 smoke (local)
+        run: |
+          PROOFBRIDGE_HMAC_SECRET="${PROOFBRIDGE_HMAC_SECRET}" \
+          npx jest test/gate1-smoke.test.js --runInBand --no-coverage
+
+      - name: Unit — /api/mint (client_nonce required)
+        run: |
+          curl -sS -X POST http://localhost:3000/api/mint \
+            -H "Content-Type: application/json" \
+            -d '{"alpha":4,"beta":4,"gamma":1,"threshold":0.55,"deed_hash":"0000000000000000000000000000000000000000000000000000000000000000","client_nonce":"0000000000000000000000000000000000000000000000000000000000000000","chain_target":"AMOY"}' \
+            | jq -e '.payload.verdict == "PASS"'
+
+      # ── Production verification ────────────────────────────────────────────
+      - name: Production verify — AMOY HALT (low alpha)
+        run: |
+          curl -sS -X POST https://proofbridge-liner.vercel.app/api/verify \
+            -H "Content-Type: application/json" \
+            -d '{"alpha":1,"beta":1,"gamma":1.2,"threshold":0.95,"deed_hash":"0000000000000000000000000000000000000000000000000000000000000001","client_nonce":"0000000000000000000000000000000000000000000000000000000000000001","chain_target":"AMOY"}' \
+            | jq -e '.ok == true | .verdict == "HALT"'
