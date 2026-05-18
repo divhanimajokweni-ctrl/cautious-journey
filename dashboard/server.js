@@ -90,6 +90,12 @@ app.get('/api/status', (_req, res) => {
     assetRegistryAddress: process.env.ASSET_REGISTRY_ADDRESS || null,
     teeVerifierAddress: process.env.TEE_VERIFIER_ADDRESS || null,
     enclaveAddress: process.env.ENCLAVE_ADDRESS || null,
+    gate1: {
+      handler: '/api/verify.js (Gate-1)',
+      version: 'gate-1',
+      chains: ['AMOY', 'FABRIC'],
+      anchored_at_always_null: true,
+    },
     phases: PHASES,
     tests: {
       total: TEST_RESULTS.length,

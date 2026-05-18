@@ -1,1 +1,1 @@
-{"name":"proofbridge-api","version":"1.0.0","main":"verify.js","type":"commonjs","scripts":{"test":"node --check verify.js && node --check kernel.js"}}
+{"name":"proofbridge-api","version":"1.0.0","main":"verify.js","type":"module"}
