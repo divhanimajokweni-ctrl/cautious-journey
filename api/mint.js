@@ -28,6 +28,13 @@ function uuidv4() { return randomUUID() }
 function isHex64(s)  { return typeof s === 'string' && /^[0-9a-f]{64}$/.test(s) }
 function isHexNonce(s) { return typeof s === 'string' && /^[0-9a-f]{64}$/.test(s) }
 
+// ── feature flags & constants ─────────────────────────────────────────────────
+
+const VERSION            = 'gate-1-mint'
+const PROTOCOL_VERSION   = '1.0'
+const SAFEGRID_VERSION   = '1.0.0'
+const ALLOWED_CHAINS     = ['AMOY', 'FABRIC']
+
 // ── serialisation helpers ─────────────────────────────────────────────────────
 
 function canonicalJSON(obj) {
