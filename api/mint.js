@@ -34,6 +34,9 @@ function hmacSHA256(message, secret) {
 
 function uuidv4() { return crypto.randomUUID() }
 
+function isHex64(s)  { return typeof s === 'string' && /^[0-9a-f]{64}$/.test(s) }
+function isHexNonce(s) { return typeof s === 'string' && /^[0-9a-f]{64}$/.test(s) }
+
 // ── serialisation helpers ─────────────────────────────────────────────────────
 
 function canonicalJSON(obj) {
