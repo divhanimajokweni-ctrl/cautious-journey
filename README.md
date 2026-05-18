@@ -1,318 +1,242 @@
-# ProofBridge Liner — Bayesian Safety Kernel
+# ProofBridge Liner — Gate-1 Deployed
 
-Hardware-enforced circuit breaker for tokenised real-world assets. Three-layer kernel: TEE Gate → Bayesian Engine → Circuit Breaker. 100% recall on historical failures, zero false negatives.
-
-## 🚀 Quick Deploy (One-Click)
-
-### Vercel (Prototype + Dashboard)
-
-Deploy the kernel API + interactive dashboard in one click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdivhanimajokweni-ctrl%2Fproofbridge-liner&env=KERNEL_SECRET&project-name=proofbridge-liner&repository-name=proofbridge-liner)
-
-**Manual:**
-
-```bash
-# Clone and install
-git clone https://github.com/divhanimajokweni-ctrl/proofbridge-liner.git
-cd proofbridge-liner
-
-# Install dependencies (Node.js required)
-npm install
-
-# Copy environment template and set a random secret
-cp .env.example .env.local
-# Edit .env.local: KERNEL_SECRET=<random-32-char-string>
-
-# Run locally
-vercel dev
-
-# Deploy to production
-vercel --prod
-```
-
-After deploy, set `KERNEL_SECRET` in Vercel dashboard (Environment Variables).
-
-### GitHub Pages (Landing)
-
-The VVU gateway is already deployed at:
-- https://venturevisionubuntu.co.za (DNS configured to Vercel)
-- https://proofbridge-liner.vercel.app/
+One-door verification corridor. POST `/api/verify` or POST `/api/mint`.
+No ambiguity. Deeds have anchors.
 
 ---
 
-## 📦 Repository Structure
+## Current State
+
+| Layer | Status | Detail |
+|-------|--------|--------|
+| `/api/verify` (Gate-1 v1) | ✅ Live | Sole proof computation path. `anchored_at: null`, `safegrid_signal`, `hmac-sha256` |
+| `/api/mint` (Gate-1 v2) | ✅ Live | Same proof path + `client_nonce` replay protection; `CIRCUIT_BREAKER_TRIPPED` on HALT |
+| `/gate-1` UI terminal | ✅ Live | `https://proofbridge-liner.vercel.app/gate-1` — human-readable contract summary |
+| production `PROOFBRIDGE_HMAC_SECRET` | ✅ Set | Encrypted, 64-char hex; dev fallback (`dev-secret`) only for local unit tests |
+| CI smoke tests | ✅ Passing | `node --test` locally; GitHub Actions step posts to deployed production |
+| legacy `vvv/api/verify.js` | ✅ Deprecated | Moved to `deprecated/vvv-api/verify.legacy.js`. Do not import. |
+| `/gate-1` route in `vercel.json` | ✅ First entry | Resolves before the `/api/*` catch-all |
+| on-chain Merkle/anchor | ⬜ Design-only | `anchored_at` is always `null` today. Deployment is the next sprint. |
+| audit-trail completeness | ⬜ Partial | `calibrated_threshold` field present in `api/mint` only; `api/verify` omits it (GET pairing limitation below) |
+
+---
+
+## How to Use
+
+### Pre-requisites
+
+| Need | Why |
+|------|-----|
+| `PROOFBRIDGE_HMAC_SECRET` set on Vercel | Signs every response with `hmac-sha256:<hex>` |
+| `"type": "module"` at repo root | Both API handlers are ESM; missing this breaks Vercel cold-start |
+| Node.js ≥ 20 (local) | `node --test`, `createHash`, `createHmac`, `randomUUID` are all built-in |
+
+---
+
+### Use case 1 — Minimal deed attestation (`/api/verify`)
+
+**When to use:** you have a deed hash, want a server-signed receipt, and don't need replay protection.
+
+```bash
+curl -X POST https://proofbridge-liner.vercel.app/api/verify \
+  -H "Content-Type: application/json" \
+  -d '{
+    "alpha": 2, "beta": 1, "gamma": 1.2, "threshold": 0.95,
+    "deed_hash": "a3f1e2d4b5c67890123456789abcdef0123456789abcdef0123456789abcdef01",
+    "issuer_did": "did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK",
+    "property_ref": "prop_gate_1_smoke",
+    "chain_target": "AMOY"
+  }'
+```
+
+| Field | Always present | Notes |
+|-------|---------------|-------|
+| `ok: true` | ✅ | — |
+| `posterior` | ✅ | `[0, 1]`, 6 decimals |
+| `threshold` | ✅ | Echoed from request |
+| `verdict` | ✅ | `PASS \| WARN \| HALT` |
+| `receipt_id` | ✅ | UUID v4, server-generated |
+| `pipeline_hash` | ✅ | 64-hex `sha256(handshake + envelope)` |
+| `anchored_at` | ✅ | **Always `null`** — contract invariant |
+| `signature` | ✅ | `hmac-sha256:<hex>` |
+| `safegrid_signal` | ✅ | `{ evaluator_version, verdict, signal_id }` |
+| `calibrated_threshold` | ⬜ | Present in `/api/mint` only; `api/verify` does not include this field when pairing at the moment; the pairing has the betaMean computed. |
+
+**Error paths:** 405 for non-POST; 400 for invalid params or `MAINNET` (rejected before computation). `anchored_at` stays `null` on error too.
+
+---
+
+### Use case 2 — Replay-resistant minting (`/api/mint`)
+
+**When to use:** you need proof that a specific verification message has not been replayed. The client generates a unique `client_nonce` (SHA-256 hex, 64 chars) and embeds it in every send.
+
+```bash
+# 1. Generate a client-side nonce once (reusable across retries is safe here)
+CLIENT_NONCE=$(openssl rand -hex 32)   # 64 hex chars
+
+# 2. POST
+curl -X POST https://proofbridge-liner.vercel.app/api/mint \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"alpha\": 4, \"beta\": 4, \"gamma\": 1, \"threshold\": 0.55,
+    \"deed_hash\": \"$(openssl rand -hex 32)\",
+    \"client_nonce\": \"${CLIENT_NONCE}\",
+    \"chain_target\": \"AMOY\",
+    \"issuer_did\": \"did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK\"
+  }"
+```
+
+**Response (PASS):**
+
+```json
+{
+  "status": "VERIFIED_SOVEREIGN_TRUTH",
+  "payload": {
+    "ok": true, "verdict": "PASS", "anchored_at": null,
+    "pipeline_hash": "<64-hex>",
+    "handshake_hash": "<64-hex>",
+    "receipt_id": "<uuid>",
+    ...
+  },
+  "signature": "hmac-sha256:<hex>"
+}
+```
+
+**Response (HALT):**
+
+```json
+{ "status": "CIRCUIT_BREAKER_TRIPPED", "payload": { "verdict": "HALT", ... }, "signature": "..." }
+```
+
+**Error paths (all 400):**
+- `client_nonce` missing or not 64-hex → `VALIDATION_ERROR`
+- `deed_hash` not 64-hex → `VALIDATION_ERROR`
+- `chain_target` not `AMOY` or `FABRIC` → `VALIDATION_ERROR` (MAINNET rejected before computation)
+
+---
+
+### Use case 3 — Local development
+
+```bash
+git clone https://github.com/divhanimajokweni-ctrl/proofbridge-liner.git
+cd proofbridge-liner
+npm install
+
+# Local unit tests (safe to run without Vercel login)
+PROOFBRIDGE_HMAC_SECRET="dev-secret" node --test test/gate1-smoke.test.js
+
+# Local API dev server
+PROOFBRIDGE_HMAC_SECRET="dev-secret" vercel dev   # http://localhost:3000
+```
+
+Set `PROOFBRIDGE_HMAC_SECRET` in the Vercel dashboard (Environment Variables → Production) before deploying to production. The `dev-secret` fallback is hard-coded in the handler; it exists to unblock local tests and should **never** be used in production — all production endpoints read `PROOFBRIDGE_HMAC_SECRET` from the Vercel environment.
+
+---
+
+### Use case 4 — Gate-1 Terminal UI
+
+Visit `https://proofbridge-liner.vercel.app/gate-1` to view the full contract specification. Use the form to POST a live request and inspect the signed receipt instantly.
+
+---
+
+## Known Weaknesses
+
+| Weakness | Impact | Status |
+|----------|--------|--------|
+| No `calibrated_threshold` in `/api/verify` response | Cannot display τ alongside μ in integrations using v1 | Documented; use `/api/mint` for full envelope |
+| `anchored_at` always `null` | On-chain anchoring is design-only; receipts are self-verifiable but not chain-anchored | Next sprint |
+| `calibrated_threshold` never rounded | Exposure lies at gate enforcement — the routing of assess-level guard core is not a backdoor to chain; currently returns binding raw float | Accepted; do rounding at integration layer |
+| No nonce DB for `/api/verify` | Replay against GET posting is possible | Use `/api/mint` which embeds `client_nonce` in every signed field |
+| `PROOFBRIDGE_HMAC_SECRET` required, not optional | If env var is unset, falls back to `dev-secret` — the response still signs, but key is predictable | Guard is present; Vercel env is configured for production |
+| `MAINNET` rejected verbatim by name | No allowlist beyond `AMOY` and `FABRIC`; adding new chains requires a code change | Acceptable for current deployment scope |
+| Legacy v0.9 `vvv/api/verify.js` still in repo (deprecated dir) | Old kernel compiled as CJS cannot be invoked by Gate-1 path; importing it bypasses the gate | Corp SDK does not import; migration path documented in `deprecated/vvv-api/README.md` |
+| `type: module` hard-requirement at root | Any CommonJS-only dependency breaks build; current tree verified | No CJS deps in `api/` or `lib/` at time of gate-1 |
+| CI step uses `curl` + `jq` without lockfile API | Rate-limited `main` pointers — `master` is reliable; Rate-limit passthrough is on `axios` passthrough | Acceptable for CI rate-bound pages only |
+
+---
+
+## Invariants at a Glance
+
+On every successful POST:
+
+```
+POST /api/verify   →  { ok: true, posterior, verdict, receipt_id, pipeline_hash,
+                        anchored_at: null, signature, safegrid_signal }
+
+POST /api/mint     →  { status, payload: { ok, verdict, anchored_at: null,
+                        pipeline_hash, receipt_id, ... }, signature }
+```
+
+On every rejected chain (`MAINNET`, or any string not matching `AMOY\|FABRIC`):
+
+```
+→  { ok: false, error: "VALIDATION_ERROR",
+    errors: [ "... not a permitted network / MAINNET is rejected ..." ]
+  }
+```
+
+No `anchored_at` field ever arrives with a truthy value. No `safefgrid_signal` (typo) field ever appears in any response.
+
+---
+
+## Route Map
+
+| Route | Target | Method |
+|-------|--------|--------|
+| `GET /gate-1` | `/vvv/gate-1.html` | GET |
+| `POST /api/verify` | `api/verify.js` (Gate-1 v1) | POST |
+| `POST /api/mint` | `api/mint.js` (Gate-1 v2) | POST |
+| `GET /api/health` | `api/verify.js` | GET |
+| `GET /api/status` | `api/verify.js` | GET |
+| `GET /api/(.*)` | `api/verify.js` (catch-all) | GET |
+| `GET /*` | `vvv/index.html` | GET |
+
+---
+
+## Repository Structure (current)
 
 ```
 proofbridge-liner/
 ├── api/
-│   └── verify.js          # Vercel serverless function — Bayesian kernel
-├── dashboard/
-│   └── index.html         # Standalone UI (single file, no build)
+│   ├── verify.js              # Gate-1 v1 handler — ESM, deployed at /api/verify
+│   ├── mint.js                # Gate-1 v2 handler — ESM, /api/mint, client_nonce required
+│   ├── kernel.js              # ESM crypto helpers (sha256, hmacsha256 exports
+│   └── package.json           # { "type": "module" }
+├── deprecated/
+│   └── vvv-api/
+│       ├── verify.legacy.js   # v0.9 SAFE-TRIP kernel — CJS — DO NOT IMPORT
+│       └── README.md          # Why it is deprecated; migration steps
 ├── test/
-│   ├── boundary.test.js   # Edge cases: α/β extremes, γ calibration
-│   └── adversarial.test.js # Monte Carlo stability tests
-├── data/
-│   └── haridev888.csv     # Sample calibration dataset
-├── visuals/
-│   ├── architecture.png   # System diagram (Excalidraw)
-│   ├── roc_curve.png      # ROC from haridev888
-│   └── pr_curve.png       # Precision-Recall curve
-├── docs/
-│   ├── deck.md            # 10-slide pitch deck (source)
-│   ├── deck.pdf           # Export via Pandoc
-│   ├── whitepaper.md      # 4–6 page technical paper
-│   └── whitepaper.pdf     # PDF build
-├── demo/
-│   └── video.mp4          # <2 min voice-over demo
-├── CNAME                  # Custom domain for GitHub Pages
-├── README.md              # This file
-├── .env.example           # KERNEL_SECRET placeholder
-├── pandoc-config.yaml     # PDF build configuration
+│   └── gate1-smoke.test.js    # Node 20 native runner; 2 assertions (AMOY + MAINNET)
+├── vvv/
+│   ├── gate-1.html            # Gate-1 terminal page — served at /gate-1
+│   └── proofbridge.html       # Gate-1 Pilot badge + /gate-1 CTA
+├── dashboard/
+│   └── server.js              # Ops daemon — /api/status includes gate1 block
+├── vercel.json                # /gate-1, /api/verify, /api/mint routes + builds
+├── package.json               # { "type": "module" }  + all build scripts retained
 └── .github/
     └── workflows/
-        └── ci.yml         # Auto-test on push
+        └── ci.yml             # Unit tests (node --test) + production smoke (curl)
 ```
 
 ---
 
-## 🔧 Local Development
+## Live
 
-### Kernel API
-
-```bash
-cd api
-npm init -y
-npm install --save-dev jest node-fetch
-# Add "type": "module" to package.json for ES module syntax
-vercel dev  # runs at http://localhost:3000
-```
-
-Test endpoint:
-
-```bash
-curl -X POST http://localhost:3000/api/verify \
-  -H "Content-Type: application/json" \
-  -d '{"alpha":24,"beta":8,"gamma":1.3,"threshold":0.6}'
-```
-
-Expected response:
-
-```json
-{
-  "kernel_version": "v0.9",
-  "verdict": "SAFE",
-  "belief": 0.759259,
-  "threshold": 0.56,
-  "safety_margin": 0.199259,
-  "reasoning_chain": [...],
-  "signature": "a1b2c3...",
-  "metadata": { ... }
-}
-```
-
-### Dashboard
-
-Open `dashboard/index.html` directly in browser (works as static file) or serve via Vercel:
-
-```bash
-cd dashboard
-vercel --prod  # deploys to <project>.vercel.app
-```
-
-The dashboard calls `/api/verify` — if running locally without Vercel, edit `dashboard/index.html` line 120 to point to `http://localhost:3000/api/verify`.
-
-### Tests
-
-```bash
-npm test  # runs jest on test/*.test.js
-```
-
-Boundary tests cover:
-- α → 0, β → ∞ (belief → 0)
-- β → 0, α → ∞ (belief → 1)
-- α = β = 0 (uniform prior → 0.5)
-- γ = 0 (threshold neutral)
-- γ high (threshold collapse)
-- Reasoning chain determinism
+| URL | Purpose |
+|-----|---------|
+| https://proofbridge-liner.vercel.app/ | VVU gateway |
+| https://proofbridge-liner.vercel.app/proofbridge | ProofBridge Liner landing |
+| https://proofbridge-liner.vercel.app/gate-1 | Gate-1 terminal UI |
+| https://proofbridge-liner.vercel.app/api/verify | Gate-1 v1 POST endpoint |
+| https://proofbridge-liner.vercel.app/api/mint | Gate-1 v2 + nonce POST endpoint |
 
 ---
 
-## 🧮 Mathematical Core
-
-### Model
-
-We model latent risk probability θ as Beta(α, β) where:
-- α = count of positive evidence (safe signals, repayments, clean records)
-- β = count of risk evidence (defaults, anomalies, red flags)
-
-Posterior belief (mean of Beta(α+1, β+1)):
-
-**μ = (α+1) / (α+β+2)**
-
-### Calibrated Threshold
-
-Base threshold τ₀ is adjusted by industry calibration factor γ:
-
-**τ = τ₀ / (1 + γ·β/α)**
-
-- γ > 1 → more risk-sensitive (threshold lowers, easier to TRIP)
-- γ < 1 → more lenient (threshold raises, harder to TRIP)
-- γ = 1 → neutral
-
-### Decision Rule
-
-**Verdict = SAFE iff μ > τ**
-
-Safety Margin **S = μ – τ** is the interpretability anchor.
-
----
-
-## 📊 Calibration Profiles
-
-| Industry | γ | Rationale |
-|----------|---|-----------|
-| Taxi Safety | 1.2 | Passenger safety critical; false negatives costly |
-| Micro-finance | 0.8 | Financial inclusion; false positives exclude vulnerable |
-| Healthcare | 1.5 | Life-critical decisions; maximum sensitivity |
-| Content Moderation | 1.0 | Balanced; scale vs accuracy trade-off |
-
-Profiles stored in `dashboard/index.html` as presets.
-
----
-
-## 🎥 Hackathon Deliverables
-
-| Track | Artifact | Status | Location |
-|-------|----------|--------|----------|
-| 1 | Working prototype (api/verify.js + dashboard) | ✅ Complete | `/api`, `/dashboard` |
-| 2 | Video demo (90s voice-over) | ⬜ pending | `/demo/video.mp4` |
-| 3 | Pitch deck (10 slides) | ⬜ pending | `/docs/deck.pdf` |
-| 4 | Whitepaper (4–6 pages) | ⬜ pending | `/docs/whitepaper.pdf` |
-
-**Prototype is production-ready:** deterministic, auditable, timestamped reasoning chain. Deploy to Vercel and run.
-
----
-
-## 🔬 Testing
-
-### Boundary tests (run automatically on CI)
-
-```bash
-npm test
-```
-
-Covers:
-- Extreme α/β ratios (0, ∞)
-- Gamma calibration edge cases (γ=0, γ→∞)
-- Reasoning chain field validation
-- Signature consistency
-
-### Adversarial Monte Carlo
-
-Perturbs inputs by ε and verifies verdict stability for clearly safe/trip cases.
-
-### Manual Smoke Test
-
-```bash
-# Test with default values
-curl -X POST http://localhost:3000/api/verify \
-  -H "Content-Type: application/json" \
-  -d '{"alpha":24,"beta":8,"gamma":1.3,"threshold":0.6}'
-```
-
-Expected: `verdict: "SAFE"`, `safety_margin: ~0.20`
-
----
-
-## 📈 Build Artifacts (CI/CD)
-
-GitHub Actions workflow (`.github/workflows/ci.yml`):
-
-1. On push to `main`:
-   - Run Jest tests
-   - Build PDF whitepaper from Markdown (Pandoc)
-   - Generate ROC/PR PNG charts from `data/haridev888.csv` (Python script)
-   - Upload artifacts to GitHub Releases
-
-2. Manual trigger (workflow_dispatch):
-   - Build full deliverable ZIP (prototype + docs + demo)
-
----
-
-## 🗂️ Pandoc PDF Build
-
-Install Pandoc + LaTeX (TeX Live):
-
-```bash
-# Ubuntu/Debian
-sudo apt-get install pandoc texlive-xetex texlive-fonts-recommended
-
-# macOS
-brew install pandoc basictex
-
-# Build whitepaper PDF
-pandoc docs/whitepaper.md \
-  --pdf-engine=xelatex \
-  --variable geometry:margin=1in \
-  --variable fontsize=11pt \
-  --variable linestretch=1.2 \
-  -o docs/whitepaper.pdf
-
-# Build pitch deck PDF (from Markdown slides)
-pandoc docs/deck.md -V geometry:margin=0.5in -o docs/deck.pdf
-```
-
-Custom template: `pandoc-config.yaml` defines metadata, fonts, colors.
-
----
-
-## 🏆 Success Criteria (Hackathon Judges)
-
-✅ **Working demo** — api/verify.js returns correct posterior, dashboard interactive live  
-✅ **Clear separation** — Belief (μ) ≠ Threshold (τ) surfaced in every deliverable  
-✅ **Explicit limitations** — manual priors, sparse evidence, calibration drift, adversarial adaptation stated  
-✅ **Deterministic audit trail** — reasoning_chain JSON, timestamped, HMAC signature  
-✅ **Industry calibration** — γ profiles differ per use case, not one-size-fits-all  
-
----
-
-## 🚀 Deployment Status
-
-### Smart Contracts (Solidity)
-
-| Contract | Address (Anvil Local) | Status |
-|----------|----------------------|--------|
-| CircuitBreaker | 0x5FbDB2315678afecb367f032d93F642f64180aa3 | ✅ Deployed |
-| AssetRegistry | 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0 | ✅ Deployed |
-| TEEVerifier | 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9 | ✅ Deployed |
-
-### Test Results
-- **45 tests passed** across CircuitBreaker, AssetRegistry, and TEEVerifier test suites
-- All deployment transactions successful on local Anvil testnet
-
-### Live Deployment (Polygon Amoy)
-Contracts are ready for deployment to Polygon Amoy testnet:
-
-```bash
-export PRIVATE_KEY=<your-private-key>
-export POLYGON_AMOY_RPC_URL=<your-rpc-url>
-export ORACLE_ADDRESS=<oracle-address>
-export ENCLAVE_ADDRESS=<enclave-address>
-
-forge script script/DeployFull.s.sol --rpc-url $POLYGON_AMOY_RPC_URL --broadcast
-```
-
----
-
-## 📞 Contact
+## Contact
 
 Vaguely Vanity LLC · Gqeberha, ZA  
-hello@venturevisionubuntu.co.za  
-https://venturevisionubuntu.co.za
+hello@venturevisionubuntu.co.za · https://venturevisionubuntu.co.za
 
----
-
-## 📄 License
-
-MIT — see LICENSE.md for details.
+MIT — see `LICENSE.md`.
