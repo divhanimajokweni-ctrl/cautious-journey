@@ -14,25 +14,16 @@
  * @see api/verify.js — Gate-1 base handler (no client_nonce required)
  */
 
-import crypto from 'node:crypto'
+import { randomUUID, createHash, createHmac } from 'node:crypto'
 
-const VERSION         = 'gate-1-mint'
-const PROTOCOL_VERSION = '1.0'
-const SAFEGRID_VERSION = '1.0.0'
+// ── primitives ───────────────────────────────────────────────────────────────
 
-const ALLOWED_CHAINS = ['AMOY', 'FABRIC']
-
-// ── low-level primitives ──────────────────────────────────────────────────────
-
-function sha256Hex(input) {
-  return crypto.createHash('sha256').update(input).digest('hex')
-}
-
+function    sha256Hex(msg) { return createHash('sha256').update(msg).digest('hex') }
 function hmacSHA256(message, secret) {
-  return `hmac-sha256:${crypto.createHmac('sha256', secret).update(message).digest('hex')}`
+  return `hmac-sha256:${createHmac('sha256', secret).update(message).digest('hex')}`
 }
 
-function uuidv4() { return crypto.randomUUID() }
+function uuidv4() { return randomUUID() }
 
 function isHex64(s)  { return typeof s === 'string' && /^[0-9a-f]{64}$/.test(s) }
 function isHexNonce(s) { return typeof s === 'string' && /^[0-9a-f]{64}$/.test(s) }
