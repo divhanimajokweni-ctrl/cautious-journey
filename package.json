@@ -3,6 +3,7 @@
   "version": "1.1.1",
   "description": "Ghost-Risk Circuit-Breaker for tokenised real-world assets",
   "main": "dashboard/server.js",
+  "type": "module",
   "scripts": {
     "start": "node dashboard/server.js",
     "dev": "node dashboard/server.js",
