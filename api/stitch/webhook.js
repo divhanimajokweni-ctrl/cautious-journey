@@ -15,6 +15,10 @@ const ACCEPTED_EVENT_TYPES = new Set([
   'payment.cancelled',
   'payment.expired',
   'payment.pending',
+  'subscription.completed',
+  'subscription.cancelled',
+  'subscription.expired',
+  'subscription.pending',
 ])
 
 async function readRawBody(req) {
@@ -86,12 +90,16 @@ function verifySignature(req, rawBody) {
 }
 
 function extractPayment(event) {
+  const stripHexPrefix = (v) => String(v).startsWith('0x') ? String(v).slice(2) : v
+  const rawType = event.type || event.eventType || ''
+  const isSub = rawType.toLowerCase().includes('subscription')
   const payment = event.payment || event.data || event
   return {
-    type: event.type || event.eventType || payment.type || 'unknown',
-    id: event.id || payment.id || payment.paymentRequestId || null,
-    status: payment.status || payment.state?.__typename || payment.state || event.type || 'unknown',
-    reference: payment.clientReference || payment.payerReference || payment.beneficiaryReference || payment.reference || payment.id || null,
+    type: rawType || payment.type || 'unknown',
+    id: event.id || payment.id || payment.paymentRequestId || payment.subscriptionId || stripHexPrefix(event.consentId) || null,
+    status: payment.status || payment.state?.__typename || payment.state || payment.subscriptionStatus || event.type || payment.subscriptionStatus || 'unknown',
+    reference: payment.clientReference || payment.payerReference || payment.beneficiaryReference || payment.reference || payment.consentId || event.consentId || payment.id || null,
+    amount: isSub ? payment.amount || event.amount || null : null,
   }
 }
 
@@ -126,5 +134,6 @@ export default async function handler(req, res) {
     status: payment.status,
     reference: payment.reference,
     idempotencyKey: payment.id || payment.reference,
+    ...(payment.amount ? { amount: payment.amount } : {}),
   })
 }
