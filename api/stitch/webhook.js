@@ -15,10 +15,16 @@ const ACCEPTED_EVENT_TYPES = new Set([
   'payment.cancelled',
   'payment.expired',
   'payment.pending',
+  'subscription.paid',
   'subscription.completed',
   'subscription.cancelled',
   'subscription.expired',
   'subscription.pending',
+  'link.paid',
+  'link.completed',
+  'link.cancelled',
+  'link.expired',
+  'link.pending',
 ])
 
 async function readRawBody(req) {
@@ -93,13 +99,14 @@ function extractPayment(event) {
   const stripHexPrefix = (v) => String(v).startsWith('0x') ? String(v).slice(2) : v
   const rawType = event.type || event.eventType || ''
   const isSub = rawType.toLowerCase().includes('subscription')
+  const isLink = rawType.toLowerCase().includes('link')
   const payment = event.payment || event.data || event
   return {
     type: rawType || payment.type || 'unknown',
-    id: event.id || payment.id || payment.paymentRequestId || payment.subscriptionId || stripHexPrefix(event.consentId) || null,
-    status: payment.status || payment.state?.__typename || payment.state || payment.subscriptionStatus || event.type || payment.subscriptionStatus || 'unknown',
+    id: event.id || payment.id || payment.paymentRequestId || payment.subscriptionId || payment.linkId || stripHexPrefix(event.consentId) || null,
+    status: payment.status || payment.state?.__typename || payment.state || payment.subscriptionStatus || payment.linkStatus || event.type || payment.subscriptionStatus || 'unknown',
     reference: payment.clientReference || payment.payerReference || payment.beneficiaryReference || payment.reference || payment.consentId || event.consentId || payment.id || null,
-    amount: isSub ? payment.amount || event.amount || null : null,
+    amount: isSub || isLink ? payment.amount || event.amount || null : null,
   }
 }
 
