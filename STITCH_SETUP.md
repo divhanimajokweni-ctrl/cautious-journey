@@ -4,6 +4,7 @@ Set these Vercel environment variables before deploying:
 
 - `STITCH_CLIENT_SECRET`: Stitch API client secret for server-side status reconciliation.
 - `STITCH_WEBHOOK_SECRET`: Svix/Stitch Endpoint Secret (`endpoint_secret` in Bridge terminology) used by `api/stitch/webhook.js` to verify webhook signatures. This is not the Stitch client secret.
+- `STITCH_ENDPOINT_SIGNING_SECRET`: Optional alias for the same Svix/Stitch endpoint signing secret; the webhook accepts either name during verification.
 - `POOL_TOKEN_SECRET`: HMAC secret for WhatsApp pool access links.
 - `POOL_TOKEN_ADMIN_SECRET`: Required admin secret for minting pool access links.
 - `SVIX_AUTH_TOKEN`: Backend-only Svix API token for creating Consumer App Portal sessions.

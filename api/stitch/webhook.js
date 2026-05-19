@@ -41,31 +41,45 @@ function normalizeSecret(secret) {
   return secret.startsWith('whsec_') ? Buffer.from(secret.slice(6), 'base64') : secret
 }
 
+function webhookSecrets() {
+  return [process.env.STITCH_WEBHOOK_SECRET, process.env.STITCH_ENDPOINT_SIGNING_SECRET]
+    .filter(Boolean)
+}
+
 function verifySignature(req, rawBody) {
-  const secret = process.env.STITCH_WEBHOOK_SECRET
-  if (!secret) return { ok: false, error: 'missing_webhook_secret' }
+  const secrets = webhookSecrets()
+  if (secrets.length === 0) return { ok: false, error: 'missing_webhook_secret' }
 
   const directSignature = header(req, 'stitch-signature')
     || header(req, 'x-stitch-signature')
     || header(req, 'x-webhook-signature')
 
   if (directSignature) {
-    const expected = createHmac('sha256', secret).update(rawBody).digest('hex')
     const normalized = String(directSignature).replace(/^sha256=/, '')
-    if (safeEqual(expected, normalized)) return { ok: true }
+    for (const secret of secrets) {
+      const expected = createHmac('sha256', secret).update(rawBody).digest('hex')
+      if (safeEqual(expected, normalized)) return { ok: true }
+    }
   }
 
   const svixId = header(req, 'svix-id')
   const svixTimestamp = header(req, 'svix-timestamp')
   const svixSignature = header(req, 'svix-signature')
   if (svixId && svixTimestamp && svixSignature) {
+    const timestampMs = Number(svixTimestamp) * 1000
+    if (!Number.isFinite(timestampMs) || Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000) {
+      return { ok: false, error: 'stale_signature' }
+    }
+
     const signedContent = Buffer.concat([
       Buffer.from(`${svixId}.${svixTimestamp}.`),
       rawBody,
     ])
-    const expected = createHmac('sha256', normalizeSecret(secret)).update(signedContent).digest('base64')
     const signatures = String(svixSignature).split(' ').flatMap((entry) => entry.split(',')).map((entry) => entry.replace(/^v\d+=/, ''))
-    if (signatures.some((signature) => safeEqual(expected, signature))) return { ok: true }
+    for (const secret of secrets) {
+      const expected = createHmac('sha256', normalizeSecret(secret)).update(signedContent).digest('base64')
+      if (signatures.some((signature) => safeEqual(expected, signature))) return { ok: true }
+    }
   }
 
   return { ok: false, error: directSignature || svixSignature ? 'invalid_signature' : 'missing_signature' }
