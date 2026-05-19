@@ -11,10 +11,13 @@ const ACCEPTED_EVENT_TYPES = new Set([
   'payment_initiation_request.cancelled',
   'payment_initiation_request.expired',
   'payment_initiation_request.pending',
+  'payment.paid',
   'payment.completed',
   'payment.cancelled',
   'payment.expired',
   'payment.pending',
+  'payment.initiated',
+  'payment.created',
   'subscription.paid',
   'subscription.completed',
   'subscription.cancelled',
@@ -95,16 +98,23 @@ function verifySignature(req, rawBody) {
   return { ok: false, error: directSignature || svixSignature ? 'invalid_signature' : 'missing_signature' }
 }
 
+function buildEventType(rawType, status) {
+  if (!rawType) return 'unknown'
+  return `${rawType.toLowerCase()}.${(status || '').toLowerCase() || 'unknown'}`
+}
+
 function extractPayment(event) {
   const stripHexPrefix = (v) => String(v).startsWith('0x') ? String(v).slice(2) : v
   const rawType = event.type || event.eventType || ''
   const isSub = rawType.toLowerCase().includes('subscription')
   const isLink = rawType.toLowerCase().includes('link')
   const payment = event.payment || event.data || event
+  const resolvedStatus = payment.status || payment.state?.__typename || payment.state || payment.subscriptionStatus || payment.linkStatus || payment.subscriptionStatus || event.status || rawType || 'unknown'
   return {
-    type: rawType || payment.type || 'unknown',
+    type: buildEventType(rawType, resolvedStatus),
+    eventResource: rawType || payment.type || 'unknown',
     id: event.id || payment.id || payment.paymentRequestId || payment.subscriptionId || payment.linkId || stripHexPrefix(event.consentId) || null,
-    status: payment.status || payment.state?.__typename || payment.state || payment.subscriptionStatus || payment.linkStatus || event.type || payment.subscriptionStatus || 'unknown',
+    status: resolvedStatus,
     reference: payment.clientReference || payment.payerReference || payment.beneficiaryReference || payment.reference || payment.consentId || event.consentId || payment.id || null,
     amount: isSub || isLink ? payment.amount || event.amount || null : null,
   }
@@ -129,7 +139,7 @@ export default async function handler(req, res) {
   const payment = extractPayment(event)
   const accepted = ACCEPTED_EVENT_TYPES.has(payment.type) || payment.type.startsWith('payment')
   if (!accepted) {
-    return res.status(202).json({ ok: true, rail: 'stitch', received: true, ignored: true, eventType: payment.type })
+    return res.status(202).json({ ok: true, rail: 'stitch', received: true, ignored: true, eventType: payment.eventResource || payment.type })
   }
 
   return res.status(200).json({
@@ -137,6 +147,7 @@ export default async function handler(req, res) {
     rail: 'stitch',
     received: true,
     eventType: payment.type,
+    eventResource: payment.eventResource,
     paymentId: payment.id,
     status: payment.status,
     reference: payment.reference,
