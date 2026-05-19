@@ -1,21 +1,18 @@
 $ORIGIN venturevisionubuntu.co.za.
 $TTL 3600
-@                                      86400 IN SOA   ns1.host-ww.net. server-admin.cloud2m.co.za. 2026051223 3600 1800 1209600 86400
+@                                      86400 IN SOA   ns1.host-ww.net. server-admin.cloud2m.co.za. 2026051905 3600 1800 1209600 86400
 
 ; NS RECORDS
 @                                      86400 IN NS    ns1.host-ww.net.
 @                                      86400 IN NS    ns2.host-ww.net.
 
-; A RECORDS — GitHub Pages (REQUIRED for apex domain)
-@                                      300   IN A     185.199.108.153
-@                                      300   IN A     185.199.109.153
-@                                      300   IN A     185.199.110.153
-@                                      300   IN A     185.199.111.153
+; A RECORDS — Vercel edge network (76.76.21.21)
+@                                      300   IN A     76.76.21.21
 
 ; CNAME RECORDS
-www                                   14400 IN CNAME divhanimajokweni-ctrl.github.io.
-ftp                                   14400 IN CNAME @
-mail                                  14400 IN CNAME @
+www                                    300   IN CNAME venturevisionubuntu.co.za.
+ftp                                    14400 IN CNAME @
+mail                                   14400 IN CNAME @
 api                                   300   IN A     76.76.21.21
 
 ; MX RECORDS
