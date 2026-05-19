@@ -1,5 +1,6 @@
 const PB_ANT = ' \\ _ /\n  (o)\n  / \\ '
 const TOKEN_ENDPOINT = '/api/pool-token/verify'
+const SVIX_PORTAL_ENDPOINT = '/api/svix/app-portal'
 
 const dashboard = {
   alpha: 5,
@@ -7,6 +8,7 @@ const dashboard = {
   tau: 0.64,
   failures: 0,
   muted: false,
+  poolToken: null,
 }
 
 const gateLoading = document.getElementById('gateLoading')
@@ -114,6 +116,7 @@ function showConsole(group) {
 async function verifyGate() {
   const poolToken = new URLSearchParams(window.location.search).get('poolToken')
   if (!poolToken) return showDenied()
+  dashboard.poolToken = poolToken
 
   try {
     const response = await fetch(TOKEN_ENDPOINT, {
@@ -129,9 +132,34 @@ async function verifyGate() {
   }
 }
 
+async function openSvixPortal() {
+  if (!dashboard.poolToken) return showDenied()
+  $('dashStatus').textContent = 'Requesting short-lived Svix App Portal session...'
+
+  try {
+    const response = await fetch(SVIX_PORTAL_ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ poolToken: dashboard.poolToken, next: '/endpoints' }),
+    })
+    const result = await response.json()
+    if (!response.ok || !result.ok || !result.url) {
+      $('dashStatus').textContent = result.error || 'Unable to create Svix App Portal session.'
+      return
+    }
+
+    $('svixPortalFrame').src = result.url
+    $('svixPortalFrameWrap').hidden = false
+    $('dashStatus').textContent = 'Svix App Portal session loaded for endpoint inspection and replay.'
+  } catch {
+    $('dashStatus').textContent = 'Unable to reach Svix App Portal endpoint.'
+  }
+}
+
 $('settleBtn').addEventListener('click', () => mutate('CLEAR'))
 $('fraudBtn').addEventListener('click', () => mutate('FRAUD'))
 $('forgeBtn').addEventListener('click', () => mutate('FORGE'))
+$('svixPortalBtn').addEventListener('click', openSvixPortal)
 $('dashResetBtn').addEventListener('click', resetConsole)
 $('dashMuteBtn').addEventListener('click', () => {
   dashboard.muted = !dashboard.muted

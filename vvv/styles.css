@@ -412,6 +412,23 @@ body.warn .metric.verdict strong, body.warn #heroVerdict { color: var(--gold); }
   margin: 1.2rem 0;
 }
 
+.svix-portal-frame {
+  margin: 1rem 0;
+  border: 1px solid rgba(7, 94, 84, 0.2);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  min-height: 560px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.1);
+}
+
+.svix-portal-frame iframe {
+  display: block;
+  width: 100%;
+  min-height: 560px;
+  border: 0;
+}
+
 .ubuntu-panel .button.ghost {
   color: #075e54;
   border-color: rgba(7, 94, 84, 0.28);

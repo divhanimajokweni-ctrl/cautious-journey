@@ -90,8 +90,13 @@
         <button class="button primary" id="settleBtn" type="button">Settle to Amoy</button>
         <button class="button danger" id="fraudBtn" type="button">Fraud Bank</button>
         <button class="button danger" id="forgeBtn" type="button">Forge Deed</button>
+        <button class="button ghost" id="svixPortalBtn" type="button">Open webhook portal</button>
         <button class="button ghost" id="dashMuteBtn" type="button" aria-pressed="false">Voice alerts on</button>
         <button class="button ghost" id="dashResetBtn" type="button">Reset console</button>
+      </div>
+
+      <div id="svixPortalFrameWrap" class="svix-portal-frame" hidden>
+        <iframe id="svixPortalFrame" title="Svix Consumer App Portal" allow="clipboard-write" loading="lazy"></iframe>
       </div>
 
       <p id="dashStatus" class="kernel-status" role="status">Authorized secure console ready.</p>
