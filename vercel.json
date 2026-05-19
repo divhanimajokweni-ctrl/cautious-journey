@@ -11,6 +11,14 @@
       "use": "@vercel/node"
     },
     {
+      "src": "api/stitch/webhook.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/pool-token/*.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "dashboard/public/**",
       "use": "@vercel/static"
     },
@@ -29,7 +37,11 @@
     { "src": "/api/status",     "dest": "/api/verify.js" },
     { "src": "/api/verify",     "dest": "/api/verify.js", "methods": ["POST"] },
     { "src": "/api/mint",       "dest": "/api/mint.js",   "methods": ["POST"] },
+    { "src": "/api/stitch/webhook", "dest": "/api/stitch/webhook.js", "methods": ["POST"] },
+    { "src": "/api/pool-token/mint", "dest": "/api/pool-token/mint.js", "methods": ["POST"] },
+    { "src": "/api/pool-token/verify", "dest": "/api/pool-token/verify.js", "methods": ["POST"] },
     { "src": "/api/(.*)",       "dest": "/api/verify.js" },
+    { "src": "/dashboard",      "dest": "/vvv/dashboard.html" },
     { "src": "/pools",          "dest": "/vvv/pools.html" },
     { "src": "/proofbridge",    "dest": "/vvv/proofbridge.html" },
     { "src": "/submission",     "dest": "/vvv/submission.html" },
