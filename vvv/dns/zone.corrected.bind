@@ -1,28 +1,32 @@
 $ORIGIN venturevisionubuntu.co.za.
 $TTL 3600
-@                                      86400 IN SOA   ns1.host-ww.net. server-admin.cloud2m.co.za. 2026052001 3600 1800 1209600 86400
+@                                      86400 IN SOA   ns1.host-ww.net. server-admin.cloud2m.co.za. 2026052002 3600 1800 1209600 86400
 
-; NS RECORDS (host-ww.net — pending migration to ns1.vercel-dns.com)
+; NS RECORDS
+; Current provider-managed zone. Optional future migration: ns1.vercel-dns.com / ns2.vercel-dns.com
 @                                      86400 IN NS    ns1.host-ww.net.
 @                                      86400 IN NS    ns2.host-ww.net.
+@                                      86400 IN NS    ns3.host-ww.net.
+@                                      86400 IN NS    ns4.host-ww.net.
 
 ; ---- VERCEL EDGE (76.76.21.21) ----
-; production deploy: proofbridge-liner-oxlsvn88d-divhanimajokweni-1651s-projects.vercel.app
-; alias: venturevisionubuntu.co.za  → proofbridge-liner.vercel.app
-; alias: api.venturevisionubuntu.co.za → proofbridge-liner.vercel.app
+; Alias targets in Vercel:
+; venturevisionubuntu.co.za      -> current proofbridge-liner production deployment
+; www.venturevisionubuntu.co.za  -> current proofbridge-liner production deployment
+; api.venturevisionubuntu.co.za  -> current proofbridge-liner production deployment
 
-; A — apex
+; Apex site
 @                                      300   IN A     76.76.21.21
 
-; CNAME — www → apex alias
-www                                    300   IN CNAME venturevisionubuntu.co.za.
+; WWW site - use A record for Vercel certificate verification under current nameservers
+www                                    300   IN A     76.76.21.21
 
-; A — api subdomain (76.76.21.21 reserved for future vercel-dns migration)
-api                                   300   IN A     76.76.21.21
+; API subdomain
+api                                    300   IN A     76.76.21.21
 
 ; Maintenance records
 ftp                                    14400 IN CNAME @
 mail                                   14400 IN CNAME @
 
-; MX — stub (set to your email provider before vercel-dns cutover)
+; MX - set to the mail provider before relying on domain email
 ; @                                     14400 IN MX    0 @
