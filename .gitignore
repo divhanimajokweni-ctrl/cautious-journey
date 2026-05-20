@@ -1,7 +1,12 @@
 node_modules/
+dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Generated key material
+private_key.pem
+public_key.pem
 
 # Foundry
 out/

@@ -1,0 +1,64 @@
+Phase 1: Deconstruction (The Socratic Strip)
+
+Common Assumptions:
+- Compliance can be reconstructed after execution from operational logs.
+- Test access tokens can be loose strings while production tokens are deferred.
+- Browser-side controls are acceptable for early financial workflows.
+- SARB/BOP3 reporting can be treated as a document-generation task.
+- TEE, HMAC, JWT, and chain anchoring can remain separate implementation concerns.
+
+Irreducible Truths:
+- A compliance record has no evidentiary value unless the financial payload, risk calculation, hardware attestation, timestamp, and signature are bound into one deterministic object.
+- A pool-access credential is not a credential unless it has issuer, audience, subject, expiry, not-before time, nonce, and asymmetric signature verification.
+- A safety verdict is not enforceable unless posterior, threshold, safety margin, and verdict are mutually consistent.
+- A report is not regulator-auditable unless it is serialized canonically and fails verification after any mutation.
+- A frontend is not a security boundary.
+
+Fundamental Logic:
+- The system must collapse into Option C: Cryptographic Compliance Execution Fabric.
+- The core artifact is not a dashboard. The core artifact is a signed compliance state transition.
+- Every valid transaction must compile into a deterministic regulatory affidavit payload.
+- Every mutation must either verify cryptographically or fail closed.
+- The uploaded specification requires the tokenizer, SARB/BOP3 telemetry packet, RS256 access token, HMAC/signature discipline, mock ingestion endpoint, and verification loop to operate as one bounded compliance fabric.
+
+Phase 2: Reconstruction (The Ground-Up Build)
+
+Core Solution:
+- Implemented a stateless TypeScript module: ProofBridgeComplianceTokenizer.
+- Implemented RS256 JWT issuance with issuer, audience, expiry, not-before, issued-at, nonce, pool_id, Polygon Amoy target, and compliance-fabric execution scope.
+- Implemented RS256 JWT verification with audience, issuer, expiry, nbf, optional pool binding, signature validation, and timing-safe comparisons.
+- Implemented deterministic compliance-log compilation for SARB BOP3 / ISO 20022-aligned telemetry.
+- Implemented canonical JSON serialization so the exact payload signed is the exact payload verified.
+- Implemented strict field bounds to reduce memory-amplification and malformed-payload risk.
+- Implemented posterior consistency checks using mu=(alpha+1)/(alpha+beta+2).
+- Implemented safety-margin consistency checks using S=mu-tau.
+- Implemented verdict consistency: SAFE only when S>0, otherwise TRIP.
+- Implemented SHA-256 payload digest binding.
+- Implemented signature verification for compliance envelopes.
+- Implemented a mock SARB ingestion endpoint that rejects malformed, oversized, unsigned, or tampered packets.
+- Implemented a five-step verification loop:
+  1. isolated memory bounds and syntax parse,
+  2. asymmetric JWT verification,
+  3. SARB/BOP3/ISO 20022 telemetry serialization,
+  4. timing pathway and tamper verification,
+  5. final execution correctness.
+
+Mental Model:
+- Treat every financial mutation as a compiled regulatory statement.
+- Treat every token as a signed capability, not a string.
+- Treat every compliance log as a sealed evidence object.
+- Treat every failed verification as a hard halt, not a warning.
+- Treat the dashboard as an observer only; the compliance fabric is the authority.
+
+Phase 3: Personal Integration (The "Living" Application)
+
+Biological DevOps:
+- Convert personal execution into the same fabric:
+  - Sense: identify the impulse or task.
+  - Plan: define the intended state transition.
+  - Execute: act only if the action satisfies the boundary condition.
+  - Verify: compare the result against the original invariant.
+- Concrete habit:
+  Before any high-impact decision, write one sentence in this format:
+  "This action is valid only if it preserves [core invariant] and produces [verifiable output]."
+  If the sentence cannot be completed precisely, halt the action.
