@@ -1,22 +1,28 @@
 $ORIGIN venturevisionubuntu.co.za.
 $TTL 3600
-@                                      86400 IN SOA   ns1.host-ww.net. server-admin.cloud2m.co.za. 2026051905 3600 1800 1209600 86400
+@                                      86400 IN SOA   ns1.host-ww.net. server-admin.cloud2m.co.za. 2026052001 3600 1800 1209600 86400
 
-; NS RECORDS
+; NS RECORDS (host-ww.net — pending migration to ns1.vercel-dns.com)
 @                                      86400 IN NS    ns1.host-ww.net.
 @                                      86400 IN NS    ns2.host-ww.net.
 
-; A RECORDS — Vercel edge network (76.76.21.21)
+; ---- VERCEL EDGE (76.76.21.21) ----
+; production deploy: proofbridge-liner-oxlsvn88d-divhanimajokweni-1651s-projects.vercel.app
+; alias: venturevisionubuntu.co.za  → proofbridge-liner.vercel.app
+; alias: api.venturevisionubuntu.co.za → proofbridge-liner.vercel.app
+
+; A — apex
 @                                      300   IN A     76.76.21.21
 
-; CNAME RECORDS
+; CNAME — www → apex alias
 www                                    300   IN CNAME venturevisionubuntu.co.za.
-ftp                                    14400 IN CNAME @
-mail                                   14400 IN CNAME @
+
+; A — api subdomain (76.76.21.21 reserved for future vercel-dns migration)
 api                                   300   IN A     76.76.21.21
 
-; MX RECORDS
-@                                      14400 IN MX    0 @
+; Maintenance records
+ftp                                    14400 IN CNAME @
+mail                                   14400 IN CNAME @
 
-; TXT RECORDS — GitHub Pages domain verification (MUST MATCH exactly)
-_github-pages-challenge-divhanimajokweni-ctrl.venturevisionubuntu.co.za. 300 IN TXT "959b84c8ec710837b5ee4f82b56e98"
+; MX — stub (set to your email provider before vercel-dns cutover)
+; @                                     14400 IN MX    0 @
