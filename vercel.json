@@ -1,28 +1,5 @@
 {
   "version": 2,
-  "name": "proofbridge-liner",
-  "builds": [
-    {
-      "src": "api/verify.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/mint.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "dashboard/public/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "vvv/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "demo/**",
-      "use": "@vercel/static"
-    }
-  ],
   "routes": [
     { "src": "/gate-1",         "dest": "/vvv/gate-1.html" },
     { "src": "/api/health",     "dest": "/api/verify.js" },
