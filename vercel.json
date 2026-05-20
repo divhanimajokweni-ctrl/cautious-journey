@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "outputDirectory": ".",
   "routes": [
     { "src": "/gate-1",         "dest": "/vvv/gate-1.html" },
     { "src": "/api/health",     "dest": "/api/verify.js" },
