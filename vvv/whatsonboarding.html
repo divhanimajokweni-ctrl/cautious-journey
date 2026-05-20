@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VVU WhatsApp Onboarding — Ubuntu Pools</title>
+  <meta name="description" content="See exactly how a user sets up a pool via WhatsApp — in the slang and tone that matches their circle." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Reset & Tokens ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* WhatsApp-adjacent */
+      --wa-teal:      #00a884;
+      --wa-bubble-bot:#e9edef;
+      --wa-dark:      #0b141a;
+      --wa-nav:       #1f2c34;
+      --wa-user:      #054640;
+      --wa-user-text: #e9ffef;
+      --wa-text:      #111b21;
+      --wa-meta:      #8696a0;
+      --wa-input-bg:  #2a3942;
+
+      /* VVU accents */
+      --gold:  #d4a843;
+      --green: #2a7a50;
+      --pink:  #e91e8c;
+      --off:   #6b7584;
+
+      /* Spacing / Glow */
+      --r: 0.5rem;
+      --glow: 0 0 0 3px rgba(212,168,67,.25), 0 0 18px rgba(212,168,67,.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+      background: #0d1117;
+      color: #e6edf3;
+    }
+
+    /* ─── Page Header ─── */
+    .page-header { text-align: center; max-width: 580px; margin: 0 auto 2.2rem; }
+    .page-header .eyebrow {
+      display: inline-flex; align-items: center; gap: .6rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .63rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1rem;
+    }
+    .page-header .eyebrow::before { content:''; width:22px; height:1px; background:var(--gold); }
+    .page-header h1 {
+      font-size: clamp(1.55rem,4vw,2.4rem);
+      font-weight: 700; line-height: 1.2;
+      letter-spacing: -.03em; margin-bottom: .75rem;
+    }
+    .page-header p { color: var(--off); font-size: .88rem; line-height: 1.55; }
+
+    /* ─── Mode Selector ─── */
+    .mode-bar {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: .7rem; margin-bottom: 2.2rem;
+    }
+    .mode-btn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .55rem 1.15rem;
+      border-radius: 999px; border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+      color: #8b949e; font-family: 'Space Mono', monospace;
+      font-size: .68rem; letter-spacing: .08em;
+      cursor: pointer; transition: all .2s;
+    }
+    .mode-btn:hover { border-color: rgba(212,168,67,.4); color: #ddd; }
+    .mode-btn.active {
+      background: rgba(212,168,67,.14);
+      border-color: var(--gold);
+      color: var(--gold); font-weight: 700;
+    }
+    .mode-emoji { font-size: 1rem; line-height: 1; }
+
+    /* ─── Director Controls ─── */
+    .director-bar {
+      display: flex; align-items: center; gap: .75rem;
+      margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center;
+    }
+    .dir-btn {
+      padding: .45rem 1rem;
+      background: rgba(0,168,132,.12);
+      border: 1px solid rgba(0,168,132,.3);
+      border-radius: 8px;
+      color: #9df0d4; font-family: 'Space Mono', monospace;
+      font-size: .68rem; font-weight: 700; letter-spacing: .1em; cursor: pointer;
+      transition: background .2s;
+    }
+    .dir-btn:hover { background: rgba(0,168,132,.22); }
+    .dir-btn.stop-btn {
+      background: rgba(238,106,85,.12);
+      border-color: rgba(238,106,85,.3);
+      color: #ffb3a7;
+    }
+    .dir-btn.stop-btn:hover { background: rgba(238,106,85,.22); }
+    .dir-speed { color: var(--off); font-family:'Space Mono',monospace; font-size:.65rem; }
+    .dir-progress { color: var(--gold); font-family:'Space Mono',monospace; font-size:.65rem; }
+
+    /* ─── WhatsApp Phone Frame ─── */
+    .phone-wrap {
+      display: flex; justify-content: center;
+      margin: 0 auto 3rem;
+    }
+    .phone {
+      width: min(390px,96vw);
+      height: min(760px,88vh);
+      background: var(--wa-dark);
+      border-radius: 32px;
+      border: 7px solid #2a3942;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      position: relative; box-shadow: var(--glow);
+    }
+    .phone::after {
+      content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
+      width:100px; height:28px; background:#2a3942; border-radius:0 0 12px 12px;
+    }
+
+    /* ─── WhatsApp Header ─── */
+    .wa-header {
+      display: flex; align-items: center; gap: .75rem;
+      padding: 1rem 1rem .85rem;
+      background: var(--wa-nav);
+      padding-top: 2.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      flex-shrink: 0;
+    }
+    .wa-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--gold), #b8902e);
+      box-shadow: 0 2px 8px rgba(212,168,67,.25);
+    }
+    .wa-identity { flex: 1; }
+    .wa-identity strong { display: block; font-size: .92rem; color: #e9edef; margin-bottom: .1rem; }
+    .wa-identity .wa-sub { font-size: .72rem; color: var(--off); }
+
+    /* ─── Chat Messages ─── */
+    .chat-body {
+      flex: 1; overflow-y: auto;
+      background: #0b141a;
+      padding: .75rem;
+      display: flex; flex-direction: column; gap: .42rem;
+      scroll-behavior: smooth;
+    }
+    .chat-date-label {
+      text-align: center; font-size: .65rem; color: var(--off);
+      margin: .25rem 0; align-self:center;
+    }
+    .msg { display: flex; flex-direction: column; max-width: 82%; animation: msgIn .3s ease; }
+    @keyframes msgIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+
+    .msg.bot { align-self: flex-start; }
+    .msg.user { align-self: flex-end; }
+
+    .msg-row { display: flex; align-items: flex-end; gap: .45rem; }
+
+    .msg.user .msg-row { justify-content: flex-end; }
+
+    .bubble {
+      padding: .52rem .78rem .28rem;
+      border-radius: 0 var(--r) var(--r) var(--r);
+      font-size: .875rem; line-height: 1.48;
+      word-wrap: break-word;
+    }
+    .bot   .bubble { background: var(--wa-bubble-bot); color: var(--wa-text); border-radius: 0 var(--r) var(--r) var(--r); }
+    .user  .bubble { background: var(--wa-user); color: var(--wa-user-text); border-radius: var(--r) 0 var(--r) var(--r); }
+
+    .msg-meta {
+      display: flex; align-items: center; gap: .25rem;
+      font-size: .6rem; color: var(--off);
+      margin-top: .18rem;
+    }
+    .msg.user .msg-meta { justify-content: flex-end; }
+
+    /* option buttons inside bot message */
+    .option-list { display:flex; flex-direction:column; gap:.35rem; margin-top:.38rem; }
+    .opt-btn {
+      background:none; border: 1.5px solid rgba(0,168,132,.55);
+      border-radius:8px; padding:.42rem .78rem;
+      color: #00b894; font-family:'Space Mono',monospace;
+      font-size:.78rem; cursor:pointer; text-align:left;
+      transition: background .18s, border-color .18s;
+    }
+    .opt-btn:hover { background:rgba(0,168,132,.14); border-color: #00b894; }
+    .opt-btn.wide { border-color: rgba(212,168,67,.45); color: #e8c056; }
+    .opt-btn.wide:hover { background:rgba(212,168,67,.1); border-color: var(--gold); }
+
+    /* typing indicator */
+    .typing-ind { display:flex; gap:.18rem; padding:.48rem .88rem; border-radius:var(--r); background:var(--wa-bubble-bot); width:fit-content; }
+    .typing-ind span {
+      width:6px; height:6px; background:#8696a0; border-radius:50%;
+      animation: typingBounce 1.1s infinite ease-in-out;
+    }
+    .typing-ind span:nth-child(2){animation-delay:.18s} .typing-ind span:nth-child(3){animation-delay:.36s}
+    @keyframes typingBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+    /* ─── WhatsApp Input Bar ─── */
+    .wa-input-bar {
+      display: flex; align-items: center; gap: .45rem;
+      padding: .65rem .85rem;
+      background: var(--wa-input-bg);
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .wa-input-bar input[type=text] {
+      flex: 1; padding: .55rem .78rem;
+      background: #2a3942; border: none; border-radius: 20px;
+      color: #e6edf3; font-size: .8rem;
+      outline: none; font-family: inherit;
+    }
+    .wa-input-bar input[type=text]::placeholder { color: var(--off); }
+    .wa-send-btn {
+      background: var(--wa-teal); border:none; border-radius: 50%;
+      width: 36px; height: 36px; display: flex; align-items:center; justify-content:center;
+      cursor: pointer; font-size: 1rem; flex-shrink: 0;
+      transition: opacity .18s;
+    }
+    .wa-send-btn:hover { opacity: .8; }
+    .wa-typing-dot { color: var(--off); font-size:.7rem; letter-spacing:.05em; flex-shrink:0; }
+
+    /* ─── Mode Badge on bubble ─── */
+    .mode-badge {
+      display: inline-flex; align-items: center; gap: .3rem;
+      background: rgba(212,168,67,.15); border: 1px solid rgba(212,168,67,.35);
+      border-radius: 999px; padding: .18rem .6rem;
+      font-family: 'Space Mono', monospace; font-size:.58rem;
+      color: var(--gold); letter-spacing:.12em; text-transform:uppercase;
+    }
+
+    @keyframes pulse-line { 0%,100%{opacity:.4} 50%{opacity:1} }
+  </style>
+</head>
+<body>
+
+<!-- ══ PAGE HEADER ══ -->
+<div class="page-header">
+  <p class="eyebrow">Venture Vision Ubuntu · Ubuntu Pools</p>
+  <h1>WhatsApp Onboarding<br><span style="color:var(--gold)">in your language, for your circle</span></h1>
+  <p>Watch a real pool setup unfold — from the first &ldquo;hello&rdquo; to the squad code. Switch the tone to match the community: frenzied youth stokvel, church savings circle, or general creator crew.</p>
+</div>
+
+<!-- ══ MODE SELECTOR ══ -->
+<div class="mode-bar" id="modeBar" role="radiogroup" aria-label="Conversation tone">
+  <button class="mode-btn active" data-mode="kasi" role="radio" aria-checked="true">
+    <span class="mode-emoji">🪙</span> Stokvel / Kasi Mode
+  </button>
+  <button class="mode-btn" data-mode="church" role="radio" aria-checked="false">
+    <span class="mode-emoji">⛪</span> Likhaya / Church Mode
+  </button>
+  <button class="mode-btn" data-mode="general" role="radio" aria-checked="false">
+    <span class="mode-emoji">🤝</span> General / Formal Mode
+  </button>
+</div>
+
+<!-- ══ DIRECTOR BAR ══ -->
+<div class="director-bar">
+  <button class="dir-btn" id="btnPlay"   title="Play from current message">▶ Play</button>
+  <button class="dir-btn stop-btn" id="btnStop" title="Stop playback">■ Stop</button>
+  <button class="dir-btn" id="btnPrev"   title="Previous message">◀ Prev</button>
+  <button class="dir-btn" id="btnNext"   title="Next message">Next ▶</button>
+  <button class="dir-btn" id="btnReset"  title="Reset to start">↺ Reset</button>
+  <span class="dir-speed" id="dirSpeed">1×</span>
+  <span class="dir-progress" id="dirProg"></span>
+</div>
+
+<!-- ══ PHONE FRAME + CHAT ══ -->
+<div class="phone-wrap">
+  <div class="phone" role="dialog" aria-label="VVU WhatsApp Onboarding Chat">
+
+    <!-- Header -->
+    <div class="wa-header">
+      <div class="wa-avatar" id="waAvatar" title="VVU">🛡️</div>
+      <div class="wa-identity">
+        <strong id="waBotName">VVU Ubuntu Pools</strong>
+        <div class="wa-sub" id="waBotSub">Safety-verified digital stokvel</div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-body" id="chatBody" aria-live="polite">
+    </div>
+
+    <!-- Fake input bar -->
+    <div class="wa-input-bar" aria-hidden="true">
+      <span style="color:var(--off);font-size:.8rem;">✍️ Type a message…</span>
+      <div style="flex:1"></div>
+      <div class="wa-typing-dot">███████</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═─ MODES CONFIGURATION ═──────────────────────────────────────────────── -->
+<script>
+'use strict';
+
+/* ── KEY: A message is { who:'bot'|'user'|'date', text, delay(ms since prev) } ── */
+const SCRIPTS = {
+
+  /* ─────────────────────────────────────────────────
+     MODE 1 — KASI / STOKVEL
+     Tone: Frenzied, energetic,ansi, youthful. Slang-forward.
+     "Umuntu ngumuntu ngabantu" perched in every vowel.
+     ───────────────────────────────────────────────── */
+  kasi: {
+    botName:    'VVU Ubuntu Pools',
+    botSub:     'Safety-verified digital stokvel',
+    botAvatar:  '🪙',
+    speedMs:    820,   // base delay per message (ms)
+
+    messages: [
+      // ── SESSION OPEN ──
+      { who:'date',  text: 'Today · 08:15 AM'                         , delay:  0 },
+      { who:'bot',   text: 'Awe, ntwana! ✌️\nWelcome to Venture Vision Ubuntu — the streetwise digital stokvel built for real trust.\n<b>Umuntu ngumuntu ngabantu.</b> Ready to stack that bag with your circle?\n\nChoose from below:\n<b>1.</b> 🪙 Start a new pool with your majita\n<b>2.</b> 🤝 Join an existing squad (use code)\n<b>3.</b> 📊 Check my clips (balance + upcoming payouts)', delay:800 },
+
+      // ── USER: PICK OPTION 1 ──
+      { who:'user',  text: '1',                                           delay:1200 },
+      { who:'date',  text: 'Today · 08:16 AM'                            , delay:0 },
+
+      // ── BOT ASK POOL NAME ──
+      { who:'bot',   text: '<b>Sho, sharp! 🚀</b>\nMoney-rotation in motion. First things first — what are we calling this squad?\n\nGive us a real name. (e.g. <i>Gqeberha Hustlers</i>, <i>Corner Kings</i>)', delay:900 },
+      { who:'user',  text: 'Majita a la Kasi 🪙',                          delay:1300 },
+      { who:'date',  text: 'Today · 08:17 AM'                            , delay:0 },
+
+      // ── BOT ASK AMOUNT ──
+      { who:'bot',   text: '🔥 <i>Majita a la Kasi</i> — that sounds like a squad! 🤝\n\nNow the moolah. How much must every person drop into the pot per cycle?\n\nType it in Rands: e.g. <b>500 · 1 000 · 2 000</b>', delay:800 },
+      { who:'user',  text: 'R 1 500',                                      delay:1100 },
+      { who:'date',  text: 'Today · 08:17 AM'                            , delay:0 },
+
+      // ── BOT ASK FREQUENCY ──
+      { who:'bot',   text: 'R1 500 a head. No skipping, no stories! 💰\n\nHow often do we collect this?\n\n<b>1</b> ⚡ Every week  — quick hustle\n<b>2</b> 💵 Every month — payday special', delay:820 },
+      { who:'user',  text: '2',                                           delay:950 },
+      { who:'date',  text: 'Today · 08:18 AM'                            , delay:0 },
+
+      // ── BOT SECURITY + ID ──
+      { who:'bot',   text: 'Monthly rotation — locked in! 🔒\n\nNow listen up, kleva. Before anyone takes the wheel:\n\nOur <b>ProofBridge Liner</b> safety kernel is guarding this pool. That means no izinyoka (cable thieves), no ghost transactions, nothing sketchy touching your bag. Everything runs transparent on the blockchain and checks out with FSCA rules.\n\nDrop your <b>ID Number</b> to lock your admin profile:', delay:900 },
+      { who:'user',  text: '9807245123081',                                 delay:1300 },
+      { who:'date',  text: 'Today · 08:19 AM'                            , delay:0 },
+
+      // ── BOT DONE + GROUP CODE ──
+      { who:'bot',   text: 'Heita! ✅ Verified and secured.\n\n100% grand. Your stitch Payments gateway is live and ready.\n\nThe squad code to share with your circle: <b style="color:#00a884">KASI-DRIP-7GM</b></b>\n\n📋 Copy this into your WhatsApp group and paste it straight away:\n\n───────────────────────\n<i>\"Awe majita! 🚨 I just set up our digital stokvel on Venture Vision Ubuntu.\n\nEvery month we spin R1 500. No stories, no excuses. Click the link to onboard via WhatsApp and link your card securely via stitch — vvu.co.za\n\nSho\'t left to financial freedom! 🚀\"</i>\n───────────────────────', delay:900 },
+    ],
+  },
+
+  /* ─────────────────────────────────────────────────
+     MODE 2 — CHURCH / LIKHAYA / COMMUNITY SAVINGS
+     Tone: Respectful, formal, warm. For older members, church
+     groupings, community stokvels led by elders.
+     Avoids slang; uses "friends and family" framing.
+     ───────────────────────────────────────────────── */
+  church: {
+    botName:    'VVU Ubuntu Pools · Likhaya',
+    botSub:     'Community savings · Faith-aligned · FSCA-compliant',
+    botAvatar:  '⛪',
+    speedMs:    1200,   // a little slower and calmer — respectful pacing
+
+    messages: [
+      { who:'date',  text: 'Today · 09:00 AM'                         , delay:0 },
+      { who:'bot',   text: 'Good morning, friend. ✝️\n\nWelcome to Venture Vision Ubuntu — Community Savings Pools. We believe <em>"Umuntu ngumuntu ngabantu."</em> May your savings grow under God\'s grace.\n\nHow may I assist you today?\n\n1. 🙏 <b>Start a new savings circle</b> (stokvel / likhaya)\n2. 🤝 <b>Join an existing circle</b> (enter your circle code)\n3. 📋 <b>View my contributions</b> and upcoming payout date', delay:1000 },
+      { who:'user',  text: '1',                                           delay:1400 },
+      { who:'date',  text: 'Today · 09:01 AM'                            , delay:0 },
+
+      // ── BOT ASK POOL NAME ──
+      { who:'bot',   text: 'Splendid. Praise God for this step forward. 🙏\n\nLet\'s register this savings circle. Please tell me — what shall we call it?\n\nFor example: <i>St Mary\'s Ladies Circle</i>, or <i>Good Shepherd Savings Group</i>', delay:900 },
+      { who:'user',  text: 'Ubuntu Mothers Church Fund',                   delay:1400 },
+      { who:'date',  text: 'Today · 09:02 AM'                            , delay:0 },
+
+      // ── BOT ASK AMOUNT ──
+      { who:'bot',   text: 'May the Lord bless this work. <i>Ubuntu Mothers Church Fund</i> — a beautiful name. 🙏\n\nNow, the contribution amount. How much per person will each member give at the close of the month?\n\nPlease state the amount in Rands, for example <b>R 500, R 1 000, R 2 000</b>', delay:1000 },
+      { who:'user',  text: 'R 1 500',                                      delay:1400 },
+      { who:'date',  text: 'Today · 09:03 AM'                            , delay:0 },
+
+      // ── BOT ASK FREQUENCY ──
+      { who:'bot',   text: 'R1 500 per member per cycle. May each contribution bring blessings to the giver and the receiver.\n\nHow often would you like to hold a collection day?\n\n1. <b>Every four weeks</b>\n2. <b>Every calendar month</b> (1st of the month)', delay:1000 },
+      { who:'user',  text: '2',                                           delay:1200 },
+      { who:'date',  text: 'Today · 09:04 AM'                            , delay:0 },
+
+      // ── BOT SECURITY + ID ──
+      { who:'bot',   text: 'Monthly collection — that is set and confirmed.\n\nA gentle word of assurance before we proceed: this savings circle is protected by our <b>ProofBridge Liner</b> safety kernel. All transactions are recorded on a transparent, community-auditable ledger, and the platform is registered under <b>FSCA</b> regulatory guidelines. Your funds are safe.\n\nTo register you as the circle administrator, please share your <b>ID Number</b>:', delay:1000 },
+      { who:'user',  text: '9807245123081',                                 delay:1600 },
+      { who:'date',  text: 'Today · 09:05 AM'                            , delay:0 },
+
+      // ── BOT DONE + CODE ──
+      { who:'bot',   text: 'Thank you. Your registration is complete. 🙏\n\n✅ Your stitch Payments gateway is now active. All contributions are secure.\n\nYour circle\'s join code: <b style="color:#00a884">KASI-DRIP-7GM</b>\n\n───────────────────────\n<i>Dear sisters and brothers, we are inviting you to join the Ubuntu Mothers Church Fund savings circle via Venture Vision Ubuntu.\n\nMonthly contribution: R1 500.\n\nTap this link to join via WhatsApp and link your bank card safely:\n\n👉 vvu.co.za\n\nLet us save together in faith and trust. 🙏</i>\n───────────────────────', delay:1000 },
+    ],
+  },
+
+  /* ─────────────────────────────────────────────────
+     MODE 3 — GENERAL / FORMAL
+     Tone: Polished, professional, inclusive. Suitable for
+     urban professional stokvels, startup savings pools,
+     business co-op circles — or any mix of ages.
+     No slang. SA-flavoured, country-neutral.
+     ───────────────────────────────────────────────── */
+  general: {
+    botName:    'VVU Ubuntu Pools',
+    botSub:     'Community-governed savings cycles · FSCA-aligned',
+    botAvatar:  '🤝',
+    speedMs:    1000,   // measured, professional
+
+    messages: [
+      { who:'date',  text: 'Today · 10:22 AM'                        , delay:0 },
+      { who:'bot',   text: 'Hello there. Welcome to Venture Vision Ubuntu — community savings cycles built on trust and transparency.\nThis is the Ubuntu Pools onboarding assistant. Choose one:\n\n1. 🪙 <b>Set up a new savings cycle</b>\n2. 🤝 <b>Join an existing cycle</b> (use your group code)\n3. 📊 <b>View my cycle activity</b> (balance, upcoming payout)', delay:1000 },
+      { who:'user',  text: '1',                                         delay:1400 },
+      { who:'date',  text: 'Today · 10:22 AM'                        , delay:0 },
+
+      // ── BOT ASK POOL NAME ──
+      { who:'bot',   text: 'Excellent choice. Let\'s set up your cycle.\n\nFirst — what would you like to <b>name this group</b>?\nThink clearly — this name will appear on all contributions and payout records.', delay:950 },
+      { who:'user',  text: ' Ubuntu Mothers Savers',                     delay:1300 },
+      { who:'date',  text: 'Today · 10:23 AM'                        , delay:0 },
+
+      // ── BOT ASK AMOUNT ──
+      { who:'bot',   text: '<i>Ubuntu Mothers Savers</i> — clear and professional.\n\nNow the contribution amount. How much <b>per member per cycle</b> shall we set?\n\nPlease enter the amount in Rand, e.g. <b>R 500, R 1 000, R 2 000</b>', delay:950 },
+      { who:'user',  text: 'R 1 500',                                    delay:1200 },
+      { who:'date',  text: 'Today · 10:24 AM'                        , delay:0 },
+
+      // ── BOT ASK FREQUENCY ──
+      { who:'bot',   text: 'R1 500 per member, confirmed.\n\nHow frequently will the cycle run?\n\n1. ⚡ <b>Every four weeks</b>\n2. 📅 <b>Every calendar month</b>', delay:950 },
+      { who:'user',  text: '2',                                         delay:1100 },
+      { who:'date',  text: 'Today · 10:25 AM'                        , delay:0 },
+
+      // ── BOT SECURITY + ID ──
+      { who:'bot',   text: 'Monthly cycle confirmed.\n\nBefore we activate your group, a brief word about security: all Ubuntu Pools are protected by our <b>ProofBridge Liner</b> safety kernel. Every contribution creates a signed cryptographic receipt. Your pool is registered for FSCA regulatory alignment. There are no blind spots.\n\nTo register your administrator profile, please share your <b>ID Number</b>:', delay:950 },
+      { who:'user',  text: '9807245123081',                               delay:1500 },
+      { who:'date',  text: 'Today · 10:26 AM'                        , delay:0 },
+
+      // ── BOT DONE + CODE ──
+      { who:'bot',   text: `Registration complete. ✅
+
+Your stitch Payments gateway is live. Contributions are protected end-to-end.
+
+**Your group join code: KASI-DRIP-7GM**
+
+───────────────────────
+"Hi everyone — I've just launched our Ubuntu Pools savings cycle on Venture Vision Ubuntu.
+
+Monthly contribution: R1 500.
+Fully transparent. Fully community-governed.
+
+Tap to join via WhatsApp — no paperwork:
+👉 vvu.co.za
+───────────────────────"`, delay:1000 },
+    ],
+  },
+};
+
+/* ── Director State ── */
+let script       = SCRIPTS.kasi;
+let currentMsg   = 0;   // index in script.messages
+let playing      = false;
+let timer        = null;
+
+/* ── DOM refs ── */
+const chatBody    = document.getElementById('chatBody');
+const btnPlay     = document.getElementById('btnPlay');
+const btnStop     = document.getElementById('btnStop');
+const btnPrev     = document.getElementById('btnPrev');
+const btnNext     = document.getElementById('btnNext');
+const btnReset    = document.getElementById('btnReset');
+const dirSpeed    = document.getElementById('dirSpeed');
+const dirProg     = document.getElementById('dirProg');
+const waBotName   = document.getElementById('waBotName');
+const waBotSub    = document.getElementById('waBotSub');
+const waAvatar    = document.getElementById('waAvatar');
+const modeBar     = document.getElementById('modeBar');
+
+/* ── Escape HTML ── */
+function esc(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── Render one message ── */
+function renderMsg(m, renderIndex) {
+  if (m.who === 'date') {
+    const d = document.createElement('div');
+    d.className = 'chat-date-label';
+    d.textContent = m.text;
+    d.style.marginTop = renderIndex === 0 ? '0' : '.35rem';
+    return d;
+  }
+  if (m.who === 'bot') {
+    const art = document.createElement('article');
+    art.className = 'msg bot';
+    art.innerHTML = `<div class="bubble">${m.text}</div>`;
+    art.style.marginBottom = '.62rem';
+    return art;
+  }
+  // user
+  const art = document.createElement('article');
+  art.className = 'msg user';
+  art.innerHTML = `<div class="bubble">${esc(m.text)}</div>`;
+  art.style.marginBottom = '.62rem';
+  return art;
+}
+
+/* ── Append message to DOM (no animation on dry-run) ── */
+function appendMsg(m) {
+  const el = renderMsg(m, -1);
+  chatBody.appendChild(el);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  return el;
+}
+
+/* ── Render ALL visible messages up to currentMsg ── */
+function renderChat(upTo) {
+  chatBody.innerHTML = '';
+  for (let i = 0; i <= upTo; i++) {
+    appendMsg(script.messages[i]);
+  }
+  // Flash emoji badge confirming active mode
+  lastBadge?.classList.remove('just-added');
+  const last = chatBody.lastElementChild;
+  if (last && last.querySelector ? last.querySelector('.bubble') : null) {
+    last.classList.add('just-added');
+  }
+}
+
+/* ── Load a script (soft-reset) ── */
+function loadScript(mode) {
+  stopDirector();
+  script     = SCRIPTS[mode];
+  currentMsg = 0;
+
+  // Update header
+  waBotName.textContent = script.botName;
+  waBotSub.textContent  = script.botSub;
+  waAvatar.textContent  = script.botAvatar;
+
+  // Position scrolling to start
+  chatBody.innerHTML = '';
+  dirProg.textContent = '';
+}
+
+/* ── Update progress label ── */
+function updateProg() {
+  const done    = currentMsg + 1;
+  const total   = script.messages.length;
+  dirProg.textContent = `${done}/${total} messages`;
+}
+
+/* ── Step forward ── */
+function nextStep() {
+  if (currentMsg >= script.messages.length - 1) {
+    stopDirector();
+    dirProg.textContent = `${script.messages.length}/${script.messages.length} — done ✓`;
+    return;
+  }
+  currentMsg++;
+  appendMsg(script.messages[currentMsg]);
+  updateProg();
+}
+
+/* ── Step back ── */
+function prevStep() {
+  if (currentMsg <= 0) return;
+  currentMsg--;
+  renderChat(currentMsg);
+  updateProg();
+}
+
+/* ── Play ── */
+function playDirector() {
+  if (playing && currentMsg < script.messages.length - 1) return; // already rolling
+  if (currentMsg >= script.messages.length - 1) { renderChat(0); currentMsg = 0; } // replay from start
+  playing = true;
+  btnPlay.textContent = '⏸ Pause';
+  tick();
+}
+
+/* ── Stop / Pause ── */
+function stopDirector() {
+  playing = false;
+  clearTimeout(timer);
+  btnPlay.textContent = '▶ Play';
+}
+
+/* ── Tick — move to next message after delay ── */
+function tick() {
+  if (!playing) return;
+  const msg   = script.messages[currentMsg];
+  const delay = msg && msg.delay != null ? msg.delay : script.speedMs;
+  timer = setTimeout(() => {
+    nextStep();
+    if (currentMsg < script.messages.length - 1) tick();
+    else { playing = false; btnPlay.textContent = '▶ Play'; }
+  }, delay);
+}
+
+/* ── Reset to start of current script ── */
+function resetScript() {
+  stopDirector();
+  currentMsg = 0;
+  renderChat(0);
+  updateProg();
+}
+
+/* ── Mode buttons ── */
+modeBar.addEventListener('click', (e) => {
+  const btn = e.target.closest('.mode-btn');
+  if (!btn) return;
+  modeBar.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-checked', 'false');
+  });
+  btn.classList.add('active');
+  btn.setAttribute('aria-checked', 'true');
+  loadScript(btn.dataset.mode);
+  renderChat(0);
+  updateProg();
+});
+
+/* ── Director bar ── */
+btnPlay .addEventListener('click',  () => { playing ? stopDirector() : playDirector(); });
+btnStop .addEventListener('click',  stopDirector);
+btnPrev .addEventListener('click',  prevStep);
+btnNext .addEventListener('click',  nextStep);
+btnReset.addEventListener('click',  resetScript);
+dirSpeed.addEventListener('click',   () => {
+  // cycle through speeds
+  const speeds = [600, 820, 1000, 1400, 2000];
+  const labels = [];
+  script.speedMs = speeds[(speeds.indexOf(script.speedMs) + 1) % speeds.length] || 1000;
+  dirSpeed.textContent = `${Math.round(1200/script.speedMs * 10) / 10}×`;
+});
+
+/* ── Keyboard shortcuts ── */
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space')  { e.preventDefault(); playing ? stopDirector() : playDirector(); }
+  if (e.code === 'ArrowRight') nextStep();
+  if (e.code === 'ArrowLeft')  prevStep();
+  if (e.code === 'Home')       resetScript();
+  if (e.code === 'End')        { currentMsg = script.messages.length - 1; renderChat(currentMsg); updateProg(); }
+});
+
+/* ── Keyboard chapter skip: 1-2-3 ── */
+document.addEventListener('keydown', (e) => {
+  const modes = ['kasi','church','general'];
+  const idx   = Number(e.key) - 1;
+  if (idx >= 0 && idx < modes.length) {
+    const btn = modeBar.querySelector(`[data-mode="${modes[idx]}"]`);
+    if (btn) btn.click();
+  }
+});
+
+/* ── Initial render ── */
+loadScript('kasi');
+renderChat(0);
+updateProg();
+</script>
+<!-- end of script -->
+</body>
+</html>
