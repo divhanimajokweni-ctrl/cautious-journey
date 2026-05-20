@@ -46,7 +46,7 @@ runcmd:
       -e NODE_ENV=production \
       -e DASHBOARD_PORT=7860 \
       -e DASHBOARD_HOST=0.0.0.0 \
-      -e HF_TOKEN=hf_gyeOsuXDVGcvWdRHMzxgikvfFkzmQPjGv \
+      -e HF_TOKEN=${hf_token} \
       -e POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/ \
       -e TEE_SECRET=<random hex> \
       -e HF_OAUTH_CLIENT_ID=${hf_oauth_client_id} \

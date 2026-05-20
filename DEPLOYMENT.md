@@ -1,194 +1,160 @@
 # Deployment Guide
 
-## Prerequisites
+This document reflects the current production operating state for ProofBridge Liner / Venture Vision Ubuntu.
 
-### Environment Setup
-1. Install Node.js >= 20.0
-2. Install Foundry (latest version)
-3. Clone repository and install dependencies:
-   ```bash
-   git clone https://github.com/divhanimajokweni-ctrl/proofbridge-liner.git
-   cd proofbridge-liner
-   npm install
-   ```
+## Current Production
 
-### Wallet Funding
-- Deployer address: `0x49A1ba2Bde61B96685385F4Ce012586A518c3E70`
-- Required balance: ~0.06 POL for contracts + gas
-- Faucet: https://faucet.polygon.technology/ (Amoy testnet)
+- Canonical domain: https://venturevisionubuntu.co.za
+- Vercel production deployment: `proofbridge-liner-qcfdfyoch-divhanimajokweni-1651s-projects.vercel.app`
+- Vercel alias: `venturevisionubuntu.co.za`
+- DNS apex target: `76.76.21.21`
+- Health route: https://venturevisionubuntu.co.za/api/health
 
-### Environment Variables
-Create `.env` file:
+Do not use `venturevisualubuntu.co.za`; that typo domain was removed from Vercel.
+
+## Production Deploy
+
+Deploy from a clean branch/worktree, currently `compliance-fabric` for the compliance fabric PR.
+
 ```bash
-# Polygon Amoy deployment
-POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/
-PRIVATE_KEY=0xb25939caa5515f9ded22aedf08ce0ec6778ac2ef5e11cadef24bff24f017fed6
-
-# Contract addresses (after deployment)
-CIRCUIT_BREAKER_ADDRESS=0x0DA76b3179d1bce8045c832BB6D8fe9C226BfE57
-MOCK_REAL_T_ADDRESS=0xb91C1aC1Bbc9D7df85A858BCb7705D7edd8fEc82
-
-# Oracle configuration
-ORACLE_ADDRESS=0x49A1ba2Bde61B96685385F4Ce012586A518c3E70
-
-# Contract verification
-POLYGONSCAN_API_KEY=your_polygonscan_api_key
-
-# Dashboard
-DASHBOARD_PORT=5000
-DASHBOARD_HOST=0.0.0.0
-
-# Fetcher configuration
-FETCHER_POLL_MS=300000
+npm install
+npm test
+vercel deploy --prod --yes
 ```
 
-## Contract Deployment
+If the production alias does not move automatically, set it explicitly:
 
-### CircuitBreaker Contract
-1. Deploy to Polygon Amoy:
-   ```bash
-   npm run deploy:amoy
-   ```
-
-2. Verify deployment logs:
-   ```
-   CircuitBreaker deployed at: 0x770342c49e1F4710E0Eed605dCe41e7f3F7600Eb
-   Oracle: 0x49A1ba2Bde61B96685385F4Ce012586A518c3E70
-   ```
-
-3. Update `.env` with contract address
-
-### MockRealT Integration Demo
-1. Deploy integration test contract:
-   ```bash
-   npm run deploy:amoy  # Uses DeployMockRealT.s.sol
-   ```
-
-2. Test transfer blocking:
-   ```bash
-   cast send <mock_address> "transfer(address,uint256)" <recipient> 1000000000000000000 --private-key $PRIVATE_KEY --rpc-url $POLYGON_AMOY_RPC_URL
-   # Should revert: "MockRealT: ghost-risk detected"
-   ```
-
-## Prover Pipeline Setup
-
-### TSS Quorum (Optional for Live Broadcasting)
 ```bash
-docker-compose -f signer-nodes/docker-compose.quorum.yml up -d
+vercel alias set <deployment-url> venturevisionubuntu.co.za
 ```
 
-### Asset Configuration
-Create `config/assets.json`:
-```json
-[
-  {
-    "assetId": "0x52aa9c8c3e83a0f1f4f73b1f4d0f2c4a4b3a2d1c0e9d8c7b6a5948372615040f",
-    "label": "RealT Detroit Property #1",
-    "ipfsCid": "bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
-    "expectedHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "gateways": ["https://ipfs.io/ipfs/", "https://dweb.link/ipfs/"]
-  }
-]
-```
+Verify:
 
-### Scoring Configuration
-Create `config/scoring.json` (South Africa jurisdiction):
-```json
-{
-  "jurisdiction": "South Africa",
-  "deterministicFloor": 0.8,
-  "thresholdA": 0.285,
-  "thresholdB": 0.45,
-  "minMismatchesB": 2,
-  "deterministicOverride": true
-}
-```
-
-**TEE Setup**: Ensure TEE attestation service is configured for Act 47 of 1937 compliance validation.
-
-## Verification Steps
-
-### On-Chain State
 ```bash
-# Check circuit status
-cast call $CIRCUIT_BREAKER_ADDRESS "circuitOpen()" --rpc-url $POLYGON_AMOY_RPC_URL
-
-# Check oracle address
-cast call $CIRCUIT_BREAKER_ADDRESS "oracle()" --rpc-url $POLYGON_AMOY_RPC_URL
+curl -I https://venturevisionubuntu.co.za
+curl -I https://venturevisionubuntu.co.za/api/health
 ```
 
-### Pipeline Testing
+Expected: `HTTP/1.1 200 OK`.
+
+## DNS
+
+The active domain is delegated through third-party nameservers:
+
+```txt
+ns1.host-ww.net
+ns2.host-ww.net
+```
+
+Required apex record for Vercel:
+
+```txt
+Type: A
+Name: @
+Value: 76.76.21.21
+TTL: 300 or provider default
+```
+
+Recommended `www` record:
+
+```txt
+Type: CNAME
+Name: www
+Value: cname.vercel-dns.com.
+TTL: 300 or provider default
+```
+
+The repository zone file at `vvv/dns/zone.corrected.bind` should remain aligned to `venturevisionubuntu.co.za`.
+
+## Vercel Routes
+
+Route behavior is defined in `vercel.json`.
+
+Important routes:
+
+```txt
+/                 -> /vvv/index.html
+/gate-1           -> /vvv/gate-1.html
+/pools/*          -> Ubuntu Pools static journey pages
+/admin/pools      -> /vvv/admin-pools.html
+/api/health       -> /api/verify.js
+/api/status       -> /api/verify.js
+/api/verify       -> /api/verify.js
+/api/mint         -> /api/mint.js
+```
+
+## Replit Runtime
+
+Replit is configured for the Express dashboard/runtime:
+
+```txt
+Node module: nodejs-20
+Workflow: Start application
+Command: npm run start
+Deployment target: autoscale
+Run command: node dashboard/server.js
+Port: 5000
+```
+
+## Compliance Fabric Verification
+
+The TypeScript compliance fabric is build/test verified with Node.js 22 LTS:
+
 ```bash
-# Single run
-npm run fetch
-
-# Dry-run full pipeline
-npm run submit:dry
-npm run broadcast:dry
-
-# Live operations (requires TSS)
-npm run broadcast
+npm run build
+npm test
 ```
 
-### Dashboard
+The test suite validates:
+
+```txt
+1. isolated memory bounds and syntax parse
+2. asymmetric JWT cryptographic verification
+3. SARB/BOP3/ISO 20022 serialization
+4. tamper rejection and timing-safe digest path
+5. final execution correctness
+```
+
+## Key Material
+
+Generate local RSA keys only for local verification or mock SARB testing:
+
 ```bash
-npm start  # Access at http://localhost:5000
+npm run keys
 ```
 
-## Troubleshooting
+Generated files are intentionally ignored:
 
-### Common Issues
+```txt
+private_key.pem
+public_key.pem
+```
 
-#### Foundry Not Found
+Never commit private keys, wallet keys, API tokens, Vercel tokens, GitHub tokens, Hugging Face tokens, or RPC secrets.
+
+## Legacy Contract Deployment Notes
+
+The Solidity/Foundry contract stack remains in `contracts/`, `script/`, and `test/`.
+
+Use environment variables for all secrets:
+
 ```bash
-# Install Foundry
-curl -L https://foundry.paradigm.xyz | bash
-source ~/.bashrc
-foundryup
+POLYGON_AMOY_RPC_URL=<rpc-url>
+PRIVATE_KEY=<deployer-private-key>
+CIRCUIT_BREAKER_ADDRESS=<after-deploy>
+ASSET_REGISTRY_ADDRESS=<after-deploy>
+TEE_VERIFIER_ADDRESS=<after-deploy>
+ORACLE_ADDRESS=<oracle-address>
+POLYGONSCAN_API_KEY=<api-key>
 ```
 
-#### Insufficient Funds
-- Check balance: `cast balance $DEPLOYER_ADDRESS --rpc-url $POLYGON_AMOY_RPC_URL`
-- Fund via faucet if needed
+Do not place real private keys in documentation or committed env files.
 
-#### TSS Connection Failed
-- Start quorum: `docker-compose -f signer-nodes/docker-compose.quorum.yml up -d`
-- Check ports 7001-7005 are accessible
+## Post-Deploy Checklist
 
-#### RPC Rate Limits
-- Switch to Alchemy or Infura RPC endpoint
-- Implement exponential backoff in applications
-
-### Health Checks
-
-#### Contract Health
-- All functions return expected values
-- Circuit properly opens/closes
-- Oracle operations work with threshold signatures
-
-#### Pipeline Health
-- Fetcher resolves assets without errors
-- Scorer computes probabilities correctly
-- Submitter generates valid attestations
-- Broadcaster submits transactions successfully
-
-## Production Deployment
-
-### Mainnet Preparation
-1. Update RPC to Polygon mainnet
-2. Deploy contracts with verified source code
-3. Set up production TSS quorum
-4. Configure monitoring and alerting
-5. Perform comprehensive security audit
-
-### Scaling Considerations
-- Monitor gas costs for large asset portfolios
-- Implement batch processing for efficiency
-- Set up multi-region gateway access
-- Configure automated recovery procedures
-
-### Backup and Recovery
-- Regular state snapshots
-- Multi-signature admin controls
-- Emergency circuit trip procedures
-- Off-chain data backup strategies
+1. Run `npm test` locally or in CI.
+2. Deploy with `vercel deploy --prod --yes`.
+3. Alias the deployment to `venturevisionubuntu.co.za`.
+4. Verify apex HTTPS and `/api/health` return 200.
+5. Confirm Vercel domain list contains `venturevisionubuntu.co.za` and not the typo domain.
+6. Confirm Git remotes are token-free before pushing.
