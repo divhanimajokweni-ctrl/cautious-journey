@@ -11,7 +11,6 @@ test
 proofs
 docs
 signer-nodes
-prover
 scripts
 Dockerfile
 Dockerfile.rocm
