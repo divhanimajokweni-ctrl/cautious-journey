@@ -24,7 +24,7 @@
     "precommit": "node scripts/check-secrets.js"
   },
   "dependencies": {
-    "@kilocode/cli": "^7.3.0",
+    "@kilocode/cli": "7.3.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "axios": "^1.7.2",
