@@ -47,8 +47,14 @@ function upsert_env() {
   echo "✅ $key set"
 }
 
+# Optional database variables (imported if set locally)
+OPTIONAL_VARS=(
+  SUPABASE_URL
+  SUPABASE_SERVICE_ROLE_KEY
+)
+
 # -----------------------------
-# Validation
+# Validation — required only
 # -----------------------------
 
 echo "🔍 Validating required environment variables..."
@@ -73,6 +79,17 @@ upsert_env STITCH_CLIENT_ID "$STITCH_CLIENT_ID"
 upsert_env STITCH_CLIENT_SECRET "$STITCH_CLIENT_SECRET"
 upsert_env STITCH_SECRET "$STITCH_SECRET"
 upsert_env POOLS_ENGINE_ADDRESS "$POOLS_ENGINE_ADDRESS"
+
+echo ""
+echo "🗄️  Importing database variables (if set locally)..."
+
+for var in "${OPTIONAL_VARS[@]}"; do
+  if [[ -n "${!var:-}" ]]; then
+    upsert_env "$var" "${!var}"
+  else
+    echo "⏭️  $var not set locally — skipping"
+  fi
+done
 
 echo "🎉 All environment variables successfully imported!"
 
