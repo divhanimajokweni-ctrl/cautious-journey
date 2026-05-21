@@ -14,10 +14,32 @@ This document describes the AI SDK infrastructure configured for ProofBridge Lin
 | `ai` | ^6.0.189 | AI SDK Core — `generateText`, `generateObject`, streaming |
 | `ai-sdk-tool-code-execution` | ^0.0.2 | `executeCode()` tool — sandboxed Python execution |
 | `zod` | ^4.4.3 | Schema validation for tool parameters |
-| `@ai-sdk/openai` | ^3.0.64 | OpenAI-compatible provider (base for custom endpoints) |
-| `@ai-sdk/openai-compatible` | ^2.0.47 | Generic OpenAI-compatible endpoint support |
+| `@ai-sdk/openai` | ^3.0.64 | OpenAI provider (NVIDIA NIM backup) |
+| `@ai-sdk/openai-compatible` | ^2.0.47 | Command Code API provider (primary) |
 
-## Infrastructure
+## AI Provider — Command Code API
+
+- **Endpoint**: `https://api.commandcode.ai/provider/v1` (OpenAI-compatible)
+- **Vercel env var**: `COMMAND_CODE_KEY` (set in Preview + Production)
+- **Local env var**: `CMD_API_KEY` (alias in `.env.local`)
+- **Models**: `deepseek/deepseek-v4-flash`, `claude-sonnet-4-6`, `claude-opus-4-7`, `gpt-5.4-mini`, `google/gemini-3.5-flash`
+
+```typescript
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
+
+const cmd = createOpenAICompatible({
+  name: 'command-code',
+  apiKey: process.env.CMD_API_KEY,
+  baseURL: 'https://api.commandcode.ai/provider/v1',
+})
+
+const result = await generateText({
+  model: cmd.chatModel('deepseek/deepseek-v4-flash'),
+  tools: { executeCode: executeCode() },
+  maxSteps: 5,
+  prompt: 'Calculate and return the 10th Fibonacci number.',
+})
+```
 
 ### Vercel Sandbox
 

@@ -12,7 +12,7 @@
 | B1 | Vercel Aliases — 3 active, need cleanup to exactly 1 | ❌ Open | Vercel Dashboard |
 | B2 | Vercel Production Env Vars — 8 required, none set | ❌ Open | Vercel Dashboard |
 | B3 | Contracts not deployed to Polygon Amoy | ❌ Open | `forge script` |
-| B4 | NVIDIA NIM function calling — no model reliably populates tool args | ⚠️ Partial | Needs OpenAI/Anthropic key or NVIDIA dedicated FC endpoint |
+| B4 | NVIDIA NIM function calling — no model reliably populates tool args | ⚠️ Partial | Needs OpenAI/Anthropic/Command Code key |
 
 ---
 
@@ -64,27 +64,30 @@
 ### P1 — AI SDK Tool Calling
 
 - [ ] **B4 — Function-calling LLM integration**
-  - Current NVIDIA NIM endpoint (`integrate.api.nvidia.com/v1`) has inconsistent function calling
-  - Options:
-    - **Option A**: Use OpenAI API key directly → `createOpenAI({ apiKey: process.env.OPENAI_API_KEY })` → `gpt-4o-mini` (guaranteed function calling)
-    - **Option B**: Use NVIDIA's dedicated function-calling endpoint (requires separate setup)
-    - **Option C**: Use `@ai-sdk/anthropic` with Anthropic API key
-  - Recommendation: Option A — `@ai-sdk/openai` already installed, just add a real OpenAI key
+  - ✅ **Command Code API available** — `COMMAND_CODE_KEY` set in Vercel Preview + Production
+  - Provider: `https://api.commandcode.ai/provider/v1` (OpenAI-compatible)
+  - Models: `deepseek/deepseek-v4-flash`, `claude-sonnet-4-6`, `gpt-5.4-mini`
+  - `@ai-sdk/openai-compatible` already installed → use `createOpenAICompatible`
+  - Local dev: set `CMD_API_KEY` in `.env.local` or `vercel env add COMMAND_CODE_KEY development`
 
-- [ ] **Verify end-to-end tool calling**
+- [ ] **Verify Command Code API + Sandbox end-to-end**
   ```typescript
   import { executeCode } from 'ai-sdk-tool-code-execution'
   import { generateText } from 'ai'
-  import { createOpenAI } from '@ai-sdk/openai'
+  import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
 
-  const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  const cmd = createOpenAICompatible({
+    name: 'command-code',
+    apiKey: process.env.CMD_API_KEY,
+    baseURL: 'https://api.commandcode.ai/provider/v1',
+  })
+
   const result = await generateText({
-    model: openai('gpt-4o-mini'),
+    model: cmd.chatModel('deepseek/deepseek-v4-flash'),
     tools: { executeCode: executeCode() },
     maxSteps: 5,
     prompt: 'What is the 10th Fibonacci number? Write Python to calculate it.',
   })
-  // Expected: tool call with `{ code: "..." }` → sandbox execution → final answer
   ```
 
 ### P2 — Production Deploy & Verification
