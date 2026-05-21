@@ -30,7 +30,7 @@ Run these checks **locally** before any `git push` or `vercel --prod`:
 |------|---------|
 | JS syntax in all script blocks of HTML files | extract each `<script>` block → save to temp `.js` → `node --check <file>` |
 | Route conflicts in `vercel.json` | `grep '"src"' vercel.json` — ensure no two `src` patterns shadow each other |
-| Build config not stale across duplicate copies | `diff vercel.json vvv/vercel.json` — review every discrepancy; `vvv/vercel.json` is a minimal stub not independently deployed, so differences are expected and intentional |
+| Build config not stale across duplicate copies | `diff vercel.json vvv/vercel.json` — review every discrepancy; `vvv/vercel.json` is a minimal stub (`version+name` only) not independently deployed, so differences are expected and intentional; `builds` has been replaced by `functions` in root config per Vercel `vercel.json` best practice |
 | Any hard-coded secrets, e-mail addresses, or private keys | `git grep -iE '0x[0-9a-fA-F]{40}|-----BEGIN|sk_live|pk_live|ghp_|sk-'` |
 | No debug comments or console.log in production code | `git grep -inE 'console\.(log|warn|error)|debugger|TODO|FIXME|HACK'` |
 

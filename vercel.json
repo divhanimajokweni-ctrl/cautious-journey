@@ -1,68 +1,22 @@
 {
   "version": 2,
   "name": "proofbridge-liner",
-  "builds": [
-    {
-      "src": "api/verify.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/mint.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/stitch/webhook.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/pool-token/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/svix/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/v2/events.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/v2/decision.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/v2/payments.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/v2/webhooks/stitch.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/auth/nonce.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/auth/verify.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/auth/session.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/auth/signout.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "vvv/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "demo/**",
-      "use": "@vercel/static"
-    }
-  ],
+  "functions": {
+    "api/verify.js":          { "memory": 1024, "maxDuration": 10 },
+    "api/mint.js":            { "memory": 1024, "maxDuration": 10 },
+    "api/stitch/webhook.js":  { "memory":  512, "maxDuration": 10 },
+    "api/pool-token/mint.js": { "memory":  512, "maxDuration": 10 },
+    "api/pool-token/verify.js": { "memory": 512, "maxDuration": 10 },
+    "api/svix/app-portal.js": { "memory":  512, "maxDuration": 10 },
+    "api/v2/events.js":       { "memory":  512, "maxDuration": 15 },
+    "api/v2/decision.js":     { "memory":  512, "maxDuration": 15 },
+    "api/v2/payments.js":     { "memory":  512, "maxDuration": 30 },
+    "api/v2/webhooks/stitch.js": { "memory": 512, "maxDuration": 15 },
+    "api/auth/nonce.js":      { "memory":  256, "maxDuration": 10 },
+    "api/auth/verify.js":     { "memory":  512, "maxDuration": 10 },
+    "api/auth/session.js":    { "memory":  256, "maxDuration": 10 },
+    "api/auth/signout.js":    { "memory":  256, "maxDuration": 10 }
+  },
   "routes": [
     { "src": "/gate-1",                   "dest": "/vvv/gate-1.html" },
     { "src": "/api/health",               "dest": "/api/verify.js" },
