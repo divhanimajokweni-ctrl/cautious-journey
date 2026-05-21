@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 /**
  * @title  RiskOracleVerifier
@@ -30,20 +30,19 @@ contract RiskOracleVerifier is ReentrancyGuardUpgradeable, OwnableUpgradeable {
                                   STATE
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice EIP-712 domain separator (cached per-chain at init)
-    bytes32 public immutable domainSeparator;
-
-    /// @notice Oracle decision type hash (cached)
-    bytes32 public immutable DECISION_TYPEHASH;
+    /// @notice EIP-712 domain separator (updated on key-rotation)
+    bytes32 public domainSeparator;
+    /// @notice Oracle decision type hash (set once in constructor)
+    bytes32 public DECISION_TYPEHASH;
 
     /// @notice Previously-used nonces — prevents replay
     mapping(uint256 => bool) public usedNonces;
 
     /// @notice Backing contract: the AssetRegistry kernel
-    address public immutable kernel;
-
-    /// @notice UbuntuPoolsEngine; verified proposals may skip TEE
-    address public immutable poolsEngine;
+    /// @dev    `immutable` was removed: initialize() can't write immutables.
+    address public kernel;
+    /// @notice UbuntuPoolsEngine; set at deployment or initialize()
+    address public poolsEngine;
 
     /*//////////////////////////////////////////////////////////////
                                   EVENTS
@@ -81,23 +80,21 @@ contract RiskOracleVerifier is ReentrancyGuardUpgradeable, OwnableUpgradeable {
         address _owner = msg.sender;
         _disableInitializers();
 
-        bytes32 constant PERSONAL_HASH = keccak256(
+        DECISION_TYPEHASH = keccak256(
             "OracleDecision(string entityId,uint256 belief,uint256 threshold,string verdict,uint256 nonce,uint256 timestamp)"
         );
-        DECISION_TYPEHASH = PERSONAL_HASH;
-        domainSeparator   = _buildDomainSeparator(_owner);
-        kernel            = _kernel;
-        poolsEngine       = _poolsEngine;
+        domainSeparator = _buildDomainSeparator(_owner);
+        // Kernel and poolsEngine are set in initialize() (upgradeable pattern)
     }
 
     function initialize(address _kernel, address _poolsEngine) public initializer {
         __Ownable_init();
-        kernel      = _kernel;
-        poolsEngine = _poolsEngine;
+        domainSeparator = _buildDomainSeparator(address(owner()));
+        kernel          = _kernel;
+        poolsEngine     = _poolsEngine;
     }
 
-    function _buildDomainSeparator(address owner) internal pure returns (bytes32) {
-        // ProofBridge Oracle domain type
+    function _buildDomainSeparator(address owner) internal view returns (bytes32) {
         return keccak256(abi.encode(
             keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
             keccak256("ProofBridgeLiner"),
@@ -171,9 +168,17 @@ contract RiskOracleVerifier is ReentrancyGuardUpgradeable, OwnableUpgradeable {
         bytes32 proposalId,
         bool    approved
     ) external onlyOwner {
-        // Delegate to UbuntuPoolsEngine if set
+        // Use low-level call so we don't need a costly interface declaration.
+        // Byte-sig and args are abi.encode(bytes32, bool) folded mutely.
         if (poolsEngine != address(0)) {
-            UbuntuPoolsEngine(poolsEngine).settleProposal{ value: 0 }(proposalId, approved);
+            bytes memory payload =
+                abi.encodeWithSelector(
+                    bytes4(keccak256("settleProposal(bytes32,bool)")),
+                    proposalId,
+                    approved
+                );
+            (bool ok,) = poolsEngine.call{ value: 0 }(payload);
+            require(ok, "ROV: pool settlement reverted");
         }
     }
 
@@ -181,11 +186,8 @@ contract RiskOracleVerifier is ReentrancyGuardUpgradeable, OwnableUpgradeable {
     function transferOwnership(address newOwner) public override onlyOwner {
         require(newOwner != address(0), "ROV: zero owner");
         _transferOwnership(newOwner);
-        // rebuild domain separator with new owner
-        bytes32 _ds = _buildDomainSeparator(newOwner);
-        assembly {
-            domainSeparator := _ds
-        }
+        // Rebuild domain separator with the new owner address.
+        domainSeparator = _buildDomainSeparator(newOwner);
     }
 }
 

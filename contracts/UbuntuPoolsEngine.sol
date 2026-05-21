@@ -36,7 +36,6 @@ contract UbuntuPoolsEngine {
         uint256        quorum;
         uint256        votesFor;
         uint256        votesAgainst;
-        mapping(address => bool) hasVoted;
         ProposalStatus status;
     }
 
@@ -54,7 +53,8 @@ contract UbuntuPoolsEngine {
     address public immutable owner;
     uint256 public committeeQuorum;
     bytes32[] public proposalIds;
-    mapping(bytes32 => PoolProposal) public proposals;
+    mapping(bytes32 => PoolProposal)  public proposals;
+    mapping(bytes32 => mapping(address => bool)) public hasVoted;
     mapping(address => PoolMember)   public members;
     mapping(address => bool)         public isCommitteeMember;
     uint256 public memberCount;
@@ -172,9 +172,9 @@ contract UbuntuPoolsEngine {
     function castVote(bytes32 pid, bool vote) external onlyKeeper proposalExists(pid) {
         PoolProposal storage p = proposals[pid];
         require(p.status == ProposalStatus.PENDING,  "UPE: not pending");
-        require(!p.hasVoted[msg.sender],             "UPE: already voted");
+        require(        !hasVoted[pid][msg.sender],             "UPE: already voted");
 
-        p.hasVoted[msg.sender] = true;
+        hasVoted[pid][msg.sender] = true;
         if (vote) {
             p.votesFor++;
             members[msg.sender].totalVotes++;
@@ -238,10 +238,16 @@ contract UbuntuPoolsEngine {
         uint256 count;
         for (uint256 i; i < proposalIds.length; i++) {
             if (proposals[proposalIds[i]].status == status) {
-                result[count++] = proposalIds[i];
+                result[count] = proposalIds[i];
+                count++;
             }
         }
-        assembly { result.length := count }
+        assembly {
+            // Trim dynamic memory array to actual count (head overwrites tail)
+            // Solidity 0.8.x accepts mstore on memory slots ≥0x20
+            let slot := add(result, 0x20)
+            mstore(slot, count)
+        }
         return result;
     }
 }
