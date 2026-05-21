@@ -22,20 +22,20 @@
 
 ## 1. What's Already Done
 
-All of the following shipped to `origin/gate-1` (latest commit `ee0a86f`):
+All of the following shipped to `origin/gate-1` (latest commit `3faae30`, 21 commits ahead of `origin/main` at `0efd3188`):
 
 ### Code
 
 | Layer | Status | Notes |
 |-------|--------|-------|
-| API v2 — `POST /api/v2/events` | ✅ Code deployed | Bayesian α/β update |
-| API v2 — `POST /api/v2/decision` | ✅ Code deployed | EIP-712 oracle verdict + signature |
-| API v2 — `POST /api/v2/payments/initiate` | ✅ Code deployed | Stitch Instant EFT execution |
-| API v2 — `POST /api/v2/webhooks/stitch` | ✅ Code deployed | HMAC-gated settlement webhook |
-| Auth — `GET /api/auth/nonce` | ✅ Code deployed | SIWE challenge |
-| Auth — `POST /api/auth/verify` | ✅ Code deployed | Wallet sig → JWT session |
-| Auth — `GET /api/auth/session` | ✅ Code deployed | Bearer token validation |
-| Auth — `POST /api/auth/signout` | ✅ Code deployed | Session discard |
+| API v2 — `POST /api/v2/events` | ✅ Code | Bayesian α/β update |
+| API v2 — `POST /api/v2/decision` | ✅ Code | EIP-712 oracle verdict + `hmac-sha256` signature |
+| API v2 — `POST /api/v2/payments/initiate` | ✅ Code | Stitch Instant EFT execution for `RISK_VERIFIED` proposals |
+| API v2 — `POST /api/v2/webhooks/stitch` | ✅ Code | `X-Stitch-Signature` HMAC verify; closes risk-engine loop |
+| Auth — `GET /api/auth/nonce` | ✅ Code | SIWE challenge |
+| Auth — `POST /api/auth/verify` | ✅ Code | Wallet sig → `hmac-sha256` JWT session |
+| Auth — `GET /api/auth/session` | ✅ Code | Bearer token validation |
+| Auth — `POST /api/auth/signout` | ✅ Code | Session discard |
 | Inline HTML scripts (gate-1) | ✅ `node --check` PASS | verify-form client |
 | Inline HTML scripts (whatsonboarding) | ✅ `node --check` PASS | kasi/church/general tone-simulator |
 
@@ -58,7 +58,7 @@ All of the following shipped to `origin/gate-1` (latest commit `ee0a86f`):
 | Item | Status |
 |------|--------|
 | Current branch | `gate-1` |
-| Ahead of `origin/main` | 20 commits |
+| Ahead of `origin/main` | 21 commits |
 | Pushed to `origin/gate-1` | ✅ Yes |
 | Secrets in diff | ✅ None |
 
@@ -302,7 +302,7 @@ forge script script/DeployRiskOracleVerifier.s.sol \
 git branch --show-current        # must be "gate-1"
 git status -sb                    # clean working tree
 git rev-parse HEAD                # run as $CURRENT_SHA
-git log --oneline -3              # latest: ee0a86f, 65b3d64, e3131c5
+git log --oneline -4              # latest: 3faae30, ee0a86f, 65b3d64, e3131c5
 
 # ─── 5.B — Push any local fixes ────────────────────────────────────────────
 # If you made any changes since last push:
@@ -421,7 +421,7 @@ Fill in after running all checks:
 /pools          → HTTP ___ [✓ PASS | ✗ FAIL]
 /proofbridge    → HTTP ___ [✓ PASS | ✗ FAIL]
 /submission     → HTTP ___ [✓ PASS | ✗ FAIL]
-/whatsonboarding.  → HTTP ___ [✓ PASS | ✗ FAIL]
+/whatsonboarding.html   → HTTP ___ [✓ PASS | ✗ FAIL]
 /gateway        → HTTP ___ [✓ PASS | ✗ FAIL]
 /api/v2/events  → HTTP ___ [✓ PASS | ✗ FAIL]
 /api/v2/decision→ HTTP ___ [✓ PASS | ✗ FAIL]
@@ -511,40 +511,43 @@ git branch --show-current          # → gate-1
 
 # Commits ahead of origin/main
 git rev-parse origin/main           # → 0efd318...
-git rev-parse HEAD                  # → ee0a86f
+git rev-parse HEAD                  # → 3faae30
 git log --oneline origin/main..HEAD | wc -l
-# → 20 (includes both pruned commits by this agent and upstream prunes)
+# → 21 (includes both pruned commits by this agent and upstream prunes)
 
 # Latest commits
-git log --oneline -6
+git log --oneline -8
+# 3faae30 docs(DEPLOY-PROD): production deployment playbook
 # ee0a86f fix(vercel): replace deprecated 'builds' with 'functions'
 # 65b3d64 docs(README): update alias block count
 # e3131c5 chore(cleanup+v2): remove stale artifacts/deprecated/test
 # 9d90629 fix(contracts+solidity): RiskOracleVerifier + UbuntuPoolsEngine
 # 2941925 feat(v2): stateless → stateful risk engine
-# ba51d3a  docs(AGENTS.md): add CI/CD Deploy Guard
+# ba51d3a docs(AGENTS.md): add CI/CD Deploy Guard
+# e61414f feat: WhatsApp onboarding demo — 3 tone modes
 
 # Working tree status
 git status -sb
-# ## gate-1...origin/main [ahead 18]
+# ## gate-1...origin/main [ahead 21]
 ```
 
 ### History of Changes on `gate-1`
 
 | Commit | What Changed |
 |--------|------|
-| `2941925` | **v2 API + auth + contracts + execution** — 13 new JS modules, `services/`, `db/schema.sql`, `contracts/RiskOracleVerifier.sol`, `contracts/UbuntuPoolsEngine.sol` |
+| `3faae30` | **DEPLOY-PROD.md** — production deployment playbook (10 sections: blockers, steps, verification table, rollback, branch state) |
+| `ee0a86f` | **`vercel.json` `builds` → `functions`** — resolves "Unused build and development settings" dashboard warning |
+| `65b3d64` | **README alias correction** — 13+ deploys / 3 active aliases |
+| `e3131c5` | **Cleanup + v2 config** — remove `artifacts/` `deprecated/` `test/`, `vvv/vercel.json` stub, README + AGENTS.md v2 updates |
 | `9d90629` | **Solidity fix + README** — RiskOracleVerifier + UbuntuPoolsEngine compile clean, README v2 architecture |
+| `2941925` | **v2 API + auth + contracts + execution** — 13 new JS modules, `services/`, `db/schema.sql`, `contracts/RiskOracleVerifier.sol`, `contracts/UbuntuPoolsEngine.sol`, `vvv/404.html` |
 | `ba51d3a` | **AGENTS.md CI/CD Deploy Guard** — mandatory pre-push/pre-deploy checklist |
 | `e61414f` | **WhatsApp onboarding demo** — 3 tone modes (kasi/church/general) |
 | `9382bb0` | **Fix-VVU-Vercel-DNS-records** |
-| `e3131c5` | **Cleanup + v2 config** — remove `artifacts/` `deprecated/` `test/`, `vvv/vercel.json` stub, README + AGENTS.md v2 updates |
-| `65b3d64` | **README alias correction** — 13+ deploys/3 aliases noted |
-| `ee0a86f` | **`vercel.json` `builds` → `functions`** — resolves "Unused build and development settings" dashboard warning |
 
 ### Branching Strategy
 
-- **`gate-1`** is the long-running integration branch (currently 20 commits ahead of `origin/main`).
+- **`gate-1`** is the long-running integration branch (currently 21 commits ahead of `origin/main`).
 - `main` is the stable branch; merge `gate-1` → `main` when v1 + v2 are both production-ready.
 - Do not delete `gate-1` before merge — it contains v2 contracts and API config not yet on `main`.
 
