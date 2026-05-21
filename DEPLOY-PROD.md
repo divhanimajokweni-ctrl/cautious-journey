@@ -22,7 +22,7 @@
 
 ## 1. What's Already Done
 
-All of the following shipped to `origin/gate-1` (latest commit `3faae30`, 21 commits ahead of `origin/main` at `0efd3188`):
+All of the following shipped to `origin/gate-1` (latest commit `2b20bb0`, 22 commits ahead of `origin/main` at `0efd3188`):
 
 ### Code
 
@@ -58,7 +58,7 @@ All of the following shipped to `origin/gate-1` (latest commit `3faae30`, 21 com
 | Item | Status |
 |------|--------|
 | Current branch | `gate-1` |
-| Ahead of `origin/main` | 21 commits |
+| Ahead of `origin/main` | 22 commits |
 | Pushed to `origin/gate-1` | ✅ Yes |
 | Secrets in diff | ✅ None |
 
@@ -511,9 +511,9 @@ git branch --show-current          # → gate-1
 
 # Commits ahead of origin/main
 git rev-parse origin/main           # → 0efd318...
-git rev-parse HEAD                  # → 3faae30
+git rev-parse HEAD                  # → 2b20bb0
 git log --oneline origin/main..HEAD | wc -l
-# → 21 (includes both pruned commits by this agent and upstream prunes)
+# → 22 (includes both pruned commits by this agent and upstream prunes)
 
 # Latest commits
 git log --oneline -8
@@ -528,7 +528,7 @@ git log --oneline -8
 
 # Working tree status
 git status -sb
-# ## gate-1...origin/main [ahead 21]
+# ## gate-1...origin/main [ahead 22]
 ```
 
 ### History of Changes on `gate-1`
@@ -547,7 +547,7 @@ git status -sb
 
 ### Branching Strategy
 
-- **`gate-1`** is the long-running integration branch (currently 21 commits ahead of `origin/main`).
+- **`gate-1`** is the long-running integration branch (currently 22 commits ahead of `origin/main`).
 - `main` is the stable branch; merge `gate-1` → `main` when v1 + v2 are both production-ready.
 - Do not delete `gate-1` before merge — it contains v2 contracts and API config not yet on `main`.
 
