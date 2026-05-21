@@ -30,7 +30,7 @@ Run these checks **locally** before any `git push` or `vercel --prod`:
 |------|---------|
 | JS syntax in all script blocks of HTML files | extract each `<script>` block → save to temp `.js` → `node --check <file>` |
 | Route conflicts in `vercel.json` | `grep '"src"' vercel.json` — ensure no two `src` patterns shadow each other |
-| Build config not stale across duplicate copies | `diff vercel.json vvv/vercel.json` — note every discrepancy |
+| Build config not stale across duplicate copies | `diff vercel.json vvv/vercel.json` — review every discrepancy; `vvv/vercel.json` is a minimal stub not independently deployed, so differences are expected and intentional |
 | Any hard-coded secrets, e-mail addresses, or private keys | `git grep -iE '0x[0-9a-fA-F]{40}|-----BEGIN|sk_live|pk_live|ghp_|sk-'` |
 | No debug comments or console.log in production code | `git grep -inE 'console\.(log|warn|error)|debugger|TODO|FIXME|HACK'` |
 
@@ -58,7 +58,7 @@ curl -sL https://proofbridge-liner.vercel.app/ | head -c 300
 |------|-----------------|
 | Is there **exactly one** `production` alias pointing to `proofbridge-liner.vercel.app`? | reject if zero or multiple |
 | Is the deployed content the expected VVU homepage (`vvv/index.html`)? | compare first 200 bytes or SHA256 |
-| Is `gate-1`, `pools`, `proofbridge`, `submission`, `gateway` all 200? | reject any 4xx / 5xx |
+| Is `gate-1`, `gateway`, `pools`, `proofbridge`, `submission`, `whatsonboarding.html` all 200? | reject any 4xx / 5xx |
 | Does the new deploy have the new changes in scope? | `git diff HEAD~1 HEAD --stat` matches `git add` list |
 
 ---
@@ -94,6 +94,13 @@ Verify each of the following URLs returns `200` with correct content:
 | `/whatsonboarding.html` | `<title>VVU WhatsApp Onboarding</title>` |
 | `/proofbridge` | `ProofBridge Liner`, `FSCA`, `Amoy` |
 | `/dashboard` | `VVU`, `Secure Console`, `Secure` |
+| `POST /api/v2/events` | `202` — event ingested, entity stats returned |
+| `POST /api/v2/decision` | `{ok:true, belief, threshold, verdict, signature}` |
+| `POST /api/v2/payments/initiate` | `{ok:true, proposal_id, status:EXECUTION_PENDING}` |
+| `POST /api/v2/webhooks/stitch` | `{ok:true, processed}` (HMAC-gated) |
+| `GET /api/auth/nonce` | `{nonce}` — 200, no auth required |
+| `POST /api/auth/verify` | `{ok:true, session:{token}}` — valid sig returns JWT |
+| `GET /api/auth/session` | `{ok:true, session}` with Bearer token |
 | `/submission` | `<title>` present and not 404 |
 | `POST /api/verify` | `{"ok":true,"verdict":"PASS|WARN|HALT"}` |
 | `GET /api/health` | `{"error":"method_not_allowed","allowed":["POST"]}` |
@@ -141,8 +148,9 @@ If any route is not 200 → stop, roll back, alert.
 [ ] vercel ls aliases filtered — production target confirmed
 [ ] vercel inspect shows correct alias│san alignment
 [ ] vercel --confirm --prod run NOT already failed (no double-tap)
-[ ] All 7 production routes OK after deploy
+[ ] All production routes OK after deploy (/, /gate-1, /gateway, /pools, /proofbridge, /submission, /whatsonboarding.html, /api/v2/events, /api/v2/decision, /api/auth/nonce)
 [ ] Post-deploy hash matches `vvv/index.html` canonical SHA256
+[ ] gate-1 branch is tracked and reviewed before merge to main (currently 15 commits ahead of origin/main — see DEPLOYMENT.md branching strategy)
 ```
 
 ---
