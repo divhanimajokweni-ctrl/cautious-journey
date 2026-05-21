@@ -352,7 +352,7 @@ No `safefgrid_signal` (typo) field ever appears in any response.
 | `anchored_at` always `null` | On-chain anchoring is design-only | Next sprint |
 | Stitch credentials env vars not set | v2 payments pipeline will 500 until configured | Blocking — set in Vercel dashboard |
 | oracle private key env var not set | v2/decision will 503 until ORACLE_PRIVATE_KEY configured | Blocking |
-| Vercel aliases > 1 | `npx vercel ls` shows 4 Production entries for same project | Manual dashboard cleanup required |
+| Vercel aliases > 1 | `npx vercel ls` shows 13+ Production entries for same project; deploy has 3 active aliases | **Manual dashboard cleanup required before `vercel --prod`** |
 
 ---
 
