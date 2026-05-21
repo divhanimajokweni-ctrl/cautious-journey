@@ -23,3 +23,5 @@ lib/
 # Vercel (keep project.json for team reference)
 .vercel/output
 .vercel/.env*.local
+.vercel
+.env*.local
