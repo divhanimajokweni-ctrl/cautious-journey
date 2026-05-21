@@ -86,3 +86,37 @@ CREATE TRIGGER IF NOT EXISTS trg_proposals_updated
 -- ── bootstrap ───────────────────────────────────────────────────────────────
 INSERT OR IGNORE INTO entities (entity_id, alpha, beta, gamma, threshold, direction)
 VALUES ('stokvel_123', 1.0, 10.0, 1.0, 0.55, 'CONTINUOUS');
+
+-- ============================================================================
+-- Stitch / Svix webhook persistence (Postgres / Supabase)
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS webhook_events (
+    id           TEXT PRIMARY KEY,                     -- svix-id
+    event_type   TEXT NOT NULL,
+    payload      JSONB NOT NULL,
+    received_at  TIMESTAMPTZ DEFAULT now(),
+
+    processed    BOOLEAN DEFAULT false,
+    processed_at TIMESTAMPTZ,
+
+    status       TEXT DEFAULT 'pending',               -- pending | success | failed | skipped
+    error        TEXT
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id    TEXT,
+    stitch_id  TEXT,
+    status     TEXT,                                   -- active | inactive | failed
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS payments (
+    id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    stitch_payment_id  TEXT,
+    amount             NUMERIC,
+    currency           TEXT,
+    status             TEXT,
+    created_at         TIMESTAMPTZ DEFAULT now()
+);
