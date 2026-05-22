@@ -111,8 +111,8 @@ Three blockers — none of them fixable by CLI alone. Each one requires **manual
 │ The pools engine contract is in source but has never been broadcast to Amoy.     │
 │                                                                                  │
 │ FIX:                                                                             │
-│   export POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/              │
-│   export PRIVATE_KEY=REMOVED_SECRET  │
+│  export POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/              │
+│  export PRIVATE_KEY=<set-from-Vercel-env-or-new-keypair>  │
 │   forge script script/DeployUbuntuPoolsEngine.s.sol \                            │
 │     --rpc-url $POLYGON_AMOY_RPC_URL \                                            │
 │     --broadcast                                                                  │
@@ -257,7 +257,8 @@ npx vercel ls
 ```bash
 # Set RPC and private key (testnet, 0.06 POL needed)
 export POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/
-export PRIVATE_KEY=REMOVED_SECRET
+# ⛔ BLOCKED KEY 0xb259...fed6 — purged from history, do NOT reuse. Use a fresh keypair.
+export PRIVATE_KEY=<new-rotated-key>
 
 # Verify balance first
 cast balance 0x49A1ba2Bde61B96685385F4Ce012586A518c3E70 --rpc-url $POLYGON_AMOY_RPC_URL

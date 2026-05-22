@@ -1,4 +1,4 @@
-import { createHmac, randomBytes } from 'node:crypto'
+import { createHash } from 'node:crypto'
 import jwt from '../../lib/jwt.js'
 
 /**

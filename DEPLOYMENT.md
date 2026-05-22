@@ -18,11 +18,16 @@
 - Faucet: https://faucet.polygon.technology/ (Amoy testnet)
 
 ### Environment Variables
+
 Create `.env` file:
 ```bash
 # Polygon Amoy deployment
+# ⛔ BLOCKED KEYS — rotated out of git history on 2026-05-22.
+#    DO NOT use the key ending in `...f017fed6` or `...f02` anywhere.
+#    Abort deployment immediately if either appears in PRIVATE_KEY or ORACLE_PRIVATE_KEY.
+#    Generate a new keypair for all live deploys.
 POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/
-PRIVATE_KEY=REMOVED_SECRET
+PRIVATE_KEY=0x0000000000000000000000000000000000000000000000000000000000000000
 
 # Contract addresses (after deployment)
 CIRCUIT_BREAKER_ADDRESS=0x0DA76b3179d1bce8045c832BB6D8fe9C226BfE57

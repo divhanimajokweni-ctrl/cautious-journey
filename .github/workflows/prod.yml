@@ -1,0 +1,169 @@
+name: Production Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_prod:
+        description: Type yes to deploy to production
+        required: true
+        type: string
+        default: ''
+  push:
+    branches: [main]
+    paths:
+      - api/**
+      - dashboard/**
+      - vvv/**
+      - demo/**
+      - vercel.json
+      - script/**
+      - deploy/**
+      - .github/workflows/prod.yml
+      - package.json
+      - package-lock.json
+
+concurrency:
+  group: prod-deploy
+  cancel-in-progress: false
+
+jobs:
+  pre-flight:
+    name: Pre-flight Gates
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.gate.outputs.proceed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref:        ${{ github.sha }}
+          token:      ${{ secrets.GH_PAT }}
+          submodules: false
+          fetch-depth: 0
+
+      - name: Confirm this is a production deploy (manual trigger)
+        id: gate
+        env:
+          CONFIRM_PROD: ${{ inputs.confirm_prod }}
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ "${CONFIRM_PROD:-}" == "yes" ]]; then
+              echo "proceed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::error::Manual trigger requires confirm_prod=yes"
+              echo "proceed=false" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+          else
+            echo "Auto-deploy on push to main — proceeding"
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Syntax-check API files
+        run: |
+          cd api && node --check verify.js && node --check kernel.js && node --check jwt.js
+
+      - name: Guard block — no wildcard source roots in vercel.json
+        run: |
+          ! grep '"src": "/api/(.*)"' vercel.json && \
+            echo "No conflicting /api/(.*) catch-all in vercel.json" || \
+            { echo "Remove catch-all src — it shadows explicit routes"; exit 1; }
+
+      - name: Verify KEY is blocked string1
+        run: |
+          if git log --all --oneline --diff-filter=A -S '0xb25939caa5515f9ded22aedf08ce0ec6778ac2ef5e11cadef24bff24f017fed6' -- '*.sh' '*.md' '*.env*' 2>/dev/null; then
+            echo "::error::Leaked key still present in repository history"
+            exit 1
+          else
+            echo "GOOD: Leaked key not found in history"
+          fi
+
+  deploy:
+    name: Full Auto Deploy (Chain ${{ matrix.chain }})
+    needs: pre-flight
+    if: needs.pre-flight.outputs.proceed == 'true'
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+      VERCEL_ORG_ID:        ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID:    ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN:         ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_APP_CLIENT_SECRET: ${{ secrets.VERCEL_APP_CLIENT_SECRET }}
+      PROOFBRIDGE_HMAC_SECRET:  ${{ secrets.PROOFBRIDGE_HMAC_SECRET }}
+      ORACLE_PRIVATE_KEY:   ${{ secrets.ORACLE_PRIVATE_KEY }}
+      ORACLE_PUBLIC_KEY:    ${{ secrets.ORACLE_PUBLIC_KEY }}
+      CONTRACT_ADDRESS:     ${{ secrets.CONTRACT_ADDRESS }}
+      POOLS_ENGINE_ADDRESS: ${{ secrets.POOLS_ENGINE_ADDRESS }}
+      STITCH_CLIENT_ID:     ${{ secrets.STITCH_CLIENT_ID }}
+      STITCH_CLIENT_SECRET: ${{ secrets.STITCH_CLIENT_SECRET }}
+      STITCH_SECRET:        ${{ secrets.STITCH_SECRET }}
+      POLYGONSCAN_API_KEY:  ${{ secrets.POLYGONSCAN_API_KEY }}
+      POLYGON_AMOY_RPC_URL: ${{ secrets.POLYGON_AMOY_RPC_URL }}
+      SLACK_WEBHOOK:        ${{ secrets.SLACK_WEBHOOK }}
+      TELEGRAM_BOT_TOKEN:   ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID:     ${{ secrets.TELEGRAM_CHAT_ID }}
+    strategy:
+      fail-fast: false
+      matrix:
+        chain: [amoy]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref:        ${{ github.sha }}
+          token:      ${{ secrets.GH_PAT }}
+          submodules: false
+          fetch-depth: 0
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Foundry (forge + cast)
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Bind Vercel project
+        run: |
+          mkdir -p .vercel
+          printf '{"orgId":"%s","projectId":"%s"}\n' \
+            "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > .vercel/project.json
+
+      - name: Run Production Deploy
+        run: |
+          bash deploy/full_auto_deploy.sh
+        env:
+          NETWORK: ${{ matrix.chain }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+
+      - name: Post-deploy smoke tests
+        run: |
+          sleep 5
+          base=$(curl -sS https://proofbridge-liner.vercel.app/api/health || echo "DOWN")
+          echo "Health endpoint: $base"
+          test $? -eq 0 || { echo "::error::Production health check failed"; exit 1; }
+
+  notify_failure:
+    name: Alert on Failure
+    needs: [pre-flight, deploy]
+    if: always() && (needs.pre-flight.result == 'failure' || needs.deploy.result == 'failure')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send failure alert
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [[ -n "$SLACK_WEBHOOK" ]]; then
+            curl -X POST -H 'Content-type: application/json' \
+              --data '{"text":":x: *ProofBridge Deploy FAILED*\nBranch: '"${{ github.ref_name }}"'\nCommit: '"${{ github.sha }}"'\nWorkflow: '"${{ github.workflow }}"'"}' \
+              "$SLACK_WEBHOOK"
+          fi
