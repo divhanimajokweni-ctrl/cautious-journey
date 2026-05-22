@@ -1,1 +1,6 @@
-{"name":"proofbridge-api","version":"1.0.0","main":"verify.js","type":"module"}
+{
+  "name": "proofbridge-api",
+  "version": "1.0.0",
+  "main": "verify.js",
+  "type": "module"
+}

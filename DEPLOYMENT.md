@@ -18,11 +18,16 @@
 - Faucet: https://faucet.polygon.technology/ (Amoy testnet)
 
 ### Environment Variables
-Create `.env` file:
+
+Create `.env` file with a **new keypair on a fresh funded wallet**:
+
 ```bash
-# Polygon Amoy deployment
+# ⛔ BLOCKED KEYS — rotated out of git history on 2026-05-22.
+#    DO NOT use the key ending in `...f017fed6` or `...f02` anywhere.
+#    Abort deployment immediately if either appears in PRIVATE_KEY or ORACLE_PRIVATE_KEY.
+#    Generate a new keypair for all live deploys.
 POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/
-PRIVATE_KEY=REMOVED_SECRET
+PRIVATE_KEY=0x0000000000000000000000000000000000000000000000000000000000000000
 
 # Contract addresses (after deployment)
 CIRCUIT_BREAKER_ADDRESS=0x0DA76b3179d1bce8045c832BB6D8fe9C226BfE57
@@ -42,33 +47,60 @@ DASHBOARD_HOST=0.0.0.0
 FETCHER_POLL_MS=300000
 ```
 
-## Contract Deployment
+## Branching, Push, and Deploy
 
-### CircuitBreaker Contract
-1. Deploy to Polygon Amoy:
-   ```bash
-   npm run deploy:amoy
-   ```
+### Quick deploy (recommended for production)
 
-2. Verify deployment logs:
-   ```
-   CircuitBreaker deployed at: 0x770342c49e1F4710E0Eed605dCe41e7f3F7600Eb
-   Oracle: 0x49A1ba2Bde61B96685385F4Ce012586A518c3E70
-   ```
+```bash
+export NETWORK=amoy
+export DEPLOYER_PRIVATE_KEY=0x<new-rotated-key>
+export POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology
+export POLYGONSCAN_API_KEY=<your-key>
+bash deploy/full_auto_deploy.sh
+```
 
-3. Update `.env` with contract address
+The full auto pipeline handles: forge build → broadcast both contracts → extract addresses → verify on Etherscan → save rollback snapshot → sync all env vars to Vercel via API → `npx vercel deploy --prod` → git-tag audit trail → Slack/Telegram alert.
 
-### MockRealT Integration Demo
-1. Deploy integration test contract:
-   ```bash
-   npm run deploy:amoy  # Uses DeployMockRealT.s.sol
-   ```
+### Manual deploy (contracts only)
 
-2. Test transfer blocking:
-   ```bash
-   cast send <mock_address> "transfer(address,uint256)" <recipient> 1000000000000000000 --private-key $PRIVATE_KEY --rpc-url $POLYGON_AMOY_RPC_URL
-   # Should revert: "MockRealT: ghost-risk detected"
-   ```
+```bash
+forge script script/DeployUbuntuPoolsEngine.s.sol \
+  --rpc-url $POLYGON_AMOY_RPC_URL \
+  --private-key $DEPLOYER_PRIVATE_KEY \
+  --broadcast
+
+forge script script/DeployRiskOracleVerifier.s.sol \
+  --rpc-url $POLYGON_AMOY_RPC_URL \
+  --private-key $DEPLOYER_PRIVATE_KEY \
+  --broadcast
+```
+
+Copy contract addresses from console output into Vercel Dashboard → Environment Variables → Production:
+`POOLS_ENGINE_ADDRESS`, `ORACLE_PUBLIC_KEY`, `CONTRACT_ADDRESS`.
+
+### Push API to Vercel
+
+```bash
+git push origin gate-1
+npx vercel --confirm --prod
+```
+
+### Pre-push checklist (also in `AGENTS.md §7`)
+
+```
+[ ] Branch is correct (gate-1 / main only)
+[ ] No uncommitted secrets or PII in diff
+[ ] api/auth/*.js syntax passes: node --check
+[ ] DEPLOYER_PRIVATE_KEY not in working tree or git diff (grep 0xb259)
+[ ] vvv/vercel.json vs root/vercel.json diff reviewed
+[ ] vercel.json has no shadowing /api/(.*) catch-all
+[ ] vercel ls → exactly 1 Production alias
+[ ] All production Vercel env vars confirmed set
+```
+
+### Rolling back failed deploys
+
+`deploy/rollback.sh` reads the most recent snapshot from `deploy/snapshots/` and restores all `LIVE_` env vars back to Vercel. Always run `deploy/rollback.sh` before a second `--prod` if the first deploy was bad.
 
 ## Prover Pipeline Setup
 

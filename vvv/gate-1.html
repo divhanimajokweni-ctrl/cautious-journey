@@ -1,161 +1,453 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gate-1 — ProofBridge Liner</title>
-  <meta name="description" content="Gate-1 verification terminal — deed-hash attestation corridor" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SafeBridge | ProofBridge-Liner Gate-1 Terminal</title>
+  <meta name="description" content="SafeBridge Gate-1 static verification terminal for ProofBridge-Liner." />
+
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --night: #05080A; --void: #090D10; --ember: #C8502A; --ember2: #E06840;
-      --amber: #D4943A; --steel: #2A3D4A; --fog: #7A9099; --chalk: #C8D4D8;
-      --white: #EEF2F4; --green: #2A7A50;
+      --bg:#07070d;--panel:#0d0d18;--panel2:#111120;--line:#24243a;--line2:#30304d;
+      --text:#f4f4f7;--muted:#8b8ba3;--dim:#5c5c74;--orange:#ff6b2b;--purple:#7c3aed;
+      --green:#10b981;--amber:#f59e0b;--red:#ef4444;--blue:#38bdf8;
+      --shadow:0 22px 80px rgba(0,0,0,.42);--radius:18px;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--night); color: var(--chalk);
-      font-family: 'Inter', sans-serif; font-weight: 300; overflow-x: hidden;
-      min-height: 100vh;
-    }
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none; z-index: 999;
-    }
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 1.1rem 2.5rem;
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(5,8,10,0.9); backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(42,61,74,0.4);
-    }
-    .nav-back { font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--fog);text-decoration:none;display:flex;align-items:center;gap:0.5rem; }
-    .nav-back:hover { color: var(--ember); }
-    .nav-back::before { content: '←'; }
-    .nav-logo { font-family:'Orbitron',monospace;font-weight:700;font-size:0.75rem;letter-spacing:0.18em;color:var(--ember);text-decoration:none;text-transform:uppercase; }
-    .nav-badge { font-family:'JetBrains Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.25rem 0.6rem;border:1px solid var(--amber);color:var(--amber);border-radius:1px; }
-    .gate-hero { min-height:100vh;display:grid;place-items:center;padding:6rem 2.5rem 4rem;position:relative;overflow:hidden; }
-    .gate-hero::after { content:'';position:absolute;top:10%;right:8%;width:480px;height:480px;background:radial-gradient(ellipse,rgba(200,80,42,0.07) 0%,transparent 65%);pointer-events:none; }
-    .gate-hero-inner { width:100%;max-width:720px;position:relative;z-index:1; }
-    .gate-eyebrow { font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--amber);margin-bottom:1.5rem;display:flex;align-items:center;gap:0.75rem; }
-    .gate-eyebrow::before { content:'';width:24px;height:1px;background:var(--amber); }
-    .live-dot { display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:blink 2s ease-in-out infinite;margin-right:0.4rem; }
-    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
-    h1 { font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(2rem,5vw,3.5rem);line-height:1;letter-spacing:0.05em;color:var(--white);margin-bottom:0.5rem; }
-    h1 span { color: var(--amber); }
-    .gate-subtitle { font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--fog);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.5rem; }
-    .gate-desc { font-size:0.9rem;color:var(--chalk);line-height:1.7;max-width:560px;margin-bottom:2.5rem; }
-    .terminal { background:var(--void);border:1px solid rgba(42,61,74,0.5);border-radius:4px;overflow:hidden; }
-    .terminal-header { background:rgba(42,61,74,0.25);padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--fog);border-bottom:1px solid rgba(42,61,74,0.4); }
-    .terminal-body { padding:1.25rem 1.5rem; }
-    .status-row { display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid rgba(42,61,74,0.2);font-family:'JetBrains Mono',monospace;font-size:0.68rem; }
-    .status-row:last-child { border-bottom:none; }
-    .status-key { color:var(--fog);min-width:160px; }
-    .status-val { color:var(--chalk); }
-    .status-val.pass { color:var(--green); }
-    .status-val.warn { color:var(--amber); }
-    .status-val.halt { color:var(--ember); }
-    .status-val.null { color:rgba(200,80,42,0.5); }
-    .appendix { padding:4rem 2.5rem;background:var(--void);border-top:1px solid rgba(42,61,74,0.3); }
-    .appendix-eyebrow { font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--ember);margin-bottom:0.75rem; }
-    .appendix-title { font-family:'Orbitron',monospace;font-weight:700;font-size:clamp(1.1rem,2.5vw,1.5rem);color:var(--white);margin-bottom:2rem; }
-    .inv-grid { display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(42,61,74,0.25); }
-    .inv-card { background:var(--void);padding:1.5rem; }
-    .inv-tag { font-family:'JetBrains Mono',monospace;font-size:0.52rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--fog);margin-bottom:0.5rem; }
-    .inv-key { font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--white);font-weight:700;margin-bottom:0.3rem; }
-    .inv-desc { font-size:0.8rem;color:var(--fog);line-height:1.6; }
-    @media(max-width:680px){ nav{padding:1rem 1.25rem;}.gate-hero{padding:6rem 1.25rem 3rem;}.inv-grid{grid-template-columns:1fr;} }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
-    .gate-eyebrow{animation:fadeUp .6s .1s ease both}h1{animation:fadeUp .7s .2s ease both}.gate-subtitle{animation:fadeUp .6s .25s ease both}.gate-desc{animation:fadeUp .6s .3s ease both}.terminal{animation:fadeUp .6s .35s ease both}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:radial-gradient(circle at 18% 0%,rgba(255,107,43,.18),transparent 32%),radial-gradient(circle at 88% 12%,rgba(124,58,237,.18),transparent 30%),radial-gradient(circle at 45% 90%,rgba(16,185,129,.12),transparent 28%),var(--bg);color:var(--text);font-family:var(--sans)}
+    button,input,select{font:inherit}
+    .shell{width:min(1240px,calc(100vw - 32px));margin:0 auto;padding:24px 0 48px}
+    .topbar,.card,.footer{border:1px solid var(--line);border-radius:var(--radius);background:rgba(13,13,24,.82);box-shadow:var(--shadow)}
+    .topbar{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:18px 20px}
+    .brand{display:flex;gap:14px;align-items:center}
+    .mark{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--orange),var(--purple));display:grid;place-items:center;font-family:var(--mono);font-weight:900}
+    .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:4px}
+    h1,h2,h3,h4{margin:0}
+    h1{font-size:clamp(20px,2vw,26px);letter-spacing:-.04em}
+    .statusbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .pill{border:1px solid var(--line2);background:rgba(17,17,32,.9);color:var(--muted);border-radius:999px;padding:8px 11px;font-family:var(--mono);font-size:11px;white-space:nowrap}
+    .pill.live{color:var(--green);border-color:rgba(16,185,129,.45)}
+    .pill.null{color:var(--amber);border-color:rgba(245,158,11,.45)}
+    .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;margin-top:22px}
+    .hero-copy{padding:32px;display:flex;flex-direction:column;justify-content:space-between;gap:24px}
+    .hero-copy h2{font-size:clamp(34px,5vw,66px);line-height:.94;letter-spacing:-.075em}
+    .gradient{background:linear-gradient(90deg,#fff,#ffb18d 45%,#a78bfa 75%,#67e8f9);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero-copy p{margin:18px 0 0;color:#b7b7c7;max-width:680px;line-height:1.65;font-size:15px}
+    .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .fact{padding:14px;border-radius:14px;background:rgba(17,17,32,.82);border:1px solid var(--line)}
+    .fact b{display:block;font-family:var(--mono);font-size:20px;color:#fff;margin-bottom:4px}
+    .fact span{color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+    .pipeline{padding:24px}
+    .pipeline-title{display:flex;justify-content:space-between;margin-bottom:18px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+    .flow{display:grid;gap:12px}
+    .node{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:15px;background:rgba(17,17,32,.88)}
+    .node-index{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:rgba(255,107,43,.12);color:var(--orange);font-family:var(--mono);font-weight:800}
+    .node strong{display:block;font-size:13px}.node small{color:var(--muted);font-family:var(--mono);font-size:10px}
+    .node-state{font-family:var(--mono);font-size:10px;color:var(--green);border:1px solid rgba(16,185,129,.34);border-radius:999px;padding:5px 8px}
+    .main{margin-top:22px;display:grid;grid-template-columns:440px 1fr;gap:22px;align-items:start}
+    .panel-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center;background:rgba(17,17,32,.62)}
+    .panel-head h3{font-size:14px}.panel-head span{color:var(--muted);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.14em}
+    form{padding:20px;display:grid;gap:18px}
+    fieldset{border:1px solid var(--line);border-radius:16px;margin:0;padding:16px;background:rgba(8,8,16,.45)}
+    legend{padding:0 8px;color:var(--orange);font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .field{display:grid;gap:7px;margin-bottom:12px}.field:last-child{margin-bottom:0}
+    label{color:#c9c9d8;font-family:var(--mono);font-size:11px}
+    input,select{width:100%;border:1px solid var(--line2);border-radius:12px;background:rgba(5,5,12,.86);color:var(--text);padding:12px;outline:none}
+    input:focus,select:focus{border-color:rgba(255,107,43,.8);box-shadow:0 0 0 3px rgba(255,107,43,.13)}
+    .hint{color:var(--dim);font-family:var(--mono);font-size:10px;line-height:1.45}.hint.ok{color:var(--green)}.hint.bad{color:var(--red)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btn{border:0;border-radius:13px;padding:13px 14px;font-weight:800;cursor:pointer}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .btn-primary{background:linear-gradient(135deg,var(--orange),#ff9f66);color:#120804}
+    .btn-secondary{background:rgba(124,58,237,.18);color:#d8ccff;border:1px solid rgba(124,58,237,.45)}
+    .btn-tertiary{background:rgba(56,189,248,.1);color:#bae6fd;border:1px solid rgba(56,189,248,.35)}
+    .btn-danger{background:rgba(239,68,68,.1);color:#fecaca;border:1px solid rgba(239,68,68,.35)}
+    .output{min-height:732px}.terminal{padding:20px;display:grid;gap:16px}
+    .message{border-radius:15px;padding:14px 16px;border:1px solid var(--line);font-family:var(--mono);font-size:12px;line-height:1.55;background:rgba(17,17,32,.7);color:var(--muted)}
+    .message.error{color:#fecaca;background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.35)}
+    .message.success{color:#bbf7d0;background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.35)}
+    .result-top{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:18px;border-radius:16px;background:rgba(17,17,32,.78);border:1px solid var(--line)}
+    .verdict{display:inline-flex;border-radius:999px;padding:8px 12px;font-family:var(--mono);font-size:12px;font-weight:900;letter-spacing:.08em;border:1px solid currentColor;margin-bottom:10px}
+    .verdict.PASS{color:var(--green);background:rgba(16,185,129,.08)}.verdict.WARN{color:var(--amber);background:rgba(245,158,11,.08)}.verdict.HALT{color:var(--red);background:rgba(239,68,68,.08)}
+    .score{font-family:var(--mono);color:var(--muted);font-size:12px;line-height:1.7}.score b{color:white}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .mini-card{border:1px solid var(--line);border-radius:16px;background:rgba(17,17,32,.72);padding:16px;min-width:0}
+    .mini-card h4{margin:0 0 12px;font-family:var(--mono);font-size:11px;color:var(--orange);letter-spacing:.12em;text-transform:uppercase}
+    .row{display:grid;grid-template-columns:125px minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.055);align-items:start}.row:last-child{border-bottom:0}
+    .k{color:var(--dim);font-family:var(--mono);font-size:10px;overflow:hidden;text-overflow:ellipsis}.v{color:#d9d9e7;font-family:var(--mono);font-size:11px;word-break:break-all}
+    .jsonbox{border:1px solid var(--line);border-radius:16px;background:#05050b;overflow:hidden}
+    .json-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;background:rgba(17,17,32,.9);border-bottom:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em}
+    pre{margin:0;padding:16px;max-height:420px;overflow:auto;color:#c7d2fe;font-family:var(--mono);font-size:11px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+    .copy{border:1px solid var(--line2);background:rgba(255,255,255,.04);color:#fff;border-radius:999px;padding:6px 9px;cursor:pointer;font-family:var(--mono);font-size:10px}
+    .footer{margin-top:22px;padding:18px 20px;color:var(--dim);font-family:var(--mono);font-size:11px;line-height:1.7}
+    @media(max-width:980px){.hero,.main{grid-template-columns:1fr}.output{min-height:auto}.cards{grid-template-columns:1fr}}
+    @media(max-width:620px){.topbar{align-items:flex-start;flex-direction:column}.statusbar{justify-content:flex-start}.hero-copy{padding:24px}.facts,.grid-2,.actions{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
   </style>
-  <script defer src="https://accuracy.vercel.app/script.js" data-host="proofbridge-liner.vercel.app"></script>
-  <script defer src="https://cdn.vercelinsights.com/script.js" data-host="proofbridge-liner.vercel.app"></script>
 </head>
+
 <body>
-  <nav>
-    <a class="nav-back" href="/">VVU</a>
-    <a class="nav-logo" href="/proofbridge">ProofBridge Liner</a>
-    <span class="nav-badge">gate-1</span>
-  </nav>
-  <section class="gate-hero">
-    <div class="gate-hero-inner">
-      <p class="gate-eyebrow">Gate-1 <span class="live-dot"></span>Verification Corridor</p>
-      <h1>Gate<span>-</span>1</h1>
-      <p class="gate-subtitle">Deed-Hash · Posterior · Verdict · Receipt</p>
-      <p class="gate-desc">
-        The sealed verification corridor. One door. No ambiguity. Every POST to <code>/api/verify</code>
-        computes a Beta-Binomial posterior, validates AMOY/FABRIC chain gating, and emits a
-        server-signed deed-hash receipt.
-      </p>
-      <div class="terminal">
-        <div class="terminal-header">gate-1 · api/verify.js</div>
-        <div class="terminal-body">
-          <div class="status-row"><span class="status-key">POST /api/verify</span><span class="status-val pass"><span class="live-dot"></span>Gate-1 handler (ESM)</span></div>
-          <div class="status-row"><span class="status-key">deed_hash</span><span class="status-val pass">SHA-256 anchor · required</span></div>
-          <div class="status-row"><span class="status-key">chain_target</span><span class="status-val">AMOY | FABRIC accepted</span></div>
-          <div class="status-row"><span class="status-key">MAINNET 3f</span><span class="status-val halt">HALT — rejected before computation</span></div>
-          <div class="status-row"><span class="status-key">posterior</span><span class="status-val pass">Beta-Binomial (α+1)/(α+β+2)</span></div>
-          <div class="status-row"><span class="status-key">calibrated_threshold</span><span class="status-val pass">τ = τ₀ / (1 + γ·β/α)</span></div>
-          <div class="status-row"><span class="status-key">verdict</span><span class="status-val pass">PASS | WARN | HALT</span></div>
-          <div class="status-row"><span class="status-key">receipt_id</span><span class="status-val pass">UUID v4 · server-generated</span></div>
-          <div class="status-row"><span class="status-key">pipeline_hash</span><span class="status-val pass">SHA-256 · handshake envelope</span></div>
-          <div class="status-row"><span class="status-key">anchored_at</span><span class="status-val null">null — contract invariant</span></div>
-          <div class="status-row"><span class="status-key">signature</span><span class="status-val pass">hmac-sha256:<hex></span></div>
-          <div class="status-row"><span class="status-key">safegrid_signal</span><span class="status-val pass">signal_id · verdict · evaluator_version</span></div>
-          <div class="status-row"><span class="status-key">PROOFBRIDGE_HMAC_SECRET</span><span class="status-val pass">server-side key guard (required)</span></div>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark">SB</div>
+        <div>
+          <div class="eyebrow">ProofBridge-Liner · SafeBridge</div>
+          <h1>Gate-1 Verification Terminal</h1>
         </div>
       </div>
-    </div>
-  </section>
-  <section class="appendix">
-    <p class="appendix-eyebrow">Gate-1 Semantics</p>
-    <h2 class="appendix-title">Every contract invariant, explicitly stated</h2>
-    <div class="inv-grid">
-      <div class="inv-card">
-        <p class="inv-tag">Intake</p>
-        <p class="inv-key">deed_hash intake</p>
-        <p class="inv-desc">Every request carries a 64-hex SHA-256 deed hash. No request without a deed hash passes Gate-1.</p>
+      <div class="statusbar">
+        <span class="pill live">/api/verify LIVE</span>
+        <span class="pill null">anchored_at: null</span>
+        <span class="pill">TEE: simulated/pending hardware</span>
       </div>
-      <div class="inv-card">
-        <p class="inv-tag">Computation</p>
-        <p class="inv-key">posterior computation</p>
-        <p class="inv-desc">Beta-Binomial posterior: μ = (α+1)/(α+β+2), calibrated threshold: τ = τ₀/(1+γ·β/α). Active amend chains form sealed interfaces around chain ref and envelope ref at the time of test.</p>
+    </header>
+
+    <section class="hero">
+      <div class="card hero-copy">
+        <div>
+          <div class="eyebrow">Deterministic deed-hash receipt infrastructure</div>
+          <h2><span class="gradient">Verify the document fingerprint. Mint the audit trail.</span></h2>
+          <p>
+            SafeBridge submits a SHA-256 deed hash to ProofBridge-Liner, computes a Gamma-Pivot posterior,
+            derives a PASS/WARN/HALT verdict, and returns a server-generated receipt with a pipeline hash,
+            timestamp, null chain anchor, and HMAC signature.
+          </p>
+        </div>
+        <div class="facts">
+          <div class="fact"><b>64</b><span>hex deed hash</span></div>
+          <div class="fact"><b>3</b><span>verdict states</span></div>
+          <div class="fact"><b>null</b><span>chain anchor at Gate-1</span></div>
+        </div>
       </div>
-      <div class="inv-card">
-        <p class="inv-tag">Decision</p>
-        <p class="inv-key">PASS | WARN | HALT</p>
-        <p class="inv-desc">μ &gt; τ → PASS. μ = τ → WARN. μ &lt; τ → HALT. Three-way verdict. SAFE / TRIP replaced across the Gate-1 surface.</p>
+
+      <div class="card pipeline">
+        <div class="pipeline-title"><span>Execution corridor</span><span>Gate-1</span></div>
+        <div class="flow">
+          <div class="node"><div class="node-index">01</div><div><strong>Deed hash intake</strong><small>Validate exact SHA-256 hex format</small></div><span class="node-state">typed</span></div>
+          <div class="node"><div class="node-index">02</div><div><strong>Bayesian posterior</strong><small>alpha / beta / gamma / threshold</small></div><span class="node-state">live</span></div>
+          <div class="node"><div class="node-index">03</div><div><strong>Gate-1 verdict</strong><small>PASS, WARN, or HALT</small></div><span class="node-state">derived</span></div>
+          <div class="node"><div class="node-index">04</div><div><strong>Receipt artifact</strong><small>receipt_id + pipeline_hash + signature</small></div><span class="node-state">auditable</span></div>
+        </div>
       </div>
-      <div class="inv-card">
-        <p class="inv-tag">Receipt</p>
-        <p class="inv-key">receipt_id · server-generated</p>
-        <p class="inv-desc">UUID v4 generated by the server at response time. Never provided by the client as part of the request body.</p>
+    </section>
+
+    <section class="main">
+      <div class="card">
+        <div class="panel-head">
+          <div><h3>Verification Request</h3><span>POST /api/verify</span></div>
+          <button class="copy" type="button" id="fill-demo">Fill demo</button>
+        </div>
+
+        <form id="verify-form" autocomplete="off">
+          <fieldset>
+            <legend>Risk Parameters</legend>
+            <div class="grid-2">
+              <div class="field"><label for="alpha">alpha</label><input id="alpha" name="alpha" type="number" step="any" min="0.000001" value="2" required /></div>
+              <div class="field"><label for="beta">beta</label><input id="beta" name="beta" type="number" step="any" min="0.000001" value="1" required /></div>
+              <div class="field"><label for="gamma">gamma</label><input id="gamma" name="gamma" type="number" step="any" min="0.000001" value="1.2" required /></div>
+              <div class="field"><label for="threshold">threshold</label><input id="threshold" name="threshold" type="number" step="any" min="0" max="1" value="0.95" required /></div>
+            </div>
+            <div class="hint">Posterior = clamp((alpha / (alpha + beta)) × gamma, 0, 1)</div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Identity</legend>
+            <div class="field">
+              <label for="deed_hash">deed_hash</label>
+              <input id="deed_hash" name="deed_hash" type="text" spellcheck="false" placeholder="64 lowercase hex characters" required />
+              <div id="hash-hint" class="hint bad">must be exactly 64 lowercase hex characters</div>
+            </div>
+            <div class="field">
+              <label for="issuer_did">issuer_did</label>
+              <input id="issuer_did" name="issuer_did" type="text" value="did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK" required />
+            </div>
+            <div class="field">
+              <label for="property_ref">property_ref</label>
+              <input id="property_ref" name="property_ref" type="text" placeholder="prop_..." required />
+            </div>
+            <div class="field">
+              <label for="chain_target">chain_target</label>
+              <select id="chain_target" name="chain_target" required>
+                <option value="AMOY">AMOY</option>
+                <option value="FABRIC">FABRIC</option>
+              </select>
+              <div class="hint">MAINNET is intentionally blocked at Gate-1.</div>
+            </div>
+          </fieldset>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit" id="submit-btn">Verify deed hash</button>
+            <button class="btn btn-secondary" type="button" id="copy-request">Copy request</button>
+            <button class="btn btn-tertiary" type="button" id="download-receipt" disabled>Download receipt</button>
+            <button class="btn btn-danger" type="button" id="reset-btn">Reset</button>
+          </div>
+        </form>
       </div>
-      <div class="inv-card">
-        <p class="inv-tag">Pipeline</p>
-        <p class="inv-key">pipeline_hash · server-generated</p>
-        <p class="inv-desc">SHA-256 over the canonical handshake + envelope JSON at the time of test. Chain and envelope references are included.</p>
+
+      <div class="card output">
+        <div class="panel-head">
+          <div><h3>Receipt Terminal</h3><span>actual /api/verify response</span></div>
+          <button class="copy" type="button" id="copy-response" disabled>Copy response</button>
+        </div>
+        <div class="terminal" id="terminal">
+          <div class="message">
+            Awaiting deed hash submission. The response will show posterior, verdict, receipt_id,
+            pipeline_hash, anchored_at:null, signature, and raw JSON.
+          </div>
+        </div>
       </div>
-      <div class="inv-card">
-        <p class="inv-tag">Anchoring</p>
-        <p class="inv-key">anchored_at: null</p>
-        <p class="inv-desc">Active amend chains do not overwrite the anchored_at field. Once null, always null at Gate-1. Enforced by the server handler.</p>
-      </div>
-      <div class="inv-card">
-        <p class="inv-tag">Signature</p>
-        <p class="inv-key">signed response payload</p>
-        <p class="inv-desc">HMAC-SHA256 over `posterior:threshold:verdict`. Key held in `PROOFBRIDGE_HMAC_SECRET`. Never returned in the body.</p>
-      </div>
-      <div class="inv-card">
-        <p class="inv-tag">Signal</p>
-        <p class="inv-key">safegrid_signal</p>
-        <p class="inv-desc">Response block with evaluator_version, verdict, and server-generated signal_id. Verdict matches the top-level verdict exactly.</p>
-      </div>
-    </div>
-  </section>
+    </section>
+
+    <footer class="footer">
+      SafeBridge does not claim hardware TEE attestation or chain anchoring at Gate-1.
+      Current production truth: deterministic receipt generation, signed payloads, null anchoring,
+      and on-chain anchoring reserved for a later Merkle layer.
+    </footer>
+  </main>
+
+  <script>
+    const API_URL = "/api/verify";
+
+    const els = {
+      form: document.getElementById("verify-form"),
+      terminal: document.getElementById("terminal"),
+      submit: document.getElementById("submit-btn"),
+      fillDemo: document.getElementById("fill-demo"),
+      copyRequest: document.getElementById("copy-request"),
+      copyResponse: document.getElementById("copy-response"),
+      downloadReceipt: document.getElementById("download-receipt"),
+      reset: document.getElementById("reset-btn"),
+      hashHint: document.getElementById("hash-hint"),
+      deedHash: document.getElementById("deed_hash")
+    };
+
+    let latestResponse = null;
+
+    function isHex64(value) {
+      return /^[a-f0-9]{64}$/.test(String(value || ""));
+    }
+
+    function readForm() {
+      const data = new FormData(els.form);
+      return {
+        alpha: Number(data.get("alpha")),
+        beta: Number(data.get("beta")),
+        gamma: Number(data.get("gamma")),
+        threshold: Number(data.get("threshold")),
+        deed_hash: String(data.get("deed_hash") || "").trim().toLowerCase(),
+        issuer_did: String(data.get("issuer_did") || "").trim(),
+        property_ref: String(data.get("property_ref") || "").trim(),
+        chain_target: String(data.get("chain_target") || "AMOY").trim().toUpperCase()
+      };
+    }
+
+    function validatePayload(payload) {
+      const errors = [];
+      if (!(Number.isFinite(payload.alpha) && payload.alpha > 0)) errors.push("alpha must be > 0.");
+      if (!(Number.isFinite(payload.beta) && payload.beta > 0)) errors.push("beta must be > 0.");
+      if (!(Number.isFinite(payload.gamma) && payload.gamma > 0)) errors.push("gamma must be > 0.");
+      if (!(Number.isFinite(payload.threshold) && payload.threshold >= 0 && payload.threshold <= 1)) errors.push("threshold must be between 0 and 1.");
+      if (!isHex64(payload.deed_hash)) errors.push("deed_hash must be exactly 64 lowercase hex characters.");
+      if (!payload.issuer_did) errors.push("issuer_did is required.");
+      if (!payload.property_ref) errors.push("property_ref is required.");
+      if (!["AMOY", "FABRIC"].includes(payload.chain_target)) errors.push("chain_target must be AMOY or FABRIC.");
+      return errors;
+    }
+
+    function setHashHint() {
+      const ok = isHex64(els.deedHash.value.trim().toLowerCase());
+      els.hashHint.textContent = ok ? "valid SHA-256 deed hash format" : "must be exactly 64 lowercase hex characters";
+      els.hashHint.className = "hint " + (ok ? "ok" : "bad");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function row(k, v) {
+      return `
+        <div class="row">
+          <div class="k">${escapeHtml(k)}</div>
+          <div class="v">${escapeHtml(v ?? "null")}</div>
+        </div>
+      `;
+    }
+
+    function verdictClass(verdict) {
+      return ["PASS", "WARN", "HALT"].includes(verdict) ? verdict : "WARN";
+    }
+
+    function renderMessage(text, type) {
+      els.terminal.innerHTML = `<div class="message ${type}">${escapeHtml(text)}</div>`;
+    }
+
+    function renderReceipt(payload) {
+      const verdict = payload.verdict || "UNKNOWN";
+
+      els.terminal.innerHTML = `
+        <div class="result-top">
+          <div>
+            <div class="verdict ${verdictClass(verdict)}">${escapeHtml(verdict)}</div>
+            <div class="score">
+              posterior: <b>${escapeHtml(payload.posterior)}</b><br />
+              threshold: <b>${escapeHtml(payload.threshold)}</b>
+            </div>
+          </div>
+          <div class="score">
+            chain: <b>${escapeHtml(payload.chain_target)}</b><br />
+            anchored_at: <b>${escapeHtml(payload.anchored_at ?? "null")}</b>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="mini-card">
+            <h4>Gate-1 Receipt</h4>
+            ${row("receipt_id", payload.receipt_id)}
+            ${row("deed_hash", payload.deed_hash)}
+            ${row("pipeline_hash", payload.pipeline_hash)}
+            ${row("signature", payload.signature)}
+            ${row("timestamp", payload.timestamp)}
+          </div>
+
+          <div class="mini-card">
+            <h4>Risk Parameters</h4>
+            ${row("alpha", payload.alpha)}
+            ${row("beta", payload.beta)}
+            ${row("gamma", payload.gamma)}
+            ${row("threshold", payload.threshold)}
+            ${row("posterior", payload.posterior)}
+            ${row("verdict", payload.verdict)}
+          </div>
+        </div>
+
+        <div class="jsonbox">
+          <div class="json-head">
+            <span>Raw JSON response</span>
+            <span>${escapeHtml(API_URL)}</span>
+          </div>
+          <pre>${escapeHtml(JSON.stringify(payload, null, 2))}</pre>
+        </div>
+      `;
+    }
+
+    async function copyText(text) {
+      await navigator.clipboard.writeText(text);
+    }
+
+    function downloadJson(filename, data) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    els.deedHash.addEventListener("input", setHashHint);
+
+    els.fillDemo.addEventListener("click", () => {
+      document.getElementById("alpha").value = "2";
+      document.getElementById("beta").value = "1";
+      document.getElementById("gamma").value = "1.2";
+      document.getElementById("threshold").value = "0.95";
+      document.getElementById("deed_hash").value = "a3f1e2d4b5c67890123456789abcdef0123456789abcdef0123456789abcdef01";
+      document.getElementById("issuer_did").value = "did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK";
+      document.getElementById("property_ref").value = "prop_gate_1_safebridge_demo";
+      document.getElementById("chain_target").value = "AMOY";
+      setHashHint();
+      renderMessage("Demo payload loaded. Submit to mint a Gate-1 receipt.", "success");
+    });
+
+    els.copyRequest.addEventListener("click", async () => {
+      await copyText(JSON.stringify(readForm(), null, 2));
+      renderMessage("Request payload copied to clipboard.", "success");
+    });
+
+    els.copyResponse.addEventListener("click", async () => {
+      if (!latestResponse) return;
+      await copyText(JSON.stringify(latestResponse, null, 2));
+      renderMessage("Latest response copied to clipboard.", "success");
+      setTimeout(() => renderReceipt(latestResponse), 700);
+    });
+
+    els.downloadReceipt.addEventListener("click", () => {
+      if (!latestResponse) return;
+      downloadJson(`safebridge-receipt-${latestResponse.receipt_id || "gate-1"}.json`, latestResponse);
+    });
+
+    els.reset.addEventListener("click", () => {
+      latestResponse = null;
+      els.copyResponse.disabled = true;
+      els.downloadReceipt.disabled = true;
+      els.form.reset();
+      document.getElementById("alpha").value = "2";
+      document.getElementById("beta").value = "1";
+      document.getElementById("gamma").value = "1.2";
+      document.getElementById("threshold").value = "0.95";
+      document.getElementById("issuer_did").value = "did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK";
+      document.getElementById("chain_target").value = "AMOY";
+      setHashHint();
+      renderMessage("Terminal reset. Awaiting deed hash submission.");
+    });
+
+    els.form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const payload = readForm();
+      const errors = validatePayload(payload);
+
+      latestResponse = null;
+      els.copyResponse.disabled = true;
+      els.downloadReceipt.disabled = true;
+
+      if (errors.length) {
+        renderMessage(errors.join(" "), "error");
+        return;
+      }
+
+      els.submit.disabled = true;
+      els.submit.textContent = "Verifying...";
+      renderMessage("Posting request to /api/verify. Waiting for signed receipt...");
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await response.json();
+
+        if (!response.ok || json.error) {
+          const detail = Array.isArray(json.errors) ? json.errors.join(" ") : JSON.stringify(json);
+          renderMessage(`Verification failed: ${detail}`, "error");
+          return;
+        }
+
+        latestResponse = json;
+        els.copyResponse.disabled = false;
+        els.downloadReceipt.disabled = false;
+        renderReceipt(json);
+      } catch (error) {
+        renderMessage(`Network or runtime error: ${error.message}`, "error");
+      } finally {
+        els.submit.disabled = false;
+        els.submit.textContent = "Verify deed hash";
+      }
+    });
+
+    setHashHint();
+  </script>
 </body>
 </html>

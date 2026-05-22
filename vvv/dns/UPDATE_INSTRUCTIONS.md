@@ -1,29 +1,81 @@
 # DNS Update Instructions for venturevisionubuntu.co.za
-# Nameservers: ns1.host-ww.net, ns2.host-ww.net
-# Login to your DNS hosting control panel (host-ww.net / cloud2m.co.za)
 
-## CRITICAL RECORDS TO ADD/UPDATE
+Nameservers currently remain with the third-party DNS host:
 
-### 1. Apex A Records (ADD these 4, DELETE any existing A records for @)
-Type: A  |  Name/Host: @ (or leave blank)  |  Value/Points to: 185.199.108.153  |  TTL: 300 (5min)
-Type: A  |  Name/Host: @                   |  Value: 185.199.109.153          |  TTL: 300
-Type: A  |  Name/Host: @                   |  Value: 185.199.110.153          |  TTL: 300
-Type: A  |  Name/Host: @                   |  Value: 185.199.111.153          |  TTL: 300
+```txt
+ns1.host-ww.net
+ns2.host-ww.net
+ns3.host-ww.net
+ns4.host-ww.net
+```
 
-### 2. WWW CNAME (ADD or UPDATE)
-Type: CNAME  |  Name/Host: www  |  Value: divhanimajokweni-ctrl.github.io.  |  TTL: 14400
+Vercel can also manage the zone directly if the registrar nameservers are changed to:
 
-### 3. TXT Verification (ADD if missing, or VERIFY exact value)
-Type: TXT  |  Name/Host: _github-pages-challenge-divhanimajokweni-ctrl  |  Value: "959b84c8ec710837b5ee4f82b56e98"  |  TTL: 300
+```txt
+ns1.vercel-dns.com
+ns2.vercel-dns.com
+```
 
-### 4. API subdomain (preserve existing if needed)
-Type: A  |  Name/Host: api  |  Value: 76.76.21.21  |  TTL: 300
+Until that migration is done, keep the third-party nameservers and set the records below in the host-ww.net / cloud2m.co.za DNS panel.
 
-## REMOVE any conflicting A records for @ that point elsewhere
+## Required Vercel Records
 
-## After updating DNS, verify:
-dig A venturevisionubuntu.co.za +short
-# Should return 4 GitHub IPs above
+Delete conflicting A, AAAA, or CNAME records for `@`, `www`, and `api`, then set:
 
+```txt
+Type: A  | Host: @    | Value: 76.76.21.21 | TTL: 300
+Type: A  | Host: www  | Value: 76.76.21.21 | TTL: 300
+Type: A  | Host: api  | Value: 76.76.21.21 | TTL: 300
+```
+
+Do not point `@` or `www` to GitHub Pages IPs for this deployment. Do not set `www` as a CNAME to the apex; Vercel currently requires `A www.venturevisionubuntu.co.za 76.76.21.21` for certificate verification under the existing third-party nameserver setup.
+
+## Optional Verification TXT
+
+The previous GitHub Pages TXT record is not required for the Vercel deployment. It may remain harmlessly if you still use GitHub Pages elsewhere, but it does not configure this Vercel project.
+
+```txt
+Type: TXT | Host: _github-pages-challenge-divhanimajokweni-ctrl | Value: "959b84c8ec710837b5ee4f82b56e98"
+```
+
+## Vercel Aliases
+
+The current production deployment should be aliased to:
+
+```txt
+venturevisionubuntu.co.za
+www.venturevisionubuntu.co.za
+api.venturevisionubuntu.co.za
+```
+
+If a domain still points at an older deployment, reassign it with:
+
+```sh
+vercel alias set <current-production-url> venturevisionubuntu.co.za
+vercel alias set <current-production-url> api.venturevisionubuntu.co.za
+vercel alias set <current-production-url> www.venturevisionubuntu.co.za
+```
+
+## Verify
+
+```sh
+nslookup venturevisionubuntu.co.za
+nslookup www.venturevisionubuntu.co.za
+nslookup api.venturevisionubuntu.co.za
 curl -I https://venturevisionubuntu.co.za/
-# Should return 200
+curl -I https://www.venturevisionubuntu.co.za/
+curl -I https://api.venturevisionubuntu.co.za/api/health
+```
+
+Expected DNS answer for all three hostnames:
+
+```txt
+76.76.21.21
+```
+
+Expected HTTP result after Vercel certificate issuance:
+
+```txt
+HTTP/2 200
+server: Vercel
+```

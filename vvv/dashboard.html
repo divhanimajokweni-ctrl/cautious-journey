@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Restricted VVU split-view sovereign console for verified WhatsApp pool links." />
+  <title>VVU Secure Console</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="/dashboard.js" defer></script>
+</head>
+<body class="dashboard-page" data-gate="loading">
+  <div id="gateLoading" class="gate-screen" role="status">
+    <pre aria-hidden="true"> \ _ /
+  (o)
+  / \ </pre>
+    <p class="eyebrow">Decrypting pool security token</p>
+    <h1>Validating WhatsApp group link...</h1>
+  </div>
+
+  <main id="gateDenied" class="gate-screen denied" hidden>
+    <pre aria-hidden="true"> \ _ /
+  (o)
+  / \ </pre>
+    <p class="eyebrow">403 unauthorized pool gateway</p>
+    <h1>Access denied: secure console locked</h1>
+    <p>This switchboard terminal is restricted. Open it from the secure integration link propagated inside your verified WhatsApp Asset Pool group.</p>
+    <a class="button ghost" href="/">Return to public landing</a>
+  </main>
+
+  <main id="secureConsole" class="secure-console" hidden>
+    <section class="console-panel proof-panel" aria-labelledby="proof-title">
+      <header class="console-header">
+        <div>
+          <p class="eyebrow">ProofBridge Liner</p>
+          <h1 id="proof-title">Accessible Banking Console</h1>
+        </div>
+        <pre class="ascii-ant" aria-hidden="true"> \ _ /
+  (o)
+  / \ </pre>
+      </header>
+
+      <div class="kernel-stack" aria-label="Three-layer kernel architecture">
+        <article><span>01</span><strong>TEE Gate</strong><p>Attested boundary before mutation.</p></article>
+        <article><span>02</span><strong>Bayesian Engine</strong><p>Evidence-weighted belief calculation.</p></article>
+        <article><span>03</span><strong>Circuit Breaker</strong><p>Instant halt when μ cannot clear τ.</p></article>
+      </div>
+
+      <section class="console-readout" aria-label="Bayesian safety readout">
+        <div><span>Belief μ</span><strong id="dashMu">0.7500</strong></div>
+        <div><span>Threshold τ</span><strong id="dashTau">0.6400</strong></div>
+        <div><span>Safety S</span><strong id="dashMargin">+0.1100</strong></div>
+        <div><span>Verdict</span><strong id="dashVerdict">SAFE</strong></div>
+      </section>
+
+      <p class="decision-rule">Verdict = SAFE iff μ &gt; τ</p>
+      <div class="attestation-badges" aria-label="TEE attestation badges">
+        <span>TEE attested</span>
+        <span>Polygon Amoy</span>
+        <span>Receipt hash: 456e...c78b</span>
+      </div>
+
+      <section class="mutation-log" aria-label="Mutation log">
+        <h2>Switchboard log</h2>
+        <div id="mutationLog" class="log-list" role="log" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <section class="console-panel ubuntu-panel" aria-labelledby="ubuntu-title">
+      <header class="console-header light">
+        <div>
+          <p class="eyebrow">Ubuntu Pools</p>
+          <h1 id="ubuntu-title">WhatsApp Social Gateway</h1>
+        </div>
+        <span class="bubble-ant" aria-hidden="true">🐜</span>
+      </header>
+
+      <div class="chat-window" aria-label="WhatsApp-native onboarding simulation">
+        <article><span aria-hidden="true">🐜</span>Welcome, Nandi. Pool Alpha rotates credit monthly with member-visible rules.</article>
+        <article><span aria-hidden="true">🐜</span>Cycle 07 contribution request: R850 via Stitch primary rail.</article>
+        <article><span aria-hidden="true">🐜</span>ProofBridge review required before settlement crosses the hard boundary.</article>
+      </div>
+
+      <article id="assetCard" class="asset-card">
+        <h2>Ubuntu Infrastructure Pool Alpha</h2>
+        <p>Asset value: R12,500,000 · Group: <span id="groupName">verified</span></p>
+        <strong id="assetState">CLEAR</strong>
+      </article>
+
+      <div class="dashboard-actions" aria-label="Asset mutation controls">
+        <button class="button primary" id="settleBtn" type="button">Settle to Amoy</button>
+        <button class="button danger" id="fraudBtn" type="button">Fraud Bank</button>
+        <button class="button danger" id="forgeBtn" type="button">Forge Deed</button>
+        <button class="button ghost" id="svixPortalBtn" type="button">Open webhook portal</button>
+        <button class="button ghost" id="dashMuteBtn" type="button" aria-pressed="false">Voice alerts on</button>
+        <button class="button ghost" id="dashResetBtn" type="button">Reset console</button>
+      </div>
+
+      <div id="svixPortalFrameWrap" class="svix-portal-frame" hidden>
+        <iframe id="svixPortalFrame" title="Svix Consumer App Portal" allow="clipboard-write" loading="lazy"></iframe>
+      </div>
+
+      <p id="dashStatus" class="kernel-status" role="status">Authorized secure console ready.</p>
+      <p class="compliance-note">FSCA JS2 posture: disclosure, accessibility, and static audit mode. No certification claim.</p>
+    </section>
+  </main>
+</body>
+</html>

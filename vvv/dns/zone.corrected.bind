@@ -1,25 +1,32 @@
 $ORIGIN venturevisionubuntu.co.za.
 $TTL 3600
-@                                      86400 IN SOA   ns1.host-ww.net. server-admin.cloud2m.co.za. 2026051223 3600 1800 1209600 86400
+@                                      86400 IN SOA   ns1.host-ww.net. server-admin.cloud2m.co.za. 2026052002 3600 1800 1209600 86400
 
 ; NS RECORDS
+; Current provider-managed zone. Optional future migration: ns1.vercel-dns.com / ns2.vercel-dns.com
 @                                      86400 IN NS    ns1.host-ww.net.
 @                                      86400 IN NS    ns2.host-ww.net.
+@                                      86400 IN NS    ns3.host-ww.net.
+@                                      86400 IN NS    ns4.host-ww.net.
 
-; A RECORDS — GitHub Pages (REQUIRED for apex domain)
-@                                      300   IN A     185.199.108.153
-@                                      300   IN A     185.199.109.153
-@                                      300   IN A     185.199.110.153
-@                                      300   IN A     185.199.111.153
+; ---- VERCEL EDGE (76.76.21.21) ----
+; Alias targets in Vercel:
+; venturevisionubuntu.co.za      -> current proofbridge-liner production deployment
+; www.venturevisionubuntu.co.za  -> current proofbridge-liner production deployment
+; api.venturevisionubuntu.co.za  -> current proofbridge-liner production deployment
 
-; CNAME RECORDS
-www                                   14400 IN CNAME divhanimajokweni-ctrl.github.io.
-ftp                                   14400 IN CNAME @
-mail                                  14400 IN CNAME @
-api                                   300   IN A     76.76.21.21
+; Apex site
+@                                      300   IN A     76.76.21.21
 
-; MX RECORDS
-@                                      14400 IN MX    0 @
+; WWW site - use A record for Vercel certificate verification under current nameservers
+www                                    300   IN A     76.76.21.21
 
-; TXT RECORDS — GitHub Pages domain verification (MUST MATCH exactly)
-_github-pages-challenge-divhanimajokweni-ctrl.venturevisionubuntu.co.za. 300 IN TXT "959b84c8ec710837b5ee4f82b56e98"
+; API subdomain
+api                                    300   IN A     76.76.21.21
+
+; Maintenance records
+ftp                                    14400 IN CNAME @
+mail                                   14400 IN CNAME @
+
+; MX - set to the mail provider before relying on domain email
+; @                                     14400 IN MX    0 @

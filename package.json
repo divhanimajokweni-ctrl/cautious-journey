@@ -21,15 +21,24 @@
     "deploy:droplet": "bash scripts/deploy-droplet.sh",
     "deploy:droplet:rocm": "bash scripts/deploy-droplet.sh --rocm",
     "deploy:droplet:dry": "bash scripts/deploy-droplet.sh --dry-run",
-    "precommit": "node scripts/check-secrets.js"
+    "check:secrets": "node scripts/check-secrets.js",
+    "check:env": "node scripts/env-check.js",
+    "precommit": "node scripts/check-secrets.js",
+    "predeploy": "npm run check:secrets && npm run check:env"
   },
   "dependencies": {
-    "@kilocode/cli": "^7.3.0",
+    "@ai-sdk/openai": "^3.0.64",
+    "@ai-sdk/openai-compatible": "^2.0.47",
+    "@kilocode/cli": "7.3.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
+    "ai": "^6.0.189",
+    "ai-sdk-tool-code-execution": "^0.0.2",
+    "@supabase/supabase-js": "^2.86.0",
     "axios": "^1.7.2",
     "ethers": "^6.13.0",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "zod": "^4.4.3"
   },
   "engines": {
     "node": ">=20"

@@ -1,40 +1,52 @@
 {
   "version": 2,
   "name": "proofbridge-liner",
-  "builds": [
-    {
-      "src": "api/verify.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/mint.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "dashboard/public/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "vvv/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "demo/**",
-      "use": "@vercel/static"
-    }
-  ],
+  "functions": {
+    "api/verify.js":          { "memory": 1024, "maxDuration": 10 },
+    "api/mint.js":            { "memory": 1024, "maxDuration": 10 },
+    "api/stitch/webhook.js":  { "memory":  512, "maxDuration": 10 },
+    "api/stitch/replay.js":   { "memory":  512, "maxDuration": 15 },
+    "api/pool-token/mint.js": { "memory":  512, "maxDuration": 10 },
+    "api/pool-token/verify.js": { "memory": 512, "maxDuration": 10 },
+    "api/svix/app-portal.js": { "memory":  512, "maxDuration": 10 },
+    "api/v2/events.js":       { "memory":  512, "maxDuration": 15 },
+    "api/v2/decision.js":     { "memory":  512, "maxDuration": 15 },
+    "api/v2/payments.js":     { "memory":  512, "maxDuration": 30 },
+    "api/v2/webhooks/stitch.js": { "memory": 512, "maxDuration": 15 },
+    "api/auth/nonce.js":      { "memory":  256, "maxDuration": 10 },
+    "api/auth/verify.js":     { "memory":  512, "maxDuration": 10 },
+    "api/auth/session.js":    { "memory":  256, "maxDuration": 10 },
+    "api/auth/signout.js":    { "memory":  256, "maxDuration": 10 }
+  },
   "routes": [
-    { "src": "/gate-1",         "dest": "/vvv/gate-1.html" },
-    { "src": "/api/health",     "dest": "/api/verify.js" },
-    { "src": "/api/status",     "dest": "/api/verify.js" },
-    { "src": "/api/verify",     "dest": "/api/verify.js", "methods": ["POST"] },
-    { "src": "/api/mint",       "dest": "/api/mint.js",   "methods": ["POST"] },
-    { "src": "/api/(.*)",       "dest": "/api/verify.js" },
-    { "src": "/pools",          "dest": "/vvv/pools.html" },
-    { "src": "/proofbridge",    "dest": "/vvv/proofbridge.html" },
-    { "src": "/submission",     "dest": "/vvv/submission.html" },
-    { "src": "/demo/(.*)",      "dest": "/demo/$1" },
+    { "src": "/gate-1",                   "dest": "/vvv/gate-1.html" },
+    { "src": "/api/health",               "dest": "/api/verify.js" },
+    { "src": "/api/status",               "dest": "/api/verify.js" },
+    { "src": "/api/verify",               "dest": "/api/verify.js", "methods": ["POST"] },
+    { "src": "/api/mint",                 "dest": "/api/mint.js",   "methods": ["POST"] },
+    { "src": "/api/stitch/webhook",       "dest": "/api/stitch/webhook.js",  "methods": ["POST"] },
+    { "src": "/api/stitch/replay",        "dest": "/api/stitch/replay.js",   "methods": ["POST"] },
+    { "src": "/api/pool-token/mint",      "dest": "/api/pool-token/mint.js", "methods": ["POST"] },
+    { "src": "/api/pool-token/verify",    "dest": "/api/pool-token/verify.js", "methods": ["POST"] },
+    { "src": "/api/svix/app-portal",      "dest": "/api/svix/app-portal.js", "methods": ["POST"] },
+    { "src": "/api/no-such-route",        "dest": "/vvv/404.html" },
+    { "src": "/api/v2/events",            "dest": "/api/v2/events.js",     "methods": ["POST"] },
+    { "src": "/api/v2/decision",          "dest": "/api/v2/decision.js",   "methods": ["POST"] },
+    { "src": "/api/v2/payments/initiate", "dest": "/api/v2/payments.js",   "methods": ["POST"] },
+    { "src": "/api/v2/webhooks/stitch",   "dest": "/api/v2/webhooks/stitch.js", "methods": ["POST"] },
+    { "src": "/api/auth/nonce",           "dest": "/api/auth/nonce.js",    "methods": ["GET"] },
+    { "src": "/api/auth/verify",          "dest": "/api/auth/verify.js",   "methods": ["POST"] },
+    { "src": "/api/auth/session",         "dest": "/api/auth/session.js",  "methods": ["GET"] },
+    { "src": "/api/auth/signout",         "dest": "/api/auth/signout.js",  "methods": ["POST"] },
+    { "src": "/api/(.*)",                 "dest": "/api/verify.js" },
+    { "src": "/dashboard",                "dest": "/vvv/dashboard.html" },
+    { "src": "/pools",                    "dest": "/vvv/pools.html" },
+    { "src": "/proofbridge",              "dest": "/vvv/proofbridge.html" },
+    { "src": "/submission",               "dest": "/vvv/submission.html" },
+    { "src": "/whatsonboarding.html",     "dest": "/vvv/whatsonboarding.html" },
+    { "src": "/gateway",                  "dest": "/vvv/gate-1.html" },
+    { "src": "/demo/(.*)",                "dest": "/demo/$1" },
     { "src": "/(.*\\.(js|css|svg|ico|png|woff2?|json|map|mp4|srt|md))", "dest": "/vvv/$1" },
-    { "src": "/(.*)",           "dest": "/vvv/index.html" }
+    { "src": "/(.*)",                     "dest": "/vvv/index.html" }
   ]
 }
