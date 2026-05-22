@@ -36,6 +36,7 @@ All of the following shipped to `origin/gate-1` (latest commit `2b20bb0`, 22 com
 | Auth — `POST /api/auth/verify` | ✅ Code | Wallet sig → `hmac-sha256` JWT session |
 | Auth — `GET /api/auth/session` | ✅ Code | Bearer token validation |
 | Auth — `POST /api/auth/signout` | ✅ Code | Session discard |
+| Auth — `lib/jwt.js` | ✅ Code | HMAC-SHA256 JWT signer (symlink → `api/auth/jwt.js`) |
 | Inline HTML scripts (gate-1) | ✅ `node --check` PASS | verify-form client |
 | Inline HTML scripts (whatsonboarding) | ✅ `node --check` PASS | kasi/church/general tone-simulator |
 
@@ -45,22 +46,27 @@ All of the following shipped to `origin/gate-1` (latest commit `2b20bb0`, 22 com
 |------|--------|-------|
 | `vercel.json` | ✅ `functions` (was `builds`) | 14 per-handler entries, `maxDuration` per endpoint |
 | `vvv/vercel.json` | ✅ Minimal stub | `version+name` only — intentionally diverges from root |
-| `AGENTS.md` | ✅ v2 gates populated | §1 branch, §2 code-review, §3 alias gate, §5 post-deploy table |
-| `README.md` | ✅ v2 architecture + routes | All env vars, deployment steps, state machine |
-| `DEPLOYMENT.md` | ✅ Present | Contract deployment + wallet funding steps |
-| `db/schema.sql` | ✅ Ready | entities / proposals / decisions / events + FK + triggers |
+| `AGENTS.md` | ✅ v2 gates populated | §1 branch, §2 code-review, §3 alias gate, §4 env, §5 post-deploy table, §7 pre-push checklist |
+| `README.md` | ✅ v2 architecture + routes | All env vars, deployment steps, state machine, `deploy/` system |
+| `DEPLOYMENT.md` | ✅ Present | Contract deployment + wallet funding steps + blocked-key guardrails |
+| `DEPLOY-PROD.md` | ✅ Present | This file — the runbook itself |
+| `deploy/` | ✅ Present | `full_auto_deploy.sh`, `config.sh`, `utils.sh`, `notify.sh`, `extract_addresses.sh`, `rollback.sh` |
+| `.github/workflows/prod.yml` | ✅ Present | CI/CD: pre-flight (syntax + key gate) → deploy → Slack failure alert |
+| `db/schema.sql` | ✅ Ready | entities / proposals / decisions / events + FK + triggers for webhook persistence |
 | `services/` layer | ✅ Present | signer, state (file-backed KV), gateway, orchestrator, jwt |
 | `contracts/` | ✅ Present | `RiskOracleVerifier.sol`, `UbuntuPoolsEngine.sol` |
-| `.env.example` | ✅ Present | All required env vars documented |
+| `.env.example` | ✅ Present | All required env vars + ⛔ BLOCKED KEY warning on `...f017fed6` |
 
-### Git
+### Git key purge — 2026-05-22
 
 | Item | Status |
 |------|--------|
-| Current branch | `gate-1` |
-| Ahead of `origin/main` | 22 commits |
-| Pushed to `origin/gate-1` | ✅ Yes |
-| Secrets in diff | ✅ None |
+| Leaked key variants found in history | `...f017fed6` / `...f02` in `DEPLOY-PROD.md`, `DEPLOYMENT.md` |
+| `git filter-repo --replace-text` | ✅ Purged — 212 commits rewritten, key replaced with `REMOVED_SECRET` |
+| `git grep` on entire rewritten history | ✅ No leaked key found |
+| `origin` re-added after filter-repo | ✅ Yes |
+| `.env`, `.env.local`, `.env.production` | ✅ Clean — key not present in any env file |
+| Remaining trace | ⚠️ Intentional `.env.example:2` warning comment only |
 
 ---
 
@@ -68,62 +74,61 @@ All of the following shipped to `origin/gate-1` (latest commit `2b20bb0`, 22 com
 
 Three blockers — none of them fixable by CLI alone. Each one requires **manual action**.
 
+> ⛔ **Key rotation required**: The old deployer key ending in `...f017fed6` was purged from git history on **2026-05-22** via `git filter-repo`. All history was rewritten (212 commits). A new keypair on a fresh funded wallet must replace it in Vercel Secrets before any `vercel --prod`.
+
 ```
-┌ BLOCKER 1 ── Vercel Aliases: 13+ Production Deploys, 3 Active Aliases ─────────┐
+┌ BLOCKER 1 ── Vercel Aliases: consolidate to exactly 1 Production ──────────────┐
 │                                                                                  │
-│ npx vercel ls → 18 Production entries for the same project                       │
-│ npx vercel inspect → 3 aliases on current production deploy:                     │
-│   • proofbridge-liner.vercel.app                                                 │
-│   • proofbridge-liner-divhanimajokweni-1651s-projects.vercel.app                 │
-│   • proofbridge-liner-git-main-divhanimajokweni-1651s-projects.vercel.app        │
+│ npx vercel ls → must show exactly 1 alias with "Production" scope                │
 │                                                                                  │
-│ AGENTS.md §3 gate: exactly 1 Production alias required.                          │
-│                                                                                  │
-│ FIX: Vercel dashboard → Team Settings → Domains → Unlink all stale aliases,      │
+│ FIX: Vercel dashboard → Team Settings → Domains → unlink all stale aliases,      │
 │      keeping only proofbridge-liner.vercel.app as Production.                     │
 │                                                                                  │
 │ CONFIRM: npx vercel ls → single line with "Production"                           │
 
-┌ BLOCKER 2 ── Vercel Environment Variables: None Confirmed ───────────────────────┐
+┌ BLOCKER 2 ── Vercel Environment Variables ────────────────────────────────────┐
 │                                                                                  │
-│ These env vars must be set in Vercel Dashboard → Environment Variables →         │
-│ Production before deploying.                                                     │
+│ Required — Vercel Dashboard → [Project] → Settings → Environment Variables →   Production:
 │                                                                                  │
-│  Variable               Why                                      Required          │
-│  ─────────────────────  ────────────────────────────────────────  ───────          │
-│  PROOFBRIDGE_HMAC_SECRET Signs every API response (dev fallback  YES               │
-│                            is "dev-secret" — not safe for prod)                   │
-│  ORACLE_PRIVATE_KEY     EIP-712 signing (v2/decision)             YES               │
-│  ORACLE_PUBLIC_KEY      EIP-712 verifying contract                YES               │
-│  CONTRACT_ADDRESS       RiskOracleVerifier on Polygon Amoy        YES               │
-│  STITCH_CLIENT_ID       OAuth2 client ID for Stitch Money         YES               │
-│  STITCH_CLIENT_SECRET   OAuth2 client secret                       YES               │
-│  STITCH_SECRET          Webhook HMAC verification                  YES               │
-│  POOLS_ENGINE_ADDRESS   UbuntuPoolsEngine on Polygon Amoy          YES               │
+│  Variable               Why                                    Required          │
+│  ─────────────────────  ──────────────────────────────────────  ───────          │
+│  DEPLOYER_PRIVATE_KEY   Forge broadcast signing key (new pair) YES               │
+│  ORACLE_PRIVATE_KEY     EIP-712 signing (v2/decision)           YES               │
+│  ORACLE_PUBLIC_KEY      EIP-712 verifying contract address      YES               │
+│  PROOFBRIDGE_HMAC_SECRET HMAC-SHA256 response/JWT signing       YES               │
+│  POLYGON_AMOY_RPC_URL   Amoy RPC endpoint                       YES               │
+│  POLYGONSCAN_API_KEY    Etherscan verification                  YES               │
+│  STITCH_CLIENT_ID       Stitch OAuth2 client ID                  YES               │
+│  STITCH_CLIENT_SECRET   Stitch OAuth2 client secret              YES               │
+│  STITCH_SECRET          Svix/Stitch webhook HMAC                 YES               │
+│  POOLS_ENGINE_ADDRESS   UbuntuPoolsEngine on Amoy (empty 1st)   YES               │
+│  CONTRACT_ADDRESS       RiskOracleVerifier on Amoy               YES               │
 │                                                                                  │
-│ FIX: Vercel Dashboard → [Project] → Settings → Environment Variables →          │
-│      Add each variable scoped to Production.                                     │
+│ FIX: Vercel dashboard → Set each variable scoped to Environment = Production.   │
+│      Do NOT commit any of these to git. .env.example has zero real credentials.  │
 │                                                                                  │
-│ CONFIRM: vercel ls after first prod deploy → logs must show real SECRET used     │
+│ CONFIRM: npx vercel ls after first prod deploy → logs must show real SECRETs.   │
 
-┌ BLOCKER 3 ── UbuntuPoolsEngine Not Deployed to Polygon Amoy ────────────────────┐
+┌ BLOCKER 3 ── UbuntuPoolsEngine + RiskOracleVerifier Not on Amoy ────────────────┐
 │                                                                                  │
-│ The pools engine contract is in source but has never been broadcast to Amoy.     │
+│ The pools engine and oracle verifier are in source but have not been broadcast.  │
 │                                                                                  │
-│ FIX:                                                                             │
-│  export POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/              │
-│  export PRIVATE_KEY=<set-from-Vercel-env-or-new-keypair>  │
+│ FIX via full_auto_deploy.sh (recommended):                                       │
+│   export NETWORK=amoy                                                            │
+│   export DEPLOYER_PRIVATE_KEY=0x<new-rotated-key>                                │
+│   bash deploy/full_auto_deploy.sh                                                │
+│                                                                                  │
+│ Or manually:                                                                      │
+│   export POLYGON_AMOY_RPC_URL=https://rpc-amoy.polygon.technology/               │
+│   # ⛔ BLOCKED KEY 0xb259...fed6 — do NOT reuse                                 │
+│   export DEPLOYER_PRIVATE_KEY=0x<new-rotated-key>                                │
 │   forge script script/DeployUbuntuPoolsEngine.s.sol \                            │
-│     --rpc-url $POLYGON_AMOY_RPC_URL \                                            │
-│     --broadcast                                                                  │
-│                                                                                  │
-│ Also deploy RiskOracleVerifier when ready:                                       │
+│     --rpc-url $POLYGON_AMOY_RPC_URL --broadcast                                  │
 │   forge script script/DeployRiskOracleVerifier.s.sol \                           │
-│     --rpc-url $POLYGON_AMOY_RPC_URL \                                            │
-│     --broadcast                                                                  │
+│     --rpc-url $POLYGON_AMOY_RPC_URL --broadcast                                  │
 │                                                                                  │
-│ After each deploy, paste the contract address from the console output into       │
-│ the corresponding Vercel env var (CONTRACT_ADDRESS / POOLS_ENGINE_ADDRESS).       │
+│ After each deploy, paste the address from console output into the corresponding │
+│ Vercel env var (POOLS_ENGINE_ADDRESS / ORACLE_PUBLIC_KEY / CONTRACT_ADDRESS).    │
 └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -510,47 +515,38 @@ git checkout gate-1
 # Current branch
 git branch --show-current          # → gate-1
 
-# Commits ahead of origin/main
-git rev-parse origin/main           # → 0efd318...
-git rev-parse HEAD                  # → 2b20bb0
-git log --oneline origin/main..HEAD | wc -l
-# → 22 (includes both pruned commits by this agent and upstream prunes)
-
-# Latest commits
-git log --oneline -8
-# 3faae30 docs(DEPLOY-PROD): production deployment playbook
-# ee0a86f fix(vercel): replace deprecated 'builds' with 'functions'
-# 65b3d64 docs(README): update alias block count
-# e3131c5 chore(cleanup+v2): remove stale artifacts/deprecated/test
-# 9d90629 fix(contracts+solidity): RiskOracleVerifier + UbuntuPoolsEngine
-# 2941925 feat(v2): stateless → stateful risk engine
-# ba51d3a docs(AGENTS.md): add CI/CD Deploy Guard
-# e61414f feat: WhatsApp onboarding demo — 3 tone modes
+# Latest commit
+git rev-parse HEAD                 # → 571b24f
+git log --oneline -5
+# 571b24f fix(gate-1): runtime integrity fixes + production deploy system
+# e3a9892 feat: add webhook persistence tables to db/schema.sql
+# 810eb6a feat: add persistence layer to Stitch webhook handling
+# d01a0d7 fix: pin openzeppelin-contracts-upgradeable to v4.9.6
+# aae3495 feat(scripts+docs): add Vercel env import script + Command Code API provider
 
 # Working tree status
 git status -sb
-# ## gate-1...origin/main [ahead 22]
+# ## gate-1
+#  M .env.example, DEPLOY-PROD.md, DEPLOYMENT.md, api/auth/verify.js
+# ?? .github/workflows/prod.yml, deploy/, api/auth/oauth/, lib/jwt.js
 ```
 
-### History of Changes on `gate-1`
+### Branch State Summary
 
-| Commit | What Changed |
-|--------|------|
-| `3faae30` | **DEPLOY-PROD.md** — production deployment playbook (10 sections: blockers, steps, verification table, rollback, branch state) |
-| `ee0a86f` | **`vercel.json` `builds` → `functions`** — resolves "Unused build and development settings" dashboard warning |
-| `65b3d64` | **README alias correction** — 13+ deploys / 3 active aliases |
-| `e3131c5` | **Cleanup + v2 config** — remove `artifacts/` `deprecated/` `test/`, `vvv/vercel.json` stub, README + AGENTS.md v2 updates |
-| `9d90629` | **Solidity fix + README** — RiskOracleVerifier + UbuntuPoolsEngine compile clean, README v2 architecture |
-| `2941925` | **v2 API + auth + contracts + execution** — 13 new JS modules, `services/`, `db/schema.sql`, `contracts/RiskOracleVerifier.sol`, `contracts/UbuntuPoolsEngine.sol`, `vvv/404.html` |
-| `ba51d3a` | **AGENTS.md CI/CD Deploy Guard** — mandatory pre-push/pre-deploy checklist |
-| `e61414f` | **WhatsApp onboarding demo** — 3 tone modes (kasi/church/general) |
-| `9382bb0` | **Fix-VVU-Vercel-DNS-records** |
+| Branch | Date | Ahead of main | Push status |
+|--------|------|---------------|-------------|
+| `gate-1` | latest | 29 commits | Force-pushed 2026-05-22 (purge + deploy system) |
+| `main` | oldest | 0 (base) | Force-pushed 2026-05-22 (head synced to last known good) |
+
+> ⛔ **History note**: All branches were force-pushed on 2026-05-22 after `git filter-repo` purged
+> the exposed deployer key (`0xb259...f017fed6`), rewriting 212 commits.
+> Collaborators must reclone or `git fetch --all && git reset --hard origin/gate-1`.
 
 ### Branching Strategy
 
-- **`gate-1`** is the long-running integration branch (currently 22 commits ahead of `origin/main`).
-- `main` is the stable branch; merge `gate-1` → `main` when v1 + v2 are both production-ready.
-- Do not delete `gate-1` before merge — it contains v2 contracts and API config not yet on `main`.
+- **`gate-1`** is the long-running integration branch.
+- `main` is the stable branch — merge `gate-1` → `main` when v1 + v2 are both production-ready.
+- All deploy gating is in `AGENTS.md §7` (pre-push checklist) and `.github/workflows/prod.yml` (CI/CD).
 
 ---
 

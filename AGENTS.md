@@ -150,7 +150,9 @@ If any route is not 200 → stop, roll back, alert.
 [ ] vercel --confirm --prod run NOT already failed (no double-tap)
 [ ] All production routes OK after deploy (/, /gate-1, /gateway, /pools, /proofbridge, /submission, /whatsonboarding.html, /api/v2/events, /api/v2/decision, /api/auth/nonce)
 [ ] Post-deploy hash matches `vvv/index.html` canonical SHA256
-[ ] gate-1 branch is tracked and reviewed before merge to main (currently 15 commits ahead of origin/main — see DEPLOYMENT.md branching strategy)
+[ ] gate-1 branch is tracked and reviewed before merge to main (currently 29 commits ahead of origin/main — see DEPLOYMENT.md branching strategy)
+[ ] `.github/workflows/prod.yml` pre-flight key-leak gate passes (`git log -S 'b25939...'`)
+[ ] `deploy/full_auto_deploy.sh` PRIVATE_KEY and ORACLE_PRIVATE_KEY do not match the `^0xb259` blocked-key pattern
 ```
 
 ---

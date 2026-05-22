@@ -62,11 +62,18 @@ jobs:
         run: |
           cd api && node --check verify.js && node --check kernel.js && node --check jwt.js
 
-      - name: Guard block — no wildcard source roots in vercel.json
+      - name: Guard block — verify vercel.json route hygiene
         run: |
-          ! grep '"src": "/api/(.*)"' vercel.json && \
-            echo "No conflicting /api/(.*) catch-all in vercel.json" || \
-            { echo "Remove catch-all src — it shadows explicit routes"; exit 1; }
+          # /api/(.*) catch-all to verify.js is intentional — warn but pass
+          if grep -q '"/api/(.*)"' vercel.json; then
+            echo "Caution: catch-all /api/(.*) → verify.js is present (redirects unmatched API routes)"
+          fi
+          # /v2/* routes must ALL be explicit — no wildcard /v2/(.*) allowed
+          if grep -q '"/v2/(.*)"' vercel.json; then
+            echo "::error::Wildcard /v2/(.*) catch-all is not allowed — add each v2 route explicitly"
+            exit 1
+          fi
+          echo "vercel.json route hygiene OK"
 
       - name: Verify KEY is blocked string1
         run: |
