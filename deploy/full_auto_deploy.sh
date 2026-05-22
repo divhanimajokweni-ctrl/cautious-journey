@@ -3,24 +3,24 @@
 # Pipeline: validate → build → deploy contracts → extract → verify → Vercel env → Vercel prod deploy → tag → notify
 #
 # Required env vars (never commit — all from Vercel dashboard / GitHub Secrets):
-#   PRIVATE_KEY               forge broadcast signing key
-#   ORACLE_PRIVATE_KEY        EIP-712 signing key (defaults to PRIVATE_KEY)
-#   POLYGON_AMOY_RPC_URL      RPC endpoint
-#   POLYGONSCAN_API_KEY       Etherscan API key for verify
-#   VERCEL_TOKEN              Vercel API token
-#   VERCEL_PROJECT_ID         Vercel project ID
-#   VERCEL_ORG_ID             Vercel team/org ID
-#   VERCEL_APP_CLIENT_SECRET  OAuth token exchange
-#   PROOFBRIDGE_HMAC_SECRET   JWT signing secret
-#   ORACLE_PUBLIC_KEY         EIP-712 public key
-#   CONTRACT_ADDRESS          RiskOracleVerifier on Amoy
-#   POOLS_ENGINE_ADDRESS      UbuntuPoolsEngine on Amoy
-#   STITCH_CLIENT_ID          Stitch Money client ID
-#   STITCH_CLIENT_SECRET      Stitch Money client secret
-#   STITCH_SECRET             Stitch webhook HMAC secret
-#   SLACK_WEBHOOK             (optional) Slack incoming webhook
-#   TELEGRAM_BOT_TOKEN        (optional)
-#   TELEGRAM_CHAT_ID          (optional)
+#   DEPLOYER_PRIVATE_KEY        forge broadcast signing key (PRIVATE_KEY alias supported)
+#   ORACLE_PRIVATE_KEY           EIP-712 signing key (defaults to DEPLOYER_PRIVATE_KEY)
+#   ORACLE_PUBLIC_KEY            EIP-712 verifying contract public key
+#   PROOFBRIDGE_HMAC_SECRET      JWT signing + response-signing secret
+#   POLYGON_AMOY_RPC_URL         Amoy RPC endpoint
+#   POLYGONSCAN_API_KEY          Etherscan API key for contract verification
+#   STITCH_CLIENT_ID             Stitch Money OAuth2 client ID
+#   STITCH_CLIENT_SECRET         Stitch Money OAuth2 client secret
+#   STITCH_SECRET                Svix/Stitch webhook HMAC verification
+#   POOLS_ENGINE_ADDRESS         UbuntuPoolsEngine on Amoy (filled by pipeline on first deploy)
+#   CONTRACT_ADDRESS             RiskOracleVerifier on Amoy (filled by pipeline on first deploy)
+#   VERCEL_TOKEN                 Vercel API token (for env sync + prod deploy)
+#   VERCEL_PROJECT_ID            Vercel project ID
+#   VERCEL_ORG_ID                Vercel team/org ID
+#   VERCEL_APP_CLIENT_SECRET     Vercel OAuth token exchange
+#   SLACK_WEBHOOK                (optional) Slack incoming webhook
+#   TELEGRAM_BOT_TOKEN           (optional)
+#   TELEGRAM_CHAT_ID             (optional)
 
 set -euo pipefail
 

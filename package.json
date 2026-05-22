@@ -21,7 +21,10 @@
     "deploy:droplet": "bash scripts/deploy-droplet.sh",
     "deploy:droplet:rocm": "bash scripts/deploy-droplet.sh --rocm",
     "deploy:droplet:dry": "bash scripts/deploy-droplet.sh --dry-run",
-    "precommit": "node scripts/check-secrets.js"
+    "check:secrets": "node scripts/check-secrets.js",
+    "check:env": "node scripts/env-check.js",
+    "precommit": "node scripts/check-secrets.js",
+    "predeploy": "npm run check:secrets && npm run check:env"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.64",
